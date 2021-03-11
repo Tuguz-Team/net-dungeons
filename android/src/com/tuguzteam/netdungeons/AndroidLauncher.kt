@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_launcher)
 
         // Setup libGDX configuration and initialize it
         val config = AndroidApplicationConfiguration().apply {
@@ -16,9 +17,6 @@ class AndroidLauncher : AndroidApplication() {
             useCompass = false
             hideStatusBar = true
         }
-        initialize(NetDungeonsGame(), config)
-
-        // Set view to main menu
-        setContentView(R.layout.activity_launcher)
+        initializeForView(NetDungeonsGame(), config)
     }
 }
