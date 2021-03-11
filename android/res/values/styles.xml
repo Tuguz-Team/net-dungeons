@@ -1,8 +1,5 @@
 <resources>
-    <style name="Theme.NetDungeons" parent="android:Theme">
-		<item name="android:windowBackground">@android:color/black</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    <style name="Theme.NetDungeons" parent="Theme.MaterialComponents">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
