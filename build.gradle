@@ -33,6 +33,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
+        jcenter()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -60,12 +61,14 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86_64"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         implementation "io.github.libktx:ktx-app:$ktxVersion"
+
+        implementation 'androidx.appcompat:appcompat:1.2.0'
+        implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     }
 }
 
 project(":core") {
     apply plugin: "kotlin"
-
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
