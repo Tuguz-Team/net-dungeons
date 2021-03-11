@@ -9,11 +9,12 @@ class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val config = AndroidApplicationConfiguration()
-        config.a = 8
-        config.useAccelerometer = false
-        config.useCompass = true
-        config.hideStatusBar = true
+        val config = AndroidApplicationConfiguration().apply {
+            a = 8
+            useAccelerometer = false
+            useCompass = false
+            hideStatusBar = true
+        }
 
         initialize(NetDungeonsGame(), config)
     }

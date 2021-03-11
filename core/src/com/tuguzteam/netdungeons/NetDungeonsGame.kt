@@ -1,12 +1,12 @@
 package com.tuguzteam.netdungeons
 
-import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import ktx.app.KtxApplicationAdapter
 
-class NetDungeonsGame : ApplicationAdapter() {
+class NetDungeonsGame : KtxApplicationAdapter {
     private lateinit var img: Texture
     private lateinit var batch: SpriteBatch
 
