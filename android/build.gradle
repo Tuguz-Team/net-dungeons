@@ -1,6 +1,13 @@
 android {
     buildToolsVersion "30.0.3"
     compileSdkVersion 30
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -11,7 +18,6 @@ android {
             assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
-
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
