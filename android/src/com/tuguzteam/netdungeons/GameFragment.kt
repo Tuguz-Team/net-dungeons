@@ -15,7 +15,6 @@ class GameFragment : AndroidFragmentApplication() {
             a = 8
             useAccelerometer = false
             useCompass = false
-            hideStatusBar = true
         }
         return initializeForView(NetDungeonsGame(), config)
     }

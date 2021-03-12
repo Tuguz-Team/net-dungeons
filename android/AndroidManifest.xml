@@ -11,12 +11,12 @@
         android:appCategory="game"
         android:label="@string/app_name"
         android:theme="@style/Theme.NetDungeons"
+        android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
         tools:targetApi="o">
         <activity
             android:name="com.tuguzteam.netdungeons.MainActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape"
-            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout">
+            android:screenOrientation="sensorLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

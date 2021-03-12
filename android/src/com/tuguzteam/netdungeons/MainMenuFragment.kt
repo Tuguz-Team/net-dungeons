@@ -7,16 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 
 class MainMenuFragment : Fragment() {
-    companion object Static {
-        @JvmStatic
-        fun newInstance(): MainMenuFragment {
-            val args = Bundle()
-            val fragment = MainMenuFragment()
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
