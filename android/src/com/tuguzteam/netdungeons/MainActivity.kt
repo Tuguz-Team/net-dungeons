@@ -1,7 +1,6 @@
 package com.tuguzteam.netdungeons
 
 import android.os.Build
-import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -10,11 +9,8 @@ import androidx.fragment.app.FragmentActivity
 
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
-class MainActivity : FragmentActivity(), AndroidFragmentApplication.Callbacks {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-    }
+class MainActivity : FragmentActivity(R.layout.activity_main),
+        AndroidFragmentApplication.Callbacks {
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onWindowFocusChanged(hasFocus: Boolean) {

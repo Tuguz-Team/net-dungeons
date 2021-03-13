@@ -10,7 +10,9 @@ import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 class GameFragment : AndroidFragmentApplication() {
     override fun onCreateView(
             inflater: LayoutInflater,
-            container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
         val config = AndroidApplicationConfiguration().apply {
             a = 8
             useAccelerometer = false
