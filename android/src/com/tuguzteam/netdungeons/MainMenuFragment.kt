@@ -15,17 +15,17 @@ class MainMenuFragment : Fragment(R.layout.fragment_main_menu) {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        if (view != null) {
-            val materialButton = view.findViewById<MaterialButton>(R.id.fragment_main_menu_button)
-            materialButton?.setOnClickListener {
-                parentFragmentManager.commit {
-                    setReorderingAllowed(true)
-                    replace<GameFragment>(R.id.activity_main_fragment_container)
-                    addToBackStack(null)
-                }
+        val view: View? = super.onCreateView(inflater, container, savedInstanceState)
+
+        val materialButton: MaterialButton? = view?.findViewById(R.id.fragment_main_menu_button)
+        materialButton?.setOnClickListener {
+            parentFragmentManager.commit {
+                setReorderingAllowed(true)
+                replace<GameFragment>(R.id.activity_main_fragment_container)
+                addToBackStack(null)
             }
         }
+
         return view
     }
 }
