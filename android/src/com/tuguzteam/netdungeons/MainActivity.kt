@@ -5,11 +5,10 @@ import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
-
+import androidx.appcompat.app.AppCompatActivity
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
-class MainActivity : FragmentActivity(R.layout.activity_main),
+class MainActivity : AppCompatActivity(R.layout.activity_main),
         AndroidFragmentApplication.Callbacks {
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
