@@ -7,14 +7,16 @@ import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.input.GestureDetector
 import com.tuguzteam.netdungeons.objects.Cube
 import ktx.app.KtxApplicationAdapter
 
 class NetDungeonsGame : KtxApplicationAdapter {
-    private var camera: OrthographicCamera? = null
-    private var modelBatch: ModelBatch? = null
-    private var cube: Cube? = null
-    private var environment: Environment? = null
+    private lateinit var camera: OrthographicCamera
+    private lateinit var modelBatch: ModelBatch
+    private lateinit var cube: Cube
+    private lateinit var environment: Environment
+    private lateinit var gestureListener: GestureListener
 
     companion object {
         private const val VIEW_MULTIPLIER = 0.05f
@@ -40,27 +42,32 @@ class NetDungeonsGame : KtxApplicationAdapter {
         }
 
         cube = Cube()
+
+        gestureListener = GestureListener(camera)
+        Gdx.input.inputProcessor = GestureDetector(gestureListener)
     }
 
     override fun resize(width: Int, height: Int) {
-        camera?.apply {
+        camera.apply {
             viewportWidth = width * VIEW_MULTIPLIER
             viewportHeight = height * VIEW_MULTIPLIER
         }
     }
 
     override fun render() {
+        gestureListener.update()
+
         Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
-        modelBatch?.begin(camera)
-        modelBatch?.render(cube?.modelInstance, environment)
-        modelBatch?.end()
+        modelBatch.begin(camera)
+        modelBatch.render(cube.modelInstance, environment)
+        modelBatch.end()
     }
 
     override fun dispose() {
-        modelBatch?.dispose()
-        cube?.dispose()
+        modelBatch.dispose()
+        cube.dispose()
     }
 }
