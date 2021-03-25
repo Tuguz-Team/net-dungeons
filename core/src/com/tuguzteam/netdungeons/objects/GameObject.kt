@@ -7,6 +7,10 @@ import com.badlogic.gdx.utils.Disposable
 
 abstract class GameObject : Disposable {
     var position = Vector3()
+    set(value) {
+        field = value
+        modelInstance?.transform?.setTranslation(value)
+    }
 
     var model: Model? = null
     protected set

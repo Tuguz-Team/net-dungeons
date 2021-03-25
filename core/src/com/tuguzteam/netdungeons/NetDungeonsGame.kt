@@ -8,13 +8,12 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
-import com.tuguzteam.netdungeons.objects.Cube
 import ktx.app.KtxApplicationAdapter
 
 class NetDungeonsGame : KtxApplicationAdapter {
     private lateinit var camera: OrthographicCamera
     private lateinit var modelBatch: ModelBatch
-    private lateinit var cube: Cube
+    private lateinit var field: Field
     private lateinit var environment: Environment
     private lateinit var gestureListener: GestureListener
 
@@ -34,14 +33,13 @@ class NetDungeonsGame : KtxApplicationAdapter {
                 Gdx.graphics.width * VIEW_MULTIPLIER,
                 Gdx.graphics.height * VIEW_MULTIPLIER,
         ).apply {
-            position.set(3f, 3f, 3f)
+            position.set(30f, 30f, 30f)
             lookAt(0f, 0f, 0f)
-            near = 0.1f
-            far = 30f
+            far = 500f
             update()
         }
 
-        cube = Cube()
+        field = Field()
 
         gestureListener = GestureListener(camera)
         Gdx.input.inputProcessor = GestureDetector(gestureListener)
@@ -55,19 +53,22 @@ class NetDungeonsGame : KtxApplicationAdapter {
     }
 
     override fun render() {
-        gestureListener.update()
-
         Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
         Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
 
+        gestureListener.update()
         modelBatch.begin(camera)
-        modelBatch.render(cube.modelInstance, environment)
+        for (array in field.grid) {
+            for (item in array!!) {
+                modelBatch.render(item!!.modelInstance, environment)
+            }
+        }
         modelBatch.end()
     }
 
     override fun dispose() {
         modelBatch.dispose()
-        cube.dispose()
+        field.dispose()
     }
 }
