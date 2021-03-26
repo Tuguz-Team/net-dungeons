@@ -11,6 +11,7 @@ import kotlin.math.sign
 class GestureListener(private val camera: OrthographicCamera) : GestureAdapter() {
     private var sign = 0
     private var processedAngle = 0f
+    private var oldZoomDistance = 0f
 
     private companion object {
         private const val FLING_VELOCITY = 1.25f
@@ -18,7 +19,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
         private const val CAMERA_SPEED = 1.25f
         private const val MIN_ZOOM = 0.5f
         private const val MAX_ZOOM = 1f
-        private const val ZOOM_SPEED = 1.25f
+        private const val ZOOM_SPEED = 0.85f
     }
 
     override fun fling(velocityX: Float, velocityY: Float, button: Int): Boolean {
@@ -30,31 +31,30 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
         return false
     }
 
-    private var oldDistance = 0f
-
     override fun zoom(initialDistance: Float, distance: Float): Boolean {
         val delta = Gdx.graphics.deltaTime * ZOOM_SPEED *
-                clamp(initialDistance - distance, -1f, 1f)
-        camera.zoom = clamp(camera.zoom + delta, MIN_ZOOM, MAX_ZOOM)
-        oldDistance = distance
+                clamp(oldZoomDistance - distance, -1f, 1f)
+        camera.apply {
+            zoom = clamp(camera.zoom + delta, MIN_ZOOM, MAX_ZOOM)
+            update()
+        }
+        oldZoomDistance = distance
         return true
     }
 
     fun update() {
-        if (sign != 0 && processedAngle.absoluteValue < ANGLE) {
-            val angle = Gdx.graphics.deltaTime * sign * ANGLE * CAMERA_SPEED
+        if (sign != 0) {
+            var angle = Gdx.graphics.deltaTime * sign * ANGLE * CAMERA_SPEED
+            processedAngle += angle
+            if (processedAngle.absoluteValue >= ANGLE) {
+                angle += sign * ANGLE - processedAngle
+                sign = 0
+                processedAngle = 0f
+            }
             camera.apply {
                 rotateAround(Vector3(), Vector3.Y, angle)
                 update()
             }
-            processedAngle += angle
-        } else {
-            camera.apply {
-                rotateAround(Vector3(), Vector3.Y, sign * ANGLE - processedAngle)
-                update()
-            }
-            sign = 0
-            processedAngle = 0f
         }
     }
 }
