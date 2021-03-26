@@ -8,17 +8,17 @@ import com.badlogic.gdx.utils.Disposable
 abstract class GameObject : Disposable {
     var position = Vector3()
     set(value) {
-        field = value
-        modelInstance?.transform?.setTranslation(value)
+        field.set(value)
+        modelInstance.transform?.setTranslation(field)
     }
 
-    var model: Model? = null
+    lateinit var model: Model
     protected set
 
-    var modelInstance: ModelInstance? = null
+    lateinit var modelInstance: ModelInstance
     protected set
 
     override fun dispose() {
-        model?.dispose()
+        model.dispose()
     }
 }

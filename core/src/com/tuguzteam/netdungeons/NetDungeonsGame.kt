@@ -8,18 +8,19 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxApplicationAdapter
 
 class NetDungeonsGame : KtxApplicationAdapter {
     private lateinit var camera: OrthographicCamera
-    private lateinit var modelBatch: ModelBatch
+    private lateinit var viewport: Viewport
+
     private lateinit var field: Field
+
+    private lateinit var modelBatch: ModelBatch
     private lateinit var environment: Environment
     private lateinit var gestureListener: GestureListener
-
-    companion object {
-        private const val VIEW_MULTIPLIER = 0.05f
-    }
 
     override fun create() {
         environment = Environment().apply {
@@ -29,15 +30,13 @@ class NetDungeonsGame : KtxApplicationAdapter {
 
         modelBatch = ModelBatch()
 
-        camera = OrthographicCamera(
-                Gdx.graphics.width * VIEW_MULTIPLIER,
-                Gdx.graphics.height * VIEW_MULTIPLIER,
-        ).apply {
+        camera = OrthographicCamera().apply {
             position.set(30f, 30f, 30f)
             lookAt(0f, 0f, 0f)
             far = 500f
             update()
         }
+        viewport = ExtendViewport(50f, 50f, camera)
 
         field = Field()
 
@@ -46,10 +45,7 @@ class NetDungeonsGame : KtxApplicationAdapter {
     }
 
     override fun resize(width: Int, height: Int) {
-        camera.apply {
-            viewportWidth = width * VIEW_MULTIPLIER
-            viewportHeight = height * VIEW_MULTIPLIER
-        }
+        viewport.update(width, height)
     }
 
     override fun render() {
@@ -59,10 +55,8 @@ class NetDungeonsGame : KtxApplicationAdapter {
 
         gestureListener.update()
         modelBatch.begin(camera)
-        for (array in field.grid) {
-            for (item in array!!) {
-                modelBatch.render(item!!.modelInstance, environment)
-            }
+        for (gameObject in field) {
+            modelBatch.render(gameObject.modelInstance, environment)
         }
         modelBatch.end()
     }

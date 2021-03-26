@@ -5,30 +5,27 @@ import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.objects.Cube
 import com.tuguzteam.netdungeons.objects.GameObject
 
-class Field : Disposable {
-    val grid = arrayOfNulls<Array<GameObject?>>(SIZE * 2 + 1)
-
+class Field : Disposable, Iterable<GameObject> {
     private companion object {
-        private const val SIZE = 5
+        private const val SIZE = 4
     }
 
-    init {
-        for (i in grid.indices) {
-            grid[i] = arrayOfNulls(SIZE * 2 + 1)
-            for (j in grid[i]!!.indices) {
-                grid[i]!![j] = Cube(
-                        Vector3(5f, 5f, 5f),
-                        Vector3((i - SIZE) * 5f, -2.5f, (j - SIZE) * 5f)
-                )
-            }
-        }
+    val dimension = SIZE * 2 + 1
+
+    private val array = Array<GameObject>(dimension * dimension) { i ->
+        Cube(
+                Vector3(5f, 5f, 5f),
+                Vector3((i / dimension - SIZE) * 5f, -2.5f, (i % dimension - SIZE) * 5f)
+        )
     }
+
+    operator fun get(i: Int, j: Int): GameObject = array[i * dimension + j]
 
     override fun dispose() {
-        for (array in grid) {
-            for (item in array!!) {
-                item?.dispose()
-            }
+        for (gameObject in this) {
+            gameObject.dispose()
         }
     }
+
+    override fun iterator(): Iterator<GameObject> = array.iterator()
 }
