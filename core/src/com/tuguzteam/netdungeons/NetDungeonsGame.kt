@@ -1,7 +1,6 @@
 package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
@@ -67,10 +66,4 @@ class NetDungeonsGame : KtxApplicationAdapter {
         modelBatch.dispose()
         field.dispose()
     }
-}
-
-inline fun <T : ModelBatch> T.use(camera: Camera, action: (T) -> Unit) {
-    begin(camera)
-    action(this)
-    end()
 }
