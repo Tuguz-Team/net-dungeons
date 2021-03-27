@@ -18,6 +18,6 @@ class GameFragment : AndroidFragmentApplication() {
             useAccelerometer = false
             useCompass = false
         }
-        return initializeForView(NetDungeonsGame(), config)
+        return initializeForView(Game(), config)
     }
 }

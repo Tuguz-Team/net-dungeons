@@ -10,11 +10,12 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.tuguzteam.netdungeons.ui.GestureListener
 import ktx.app.KtxApplicationAdapter
 import ktx.graphics.color
 import ktx.math.vec3
 
-class NetDungeonsGame : KtxApplicationAdapter {
+class Game : KtxApplicationAdapter {
     private lateinit var modelBatch: ModelBatch
     private lateinit var environment: Environment
 
@@ -24,16 +25,17 @@ class NetDungeonsGame : KtxApplicationAdapter {
     private lateinit var gestureListener: GestureListener
 
     private lateinit var field: Field
+    private lateinit var assetManager: AssetManager
 
     override fun create() {
         modelBatch = ModelBatch()
         environment = Environment().apply {
             set(ColorAttribute(
                     ColorAttribute.AmbientLight,
-                    color(red = 0.3f, green = 0.3f, blue = 0.3f, alpha = 1f)
+                    color(red = 0.3f, green = 0.3f, blue = 0.3f)
             ))
             add(DirectionalLight().set(
-                    color(red = 0.6f, green = 0.6f, blue = 0.6f, alpha = 1f),
+                    color(red = 0.6f, green = 0.6f, blue = 0.6f),
                     vec3(x = -1f, y = -0.8f, z = -0.2f)
             ))
         }
@@ -50,7 +52,8 @@ class NetDungeonsGame : KtxApplicationAdapter {
         gestureListener = GestureListener(camera)
         Gdx.input.inputProcessor = GestureDetector(gestureListener)
 
-        field = Field()
+        assetManager = AssetManager()
+        field = Field(side = 9, assetManager)
     }
 
     override fun resize(width: Int, height: Int) {
@@ -73,5 +76,6 @@ class NetDungeonsGame : KtxApplicationAdapter {
     override fun dispose() {
         modelBatch.dispose()
         field.dispose()
+        assetManager.dispose()
     }
 }

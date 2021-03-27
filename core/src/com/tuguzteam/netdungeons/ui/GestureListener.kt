@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons
+package com.tuguzteam.netdungeons.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
