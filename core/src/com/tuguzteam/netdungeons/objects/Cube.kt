@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.math.MathUtils.random
 import com.badlogic.gdx.math.Vector3
 
-class Cube(dimensions: Vector3) : GameObject() {
+open class Cube(dimensions: Vector3) : GameObject() {
     init {
         val modelBuilder = ModelBuilder()
         model = modelBuilder.createBox(

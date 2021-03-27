@@ -8,24 +8,30 @@ import com.tuguzteam.netdungeons.objects.GameObject
 class Field : Disposable, Iterable<GameObject> {
     private companion object {
         private const val SIZE = 4
+        private const val dimension = SIZE * 2 + 1
     }
 
-    val dimension = SIZE * 2 + 1
-
-    private val array = Array<GameObject>(dimension * dimension) { i ->
-        Cube(
-                Vector3(5f, 5f, 5f),
-                Vector3((i / dimension - SIZE) * 5f, -2.5f, (i % dimension - SIZE) * 5f)
-        )
+    private val array = Array(dimension * dimension) { i ->
+        Cell(Vector3(
+                (i / dimension - SIZE) * Cell.width,
+                -1f,
+                (i % dimension - SIZE) * Cell.width
+        ))
     }
 
-    operator fun get(i: Int, j: Int): GameObject = array[i * dimension + j]
-
-    override fun dispose() {
-        for (gameObject in this) {
-            gameObject.dispose()
+    class Cell(position: Vector3) : Cube(Vector3(width, 2f, width), position) {
+        companion object {
+            const val width = 5f
         }
     }
 
-    override fun iterator(): Iterator<GameObject> = array.iterator()
+    operator fun get(i: Int, j: Int): Cell = array[i * dimension + j]
+
+    override fun iterator(): Iterator<Cell> = array.iterator()
+
+    override fun dispose() {
+        for (cell in this) {
+            cell.dispose()
+        }
+    }
 }

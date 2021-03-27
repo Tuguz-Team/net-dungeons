@@ -34,7 +34,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
     override fun zoom(initialDistance: Float, distance: Float): Boolean {
         val delta = Gdx.graphics.deltaTime * ZOOM_SPEED *
                 clamp(oldZoomDistance - distance, -1f, 1f)
-        camera.apply {
+        camera.run {
             zoom = clamp(camera.zoom + delta, MIN_ZOOM, MAX_ZOOM)
             update()
         }
@@ -51,7 +51,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
                 sign = 0
                 processedAngle = 0f
             }
-            camera.apply {
+            camera.run {
                 rotateAround(Vector3(), Vector3.Y, angle)
                 update()
             }
