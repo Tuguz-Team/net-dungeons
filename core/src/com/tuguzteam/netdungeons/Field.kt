@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.objects.Cube
 import com.tuguzteam.netdungeons.objects.GameObject
+import ktx.math.vec3
 
 class Field : Disposable, Iterable<GameObject> {
     private companion object {
@@ -12,14 +13,14 @@ class Field : Disposable, Iterable<GameObject> {
     }
 
     private val array = Array(dimension * dimension) { i ->
-        Cell(Vector3(
-                (i / dimension - SIZE) * Cell.width,
-                -1f,
-                (i % dimension - SIZE) * Cell.width
+        Cell(vec3(
+                x = (i / dimension - SIZE) * Cell.width,
+                y = -1f,
+                z = (i % dimension - SIZE) * Cell.width
         ))
     }
 
-    class Cell(position: Vector3) : Cube(Vector3(width, 2f, width), position) {
+    class Cell(position: Vector3) : Cube(vec3(x = width, y = 2f, z = width), position) {
         companion object {
             const val width = 5f
         }

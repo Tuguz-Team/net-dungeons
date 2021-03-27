@@ -11,38 +11,46 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import ktx.app.KtxApplicationAdapter
+import ktx.graphics.color
+import ktx.math.vec3
 
 class NetDungeonsGame : KtxApplicationAdapter {
+    private lateinit var modelBatch: ModelBatch
+    private lateinit var environment: Environment
+
     private lateinit var camera: OrthographicCamera
     private lateinit var viewport: Viewport
 
-    private lateinit var field: Field
-
-    private lateinit var modelBatch: ModelBatch
-    private lateinit var environment: Environment
     private lateinit var gestureListener: GestureListener
 
+    private lateinit var field: Field
+
     override fun create() {
+        modelBatch = ModelBatch()
         environment = Environment().apply {
-            set(ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f))
-            add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
+            set(ColorAttribute(
+                    ColorAttribute.AmbientLight,
+                    color(red = 0.3f, green = 0.3f, blue = 0.3f, alpha = 1f)
+            ))
+            add(DirectionalLight().set(
+                    color(red = 0.6f, green = 0.6f, blue = 0.6f, alpha = 1f),
+                    vec3(x = -1f, y = -0.8f, z = -0.2f)
+            ))
         }
 
-        modelBatch = ModelBatch()
-
         camera = OrthographicCamera().apply {
-            position.set(30f, 30f, 30f)
-            lookAt(0f, 0f, 0f)
+            position.set(vec3(x = 30f, y = 30f, z = 30f))
+            lookAt(vec3(x = 0f, y = 0f, z = 0f))
             near = 20f
             far = 120f
             update()
         }
         viewport = ExtendViewport(50f, 50f, camera)
 
-        field = Field()
-
         gestureListener = GestureListener(camera)
         Gdx.input.inputProcessor = GestureDetector(gestureListener)
+
+        field = Field()
     }
 
     override fun resize(width: Int, height: Int) {

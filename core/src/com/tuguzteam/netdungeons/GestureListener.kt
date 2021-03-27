@@ -72,7 +72,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
         }
 
         if (updateZoom || updateRotation) {
-            camera.update()
+            camera.update(false)
         }
     }
 }
