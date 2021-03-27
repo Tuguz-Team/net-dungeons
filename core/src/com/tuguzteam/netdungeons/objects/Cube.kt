@@ -15,7 +15,7 @@ open class Cube(dimensions: Vector3) : GameObject() {
         model = modelBuilder.createBox(
                 dimensions.x, dimensions.y, dimensions.z,
                 Material(ColorAttribute.createDiffuse(
-                        color(red = random(), green = random(), blue = random(), alpha = 1f)
+                        color(red = random(), green = random(), blue = random())
                 )),
                 (Usage.Position or Usage.Normal).toLong()
         )
