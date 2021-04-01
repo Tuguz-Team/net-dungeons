@@ -17,7 +17,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
 
         private const val MIN_ZOOM = 0.5f
         private const val MAX_ZOOM = 1f
-        private const val ZOOM_SPEED = 1f
+        private const val ZOOM_SPEED = 0.75f
         private const val ZOOM_DURATION = 0.25f
     }
 

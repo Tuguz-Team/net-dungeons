@@ -5,16 +5,21 @@ import com.badlogic.gdx.graphics.g3d.Model
 import java.util.EnumMap
 
 class AssetManager : AssetManager() {
-    private val models: MutableMap<ModelType, Model> = EnumMap(ModelType::class.java)
+    private val models: EnumMap<ModelType, Model> = EnumMap(ModelType::class.java)
 
     init {
-        for (type in ModelType.values()) {
-            load(type.filename, Model::class.java)
-            models[type] = super.get(type.filename, Model::class.java)
+        for (modelType in ModelType.values()) {
+            super.load("models/${modelType.filename}", Model::class.java)
         }
     }
 
-    enum class ModelType(val filename: String)
+    enum class ModelType(val filename: String) {
+        Suzanne("suzanne.obj")
+    }
 
-    operator fun get(modelType: ModelType): Model = models[modelType]!!
+    operator fun get(modelType: ModelType): Model {
+        models[modelType] = models[modelType]
+                ?: super.get("models/${modelType.filename}", Model::class.java)
+        return models[modelType]!!
+    }
 }

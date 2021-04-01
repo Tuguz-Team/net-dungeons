@@ -1,4 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-# Voxel 3D model type
+# 3D model files
 *.vox filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.mtl filter=lfs diff=lfs merge=lfs -text
+*.g3dj filter=lfs diff=lfs merge=lfs -text
+*.g3db filter=lfs diff=lfs merge=lfs -text

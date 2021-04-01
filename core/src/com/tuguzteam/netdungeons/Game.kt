@@ -1,7 +1,6 @@
 package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
@@ -12,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.ui.GestureListener
 import ktx.app.KtxApplicationAdapter
+import ktx.app.clearScreen
 import ktx.graphics.color
 import ktx.math.vec3
 
@@ -53,6 +53,8 @@ class Game : KtxApplicationAdapter {
         Gdx.input.inputProcessor = GestureDetector(gestureListener)
 
         assetManager = AssetManager()
+        assetManager.finishLoading()
+        val suzanne = assetManager[AssetManager.ModelType.Suzanne]
         field = Field(side = 9, assetManager)
     }
 
@@ -61,9 +63,7 @@ class Game : KtxApplicationAdapter {
     }
 
     override fun render() {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.width, Gdx.graphics.height)
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f)
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT or GL20.GL_DEPTH_BUFFER_BIT)
+        clearScreen(red = 0f, green = 0f, blue = 0f)
 
         gestureListener.update()
         modelBatch.use(camera) {
