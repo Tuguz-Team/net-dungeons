@@ -6,10 +6,13 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
+import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.*
@@ -23,7 +26,9 @@ import ktx.app.clearScreen
 import ktx.graphics.color
 import ktx.log.debug
 import ktx.log.logger
+import ktx.math.plus
 import ktx.math.vec3
+
 
 class Game : KtxApplicationAdapter, KtxGestureAdapter {
     private lateinit var collisionConfiguration: btCollisionConfiguration
@@ -60,16 +65,16 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
         modelBatch = ModelBatch()
         environment = Environment().apply {
             set(
-                ColorAttribute(
-                    ColorAttribute.AmbientLight,
-                    color(red = 0.3f, green = 0.3f, blue = 0.3f)
-                )
+                    ColorAttribute(
+                            ColorAttribute.AmbientLight,
+                            color(red = 0.3f, green = 0.3f, blue = 0.3f)
+                    )
             )
             add(
-                DirectionalLight().set(
-                    color(red = 0.6f, green = 0.6f, blue = 0.6f),
-                    vec3(x = -1f, y = -0.8f, z = -0.2f)
-                )
+                    DirectionalLight().set(
+                            color(red = 0.6f, green = 0.6f, blue = 0.6f),
+                            vec3(x = -1f, y = -0.8f, z = -0.2f)
+                    )
             )
         }
 
@@ -84,8 +89,8 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
 
         gestureListener = GestureListener(camera)
         val multiplexer = InputMultiplexer(
-            GestureDetector(gestureListener),
-            GestureDetector(this)
+                GestureDetector(gestureListener),
+                GestureDetector(this)
         )
         Gdx.input.inputProcessor = multiplexer
 
@@ -116,6 +121,9 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
             gestureListener.update()
             modelBatch.use(camera) {
                 it.render(modelInstances, environment)
+                if (line != null) {
+                    it.render(line)
+                }
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
@@ -125,8 +133,19 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
         }
     }
 
+    private var line: ModelInstance? = null
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
         val ray = viewport.getPickRay(x, y)
+
+        line?.model?.dispose()
+        val modelBuilder = ModelBuilder()
+        modelBuilder.begin()
+        val builder = modelBuilder.part("line", 1, 3, Material())
+        builder.setColor(Color.RED)
+        builder.line(ray.origin, ray.direction.cpy().scl(50f) + ray.origin)
+        val lineModel = modelBuilder.end()
+        line = ModelInstance(lineModel)
+
         val collisionBody = rayTest(collisionWorld, ray, 100f)
         val gameObject = GameObject.find {
             it.collision == collisionBody
