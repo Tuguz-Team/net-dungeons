@@ -70,7 +70,7 @@ class Game : KtxApplicationAdapter {
     private fun doneLoading() {
         field = Field(side = 9, assetManager)
         modelInstances.run {
-            addAll(field.iterator().asSequence().map {
+            addAll(field.asSequence().map {
                 it.modelInstance
             })
             trimToSize()
@@ -87,9 +87,7 @@ class Game : KtxApplicationAdapter {
         if (assetManager.isFinished) {
             gestureListener.update()
             modelBatch.use(camera) {
-                for (modelInstance in modelInstances) {
-                    it.render(modelInstance, environment)
-                }
+                it.render(modelInstances, environment)
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
