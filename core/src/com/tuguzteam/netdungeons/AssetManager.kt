@@ -2,7 +2,7 @@ package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.g3d.Model
-import java.util.EnumMap
+import java.util.*
 
 class AssetManager : AssetManager() {
     private val models: EnumMap<ModelType, Model> = EnumMap(ModelType::class.java)

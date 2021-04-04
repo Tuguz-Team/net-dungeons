@@ -1,9 +1,11 @@
 package com.tuguzteam.netdungeons
 
+import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
@@ -13,6 +15,8 @@ import com.tuguzteam.netdungeons.ui.GestureListener
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.color
+import ktx.log.debug
+import ktx.log.logger
 import ktx.math.vec3
 
 class Game : KtxApplicationAdapter {
@@ -24,10 +28,18 @@ class Game : KtxApplicationAdapter {
 
     private lateinit var gestureListener: GestureListener
 
-    private lateinit var field: Field
     private lateinit var assetManager: AssetManager
+    private lateinit var field: Field
+
+    private val modelInstances: ArrayList<ModelInstance> = ArrayList()
+
+    private companion object {
+        private val logger = logger<Game>()
+    }
 
     override fun create() {
+        Gdx.app.logLevel = Application.LOG_DEBUG
+
         modelBatch = ModelBatch()
         environment = Environment().apply {
             set(ColorAttribute(
@@ -42,7 +54,7 @@ class Game : KtxApplicationAdapter {
 
         camera = OrthographicCamera().apply {
             position.set(vec3(x = 30f, y = 30f, z = 30f))
-            lookAt(vec3(x = 0f, y = 0f, z = 0f))
+            lookAt(vec3())
             near = 20f
             far = 120f
             update()
@@ -53,9 +65,16 @@ class Game : KtxApplicationAdapter {
         Gdx.input.inputProcessor = GestureDetector(gestureListener)
 
         assetManager = AssetManager()
-        assetManager.finishLoading()
-        val suzanne = assetManager[AssetManager.ModelType.Suzanne]
+    }
+
+    private fun doneLoading() {
         field = Field(side = 9, assetManager)
+        modelInstances.run {
+            addAll(field.iterator().asSequence().map {
+                it.modelInstance
+            })
+            trimToSize()
+        }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -65,10 +84,17 @@ class Game : KtxApplicationAdapter {
     override fun render() {
         clearScreen(red = 0f, green = 0f, blue = 0f)
 
-        gestureListener.update()
-        modelBatch.use(camera) {
-            for (cell in field) {
-                it.render(cell.modelInstance, environment)
+        if (assetManager.isFinished) {
+            gestureListener.update()
+            modelBatch.use(camera) {
+                for (modelInstance in modelInstances) {
+                    it.render(modelInstance, environment)
+                }
+            }
+        } else {
+            logger.debug { "Asset loading progress: ${assetManager.progress}" }
+            if (assetManager.update()) {
+                doneLoading()
             }
         }
     }

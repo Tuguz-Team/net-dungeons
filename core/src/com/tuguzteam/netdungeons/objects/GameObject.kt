@@ -1,24 +1,17 @@
 package com.tuguzteam.netdungeons.objects
 
-import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.utils.Disposable
 
-abstract class GameObject : Disposable {
-    var position = Vector3()
+abstract class GameObject(position: Vector3) {
+    var position: Vector3 = position
         set(value) {
             field = value
-            modelInstance.transform?.setTranslation(field)
+            if (::modelInstance.isInitialized) {
+                modelInstance.transform?.setTranslation(field)
+            }
         }
-
-    lateinit var model: Model
-        protected set
 
     lateinit var modelInstance: ModelInstance
         protected set
-
-    override fun dispose() {
-        model.dispose()
-    }
 }

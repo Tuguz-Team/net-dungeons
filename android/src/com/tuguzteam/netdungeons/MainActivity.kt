@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class MainActivity : AppCompatActivity(R.layout.activity_main),
-        AndroidFragmentApplication.Callbacks {
+    AndroidFragmentApplication.Callbacks {
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -20,7 +20,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
                 window.setDecorFitsSystemWindows(false)
                 window.insetsController?.apply {
                     hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
-                    systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    systemBarsBehavior =
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
             } else {
                 window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
