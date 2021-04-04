@@ -1,7 +1,6 @@
 package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.math.MathUtils.random
-import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.objects.Cube
 import ktx.graphics.color
@@ -20,12 +19,12 @@ class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterabl
                 x = (i / side - side / 2) * Cell.width,
                 y = -Cell.height / 2,
                 z = (i % side - side / 2) * Cell.width
-            )
+            ).toImmutable()
         )
     }
 
-    class Cell(position: Vector3) : Cube(
-        dimensions = vec3(x = width, y = height, z = width),
+    class Cell(position: ImmutableVector3) : Cube(
+        dimensions = vec3(x = width, y = height, z = width).toImmutable(),
         color(red = random(), green = random(), blue = random()),
         position
     ) {
