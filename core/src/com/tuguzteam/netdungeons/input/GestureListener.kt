@@ -1,15 +1,15 @@
-package com.tuguzteam.netdungeons.ui
+package com.tuguzteam.netdungeons.input
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.input.GestureDetector.GestureAdapter
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.math.Vector3
+import com.tuguzteam.netdungeons.KtxGestureAdapter
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-class GestureListener(private val camera: OrthographicCamera) : GestureAdapter() {
+class GestureListener(private val camera: OrthographicCamera) : KtxGestureAdapter {
     private companion object {
         private const val FLING_VELOCITY = 1.25f
         private const val ROTATION_ANGLE = 90f
@@ -72,7 +72,7 @@ class GestureListener(private val camera: OrthographicCamera) : GestureAdapter()
         }
 
         if (updateZoom || updateRotation) {
-            camera.update(false)
+            camera.update()
         }
     }
 }

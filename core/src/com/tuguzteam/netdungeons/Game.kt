@@ -2,6 +2,7 @@ package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
@@ -11,7 +12,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.tuguzteam.netdungeons.ui.GestureListener
+import com.tuguzteam.netdungeons.input.GestureListener
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.color
@@ -42,14 +43,18 @@ class Game : KtxApplicationAdapter {
 
         modelBatch = ModelBatch()
         environment = Environment().apply {
-            set(ColorAttribute(
+            set(
+                ColorAttribute(
                     ColorAttribute.AmbientLight,
                     color(red = 0.3f, green = 0.3f, blue = 0.3f)
-            ))
-            add(DirectionalLight().set(
+                )
+            )
+            add(
+                DirectionalLight().set(
                     color(red = 0.6f, green = 0.6f, blue = 0.6f),
                     vec3(x = -1f, y = -0.8f, z = -0.2f)
-            ))
+                )
+            )
         }
 
         camera = OrthographicCamera().apply {
@@ -62,7 +67,8 @@ class Game : KtxApplicationAdapter {
         viewport = ExtendViewport(50f, 50f, camera)
 
         gestureListener = GestureListener(camera)
-        Gdx.input.inputProcessor = GestureDetector(gestureListener)
+        val multiplexer = InputMultiplexer(GestureDetector(gestureListener))
+        Gdx.input.inputProcessor = multiplexer
 
         assetManager = AssetManager()
     }
