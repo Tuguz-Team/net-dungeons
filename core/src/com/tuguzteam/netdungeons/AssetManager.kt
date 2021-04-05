@@ -19,7 +19,7 @@ class AssetManager : AssetManager() {
 
     operator fun get(modelType: ModelType): Model {
         models[modelType] = models[modelType]
-                ?: super.get("models/${modelType.filename}", Model::class.java)
+            ?: super.get("models/${modelType.filename}", Model::class.java)
         return models[modelType]!!
     }
 }

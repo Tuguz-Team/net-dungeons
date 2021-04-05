@@ -45,14 +45,18 @@ class Game : KtxApplicationAdapter {
 
         modelBatch = ModelBatch()
         environment = Environment().apply {
-            set(ColorAttribute(
+            set(
+                ColorAttribute(
                     ColorAttribute.AmbientLight,
                     color(red = 0.3f, green = 0.3f, blue = 0.3f)
-            ))
-            add(DirectionalLight().set(
+                )
+            )
+            add(
+                DirectionalLight().set(
                     color(red = 0.6f, green = 0.6f, blue = 0.6f),
                     vec3(x = -1f, y = -0.8f, z = -0.2f)
-            ))
+                )
+            )
         }
 
         camera = OrthographicCamera().apply {
@@ -67,8 +71,8 @@ class Game : KtxApplicationAdapter {
         rotationZoomGestureListener = RotationZoomGestureListener(camera)
         objectChooseGestureListener = ObjectChooseGestureListener(viewport)
         val multiplexer = InputMultiplexer(
-                GestureDetector(rotationZoomGestureListener),
-                GestureDetector(objectChooseGestureListener)
+            GestureDetector(rotationZoomGestureListener),
+            GestureDetector(objectChooseGestureListener)
         )
         Gdx.input.inputProcessor = multiplexer
 

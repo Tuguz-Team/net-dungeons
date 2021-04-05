@@ -15,17 +15,19 @@ class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterabl
     }
 
     private val array = Array(side * side) { i ->
-        Cell(ImmutableVector3(
+        Cell(
+            ImmutableVector3(
                 x = (i / side - side / 2) * Cell.width,
                 y = -Cell.height / 2,
                 z = (i % side - side / 2) * Cell.width
-        ))
+            )
+        )
     }
 
     class Cell(position: ImmutableVector3) : Focusable, Cube(
-            dimensions = ImmutableVector3(x = width, y = height, z = width),
-            color(red = random(), green = random(), blue = random()),
-            position
+        dimensions = ImmutableVector3(x = width, y = height, z = width),
+        color(red = random(), green = random(), blue = random()),
+        position
     ) {
         companion object {
             const val width = 5f

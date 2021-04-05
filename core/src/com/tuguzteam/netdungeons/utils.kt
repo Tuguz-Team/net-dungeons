@@ -34,10 +34,10 @@ interface KtxGestureAdapter : GestureDetector.GestureListener {
     override fun zoom(initialDistance: Float, distance: Float): Boolean = false
 
     override fun pinch(
-            initialPointer1: Vector2?,
-            initialPointer2: Vector2?,
-            pointer1: Vector2?,
-            pointer2: Vector2?
+        initialPointer1: Vector2?,
+        initialPointer2: Vector2?,
+        pointer1: Vector2?,
+        pointer2: Vector2?
     ): Boolean = false
 
     override fun pinchStop() = Unit

@@ -12,14 +12,14 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.toMutable
 
 open class Cube(
-        val dimensions: ImmutableVector3,
-        color: Color,
-        position: ImmutableVector3
+    val dimensions: ImmutableVector3,
+    color: Color,
+    position: ImmutableVector3
 ) : GameObject(position) {
     private var model: Model = ModelBuilder().createBox(
-            dimensions.x, dimensions.y, dimensions.z,
-            Material(ColorAttribute.createDiffuse(color)),
-            (Usage.Position or Usage.Normal).toLong()
+        dimensions.x, dimensions.y, dimensions.z,
+        Material(ColorAttribute.createDiffuse(color)),
+        (Usage.Position or Usage.Normal).toLong()
     )
 
     var color = color
