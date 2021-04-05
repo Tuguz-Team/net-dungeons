@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
-import com.badlogic.gdx.physics.bullet.collision.btBoxShape
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.toMutable
 
@@ -25,9 +24,8 @@ open class Cube(
 
     init {
         modelInstance = ModelInstance(model, position.toMutable())
-        collision = btCollisionObject().apply {
-            collisionShape = btBoxShape(dimensions.toMutable())
-            worldTransform = modelInstance.transform
+        boundingBox = modelInstance.calculateBoundingBox(BoundingBox()).apply {
+            mul(modelInstance.transform)
         }
     }
 

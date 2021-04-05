@@ -11,9 +11,9 @@ import com.google.android.material.button.MaterialButton
 
 class MainMenuFragment : Fragment(R.layout.fragment_main_menu) {
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view: View? = super.onCreateView(inflater, container, savedInstanceState)
 

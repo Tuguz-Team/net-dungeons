@@ -1,7 +1,7 @@
 package com.tuguzteam.netdungeons.objects
 
 import com.badlogic.gdx.graphics.g3d.ModelInstance
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.toMutable
@@ -16,13 +16,14 @@ abstract class GameObject(position: ImmutableVector3) : Disposable {
     var position: ImmutableVector3 = position
         set(value) {
             field = value
-            modelInstance.transform?.setTranslation(field.toMutable())
-            collision?.worldTransform = modelInstance.transform
+            modelInstance.transform!!.setTranslation(field.toMutable())
+            boundingBox.mul(modelInstance.transform)
         }
 
     lateinit var modelInstance: ModelInstance
+        protected set
 
-    var collision: btCollisionObject? = null
+    lateinit var boundingBox: BoundingBox
         protected set
 
     init {
@@ -31,6 +32,5 @@ abstract class GameObject(position: ImmutableVector3) : Disposable {
 
     override fun dispose() {
         gameObjects.remove(this)
-        collision?.dispose()
     }
 }

@@ -11,16 +11,13 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
-import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
-import com.badlogic.gdx.physics.bullet.Bullet
-import com.badlogic.gdx.physics.bullet.collision.*
+import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.input.GestureListener
 import com.tuguzteam.netdungeons.objects.GameObject
-import com.tuguzteam.netdungeons.objects.rayTest
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.color
@@ -29,13 +26,7 @@ import ktx.log.logger
 import ktx.math.plus
 import ktx.math.vec3
 
-
 class Game : KtxApplicationAdapter, KtxGestureAdapter {
-    private lateinit var collisionConfiguration: btCollisionConfiguration
-    private lateinit var collisionDispatcher: btCollisionDispatcher
-    private lateinit var collisionWorld: btCollisionWorld
-    private lateinit var broadphase: btBroadphaseInterface
-
     private lateinit var modelBatch: ModelBatch
     private lateinit var environment: Environment
 
@@ -55,12 +46,6 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
 
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
-
-        Bullet.init()
-        collisionConfiguration = btDefaultCollisionConfiguration()
-        collisionDispatcher = btCollisionDispatcher(collisionConfiguration)
-        broadphase = btDbvtBroadphase()
-        collisionWorld = btCollisionWorld(collisionDispatcher, broadphase, collisionConfiguration)
 
         modelBatch = ModelBatch()
         environment = Environment().apply {
@@ -105,9 +90,6 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
             })
             trimToSize()
         }
-        field.forEach {
-            collisionWorld.addCollisionObject(it.collision)
-        }
     }
 
     override fun resize(width: Int, height: Int) {
@@ -142,24 +124,28 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
         modelBuilder.begin()
         val builder = modelBuilder.part("line", 1, 3, Material())
         builder.setColor(Color.RED)
-        builder.line(ray.origin, ray.direction.cpy().scl(50f) + ray.origin)
+        builder.line(ray.origin, ray.direction.cpy().scl(100f) + ray.origin)
         val lineModel = modelBuilder.end()
         line = ModelInstance(lineModel)
 
-        val collisionBody = rayTest(collisionWorld, ray, 100f)
-        val gameObject = GameObject.find {
-            it.collision == collisionBody
+        var gameObject: GameObject? = null
+        GameObject.forEach {
+            if (Intersector.intersectRayBoundsFast(ray, it.boundingBox)) {
+                if (gameObject == null) {
+                    gameObject = it
+                } else if (it.position.dst2(ray.origin.toImmutable()) <
+                        gameObject!!.position.dst2(ray.origin.toImmutable())) {
+                    gameObject = it
+                }
+            }
         }
-        gameObject?.modelInstance?.materials?.get(0)?.set(
-            ColorAttribute(ColorAttribute.Diffuse, Color.RED)
-        )
+        gameObject?.modelInstance?.materials?.get(0)?.set(ColorAttribute.createDiffuse(Color.RED))
+        logger.debug { "Choosed object: $gameObject" }
+
         return gameObject != null
     }
 
     override fun dispose() {
-        collisionConfiguration.dispose()
-        collisionDispatcher.dispose()
-        collisionWorld.dispose()
         modelBatch.dispose()
         field.dispose()
         assetManager.dispose()

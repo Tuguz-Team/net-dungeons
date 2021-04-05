@@ -11,7 +11,7 @@ import androidx.multidex.MultiDex
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class MainActivity : AppCompatActivity(R.layout.activity_main),
-    AndroidFragmentApplication.Callbacks {
+        AndroidFragmentApplication.Callbacks {
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
                 window.insetsController?.apply {
                     hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                     systemBarsBehavior =
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                            WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
             } else {
                 window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
