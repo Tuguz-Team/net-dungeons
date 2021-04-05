@@ -1,10 +1,11 @@
 package com.tuguzteam.netdungeons
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.MathUtils.random
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.objects.Cube
+import com.tuguzteam.netdungeons.objects.Focusable
 import ktx.graphics.color
-import ktx.math.vec3
 
 class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterable<Field.Cell> {
     init {
@@ -14,17 +15,15 @@ class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterabl
     }
 
     private val array = Array(side * side) { i ->
-        Cell(
-                vec3(
-                        x = (i / side - side / 2) * Cell.width,
-                        y = -Cell.height / 2,
-                        z = (i % side - side / 2) * Cell.width
-                ).toImmutable()
-        )
+        Cell(ImmutableVector3(
+                x = (i / side - side / 2) * Cell.width,
+                y = -Cell.height / 2,
+                z = (i % side - side / 2) * Cell.width
+        ))
     }
 
-    class Cell(position: ImmutableVector3) : Cube(
-            dimensions = vec3(x = width, y = height, z = width).toImmutable(),
+    class Cell(position: ImmutableVector3) : Focusable, Cube(
+            dimensions = ImmutableVector3(x = width, y = height, z = width),
             color(red = random(), green = random(), blue = random()),
             position
     ) {
@@ -32,11 +31,21 @@ class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterabl
             const val width = 5f
             const val height = 2f
         }
+
+        var initialColor = color
+
+        override fun onFocus() {
+            color = Color.RED
+        }
+
+        override fun onRemoveFocus() {
+            color = initialColor
+        }
     }
 
-    operator fun get(i: Int, j: Int): Cell = array[i * side + j]
+    operator fun get(i: Int, j: Int) = array[i * side + j]
 
-    override fun iterator(): Iterator<Cell> = array.iterator()
+    override fun iterator() = array.iterator()
 
     override fun dispose() {
         for (cell in this) {

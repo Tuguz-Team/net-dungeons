@@ -3,11 +3,10 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.ModelInstance
+import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
@@ -35,7 +34,7 @@ class Game : KtxApplicationAdapter {
     private lateinit var assetManager: AssetManager
     private lateinit var field: Field
 
-    private val modelInstances: ArrayList<ModelInstance> = ArrayList()
+    private val renderables: ArrayList<RenderableProvider> = ArrayList()
 
     private companion object {
         private val logger = logger<Game>()
@@ -69,10 +68,10 @@ class Game : KtxApplicationAdapter {
         objectChooseGestureListener = ObjectChooseGestureListener(
                 viewport,
                 focusAction = {
-                    modelInstance.materials[0].set(ColorAttribute.createDiffuse(Color.RED))
+                    (this as? Field.Cell)?.onFocus()
                 },
                 resetFocusAction = {
-                    modelInstance.materials[0].set(ColorAttribute.createDiffuse(Color.BLUE))
+                    (this as? Field.Cell)?.onRemoveFocus()
                 }
         )
         val multiplexer = InputMultiplexer(
@@ -86,8 +85,8 @@ class Game : KtxApplicationAdapter {
 
     private fun doneLoading() {
         field = Field(side = 9, assetManager)
-        modelInstances.run {
-            addAll(field.map { it.modelInstance })
+        renderables.run {
+            addAll(field.map { it.renderableProvider })
             trimToSize()
         }
     }
@@ -102,7 +101,7 @@ class Game : KtxApplicationAdapter {
         if (assetManager.isFinished) {
             rotationZoomGestureListener.update()
             modelBatch.use(camera) {
-                it.render(modelInstances, environment)
+                it.render(renderables, environment)
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
