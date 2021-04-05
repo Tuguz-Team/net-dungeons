@@ -34,11 +34,11 @@ class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterabl
 
         var initialColor = color
 
-        override fun onFocus() {
+        override fun onAcquireFocus() {
             color = Color.RED
         }
 
-        override fun onRemoveFocus() {
+        override fun onLoseFocus() {
             color = initialColor
         }
     }

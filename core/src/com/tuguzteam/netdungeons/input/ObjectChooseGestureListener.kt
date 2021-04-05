@@ -3,16 +3,13 @@ package com.tuguzteam.netdungeons.input
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.KtxGestureAdapter
+import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.toImmutable
 import ktx.log.debug
 import ktx.log.logger
 
-class ObjectChooseGestureListener(
-        private val viewport: Viewport,
-        var focusAction: GameObject.() -> Unit,
-        var resetFocusAction: GameObject.() -> Unit
-) : KtxGestureAdapter {
+class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAdapter {
     private companion object {
         private val logger = logger<ObjectChooseGestureListener>()
     }
@@ -28,15 +25,15 @@ class ObjectChooseGestureListener(
             if (Intersector.intersectRayBoundsFast(ray, it.boundingBox)) {
                 val distance2 = tempGameObject?.position?.dst2(ray.origin.toImmutable())
                 val itDistance2 = it.position.dst2(ray.origin.toImmutable())
-                if (distance2 == null || itDistance2 < distance2) {
+                if (it is Focusable && (distance2 == null || itDistance2 < distance2)) {
                     tempGameObject = it
                 }
             }
         }
         if (tempGameObject !== chosenGameObject) {
-            chosenGameObject?.let(resetFocusAction)
+            (chosenGameObject as? Focusable)?.onLoseFocus()
             chosenGameObject = tempGameObject
-            chosenGameObject?.let(focusAction)
+            (chosenGameObject as? Focusable)?.onAcquireFocus()
             logger.debug { "Chosen object: $chosenGameObject" }
         }
 

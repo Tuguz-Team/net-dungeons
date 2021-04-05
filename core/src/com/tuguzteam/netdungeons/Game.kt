@@ -65,15 +65,7 @@ class Game : KtxApplicationAdapter {
         viewport = ExtendViewport(50f, 50f, camera)
 
         rotationZoomGestureListener = RotationZoomGestureListener(camera)
-        objectChooseGestureListener = ObjectChooseGestureListener(
-                viewport,
-                focusAction = {
-                    (this as? Field.Cell)?.onFocus()
-                },
-                resetFocusAction = {
-                    (this as? Field.Cell)?.onRemoveFocus()
-                }
-        )
+        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
         val multiplexer = InputMultiplexer(
                 GestureDetector(rotationZoomGestureListener),
                 GestureDetector(objectChooseGestureListener)
