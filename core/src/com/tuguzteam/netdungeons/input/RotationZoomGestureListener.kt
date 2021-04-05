@@ -9,7 +9,7 @@ import com.tuguzteam.netdungeons.KtxGestureAdapter
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-class GestureListener(private val camera: OrthographicCamera) : KtxGestureAdapter {
+class RotationZoomGestureListener(private val camera: OrthographicCamera) : KtxGestureAdapter {
     private companion object {
         private const val FLING_VELOCITY = 1.25f
         private const val ROTATION_ANGLE = 90f

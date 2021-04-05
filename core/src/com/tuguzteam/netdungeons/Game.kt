@@ -6,34 +6,31 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
-import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.ModelInstance
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
-import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.tuguzteam.netdungeons.input.GestureListener
-import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
+import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import ktx.app.KtxApplicationAdapter
 import ktx.app.clearScreen
 import ktx.graphics.color
 import ktx.log.debug
 import ktx.log.logger
-import ktx.math.plus
 import ktx.math.vec3
 
-class Game : KtxApplicationAdapter, KtxGestureAdapter {
+class Game : KtxApplicationAdapter {
     private lateinit var modelBatch: ModelBatch
     private lateinit var environment: Environment
 
     private lateinit var camera: OrthographicCamera
     private lateinit var viewport: Viewport
 
-    private lateinit var gestureListener: GestureListener
+    private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
+    private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
 
     private lateinit var assetManager: AssetManager
     private lateinit var field: Field
@@ -49,18 +46,14 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
 
         modelBatch = ModelBatch()
         environment = Environment().apply {
-            set(
-                    ColorAttribute(
-                            ColorAttribute.AmbientLight,
-                            color(red = 0.3f, green = 0.3f, blue = 0.3f)
-                    )
-            )
-            add(
-                    DirectionalLight().set(
-                            color(red = 0.6f, green = 0.6f, blue = 0.6f),
-                            vec3(x = -1f, y = -0.8f, z = -0.2f)
-                    )
-            )
+            set(ColorAttribute(
+                    ColorAttribute.AmbientLight,
+                    color(red = 0.3f, green = 0.3f, blue = 0.3f)
+            ))
+            add(DirectionalLight().set(
+                    color(red = 0.6f, green = 0.6f, blue = 0.6f),
+                    vec3(x = -1f, y = -0.8f, z = -0.2f)
+            ))
         }
 
         camera = OrthographicCamera().apply {
@@ -72,10 +65,19 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
         }
         viewport = ExtendViewport(50f, 50f, camera)
 
-        gestureListener = GestureListener(camera)
+        rotationZoomGestureListener = RotationZoomGestureListener(camera)
+        objectChooseGestureListener = ObjectChooseGestureListener(
+                viewport,
+                focusAction = {
+                    modelInstance.materials[0].set(ColorAttribute.createDiffuse(Color.RED))
+                },
+                resetFocusAction = {
+                    modelInstance.materials[0].set(ColorAttribute.createDiffuse(Color.BLUE))
+                }
+        )
         val multiplexer = InputMultiplexer(
-                GestureDetector(gestureListener),
-                GestureDetector(this)
+                GestureDetector(rotationZoomGestureListener),
+                GestureDetector(objectChooseGestureListener)
         )
         Gdx.input.inputProcessor = multiplexer
 
@@ -85,9 +87,7 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
     private fun doneLoading() {
         field = Field(side = 9, assetManager)
         modelInstances.run {
-            addAll(field.asSequence().map {
-                it.modelInstance
-            })
+            addAll(field.map { it.modelInstance })
             trimToSize()
         }
     }
@@ -100,12 +100,9 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
         clearScreen(red = 0f, green = 0f, blue = 0f)
 
         if (assetManager.isFinished) {
-            gestureListener.update()
+            rotationZoomGestureListener.update()
             modelBatch.use(camera) {
                 it.render(modelInstances, environment)
-                if (line != null) {
-                    it.render(line)
-                }
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
@@ -113,36 +110,6 @@ class Game : KtxApplicationAdapter, KtxGestureAdapter {
                 doneLoading()
             }
         }
-    }
-
-    private var line: ModelInstance? = null
-    override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
-        val ray = viewport.getPickRay(x, y)
-
-        line?.model?.dispose()
-        val modelBuilder = ModelBuilder()
-        modelBuilder.begin()
-        val builder = modelBuilder.part("line", 1, 3, Material())
-        builder.setColor(Color.RED)
-        builder.line(ray.origin, ray.direction.cpy().scl(100f) + ray.origin)
-        val lineModel = modelBuilder.end()
-        line = ModelInstance(lineModel)
-
-        var gameObject: GameObject? = null
-        GameObject.forEach {
-            if (Intersector.intersectRayBoundsFast(ray, it.boundingBox)) {
-                if (gameObject == null) {
-                    gameObject = it
-                } else if (it.position.dst2(ray.origin.toImmutable()) <
-                        gameObject!!.position.dst2(ray.origin.toImmutable())) {
-                    gameObject = it
-                }
-            }
-        }
-        gameObject?.modelInstance?.materials?.get(0)?.set(ColorAttribute.createDiffuse(Color.RED))
-        logger.debug { "Choosed object: $gameObject" }
-
-        return gameObject != null
     }
 
     override fun dispose() {
