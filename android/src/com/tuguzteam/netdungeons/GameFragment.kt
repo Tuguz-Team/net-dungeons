@@ -4,26 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
-import androidx.fragment.app.commit
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class GameFragment : AndroidFragmentApplication() {
     companion object {
-        const val TAG = "com.tuguzteam.netdungeons.GameFragment"
+        const val TAG = "Game"
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        requireActivity().onBackPressedDispatcher.addCallback {
-            parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                hide(this@GameFragment)
-            }
-        }
-    }
+    private val game = Game()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +24,6 @@ class GameFragment : AndroidFragmentApplication() {
             useAccelerometer = false
             useCompass = false
         }
-        return initializeForView(Game(), config)
+        return initializeForView(game, config)
     }
 }

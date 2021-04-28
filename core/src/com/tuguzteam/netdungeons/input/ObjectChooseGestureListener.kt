@@ -20,19 +20,19 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
         val ray = viewport.getPickRay(x, y)
 
-        var tempGameObject: GameObject? = null
+        var gameObject: GameObject? = null
         GameObject.forEach {
             if (Intersector.intersectRayBoundsFast(ray, it.boundingBox)) {
-                val distance2 = tempGameObject?.position?.dst2(ray.origin.toImmutable())
+                val distance2 = gameObject?.position?.dst2(ray.origin.toImmutable())
                 val itDistance2 = it.position.dst2(ray.origin.toImmutable())
                 if (it is Focusable && (distance2 == null || itDistance2 < distance2)) {
-                    tempGameObject = it
+                    gameObject = it
                 }
             }
         }
-        if (tempGameObject !== chosenGameObject) {
+        if (gameObject !== chosenGameObject) {
             (chosenGameObject as? Focusable)?.onLoseFocus()
-            chosenGameObject = tempGameObject
+            chosenGameObject = gameObject
             (chosenGameObject as? Focusable)?.onAcquireFocus()
             logger.debug { "Chosen object: $chosenGameObject" }
         }

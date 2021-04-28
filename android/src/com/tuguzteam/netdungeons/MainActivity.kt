@@ -1,22 +1,15 @@
 package com.tuguzteam.netdungeons
 
-import android.content.Context
 import android.os.Build
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.multidex.MultiDex
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class MainActivity : AppCompatActivity(R.layout.activity_main),
     AndroidFragmentApplication.Callbacks {
-
-    override fun attachBaseContext(newBase: Context?) {
-        super.attachBaseContext(newBase)
-        MultiDex.install(this)
-    }
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -41,7 +34,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
         }
     }
 
-    override fun exit() {
-        TODO("Not yet implemented")
-    }
+    override fun exit() = Unit
 }
