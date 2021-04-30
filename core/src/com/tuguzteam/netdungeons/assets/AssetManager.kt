@@ -39,11 +39,7 @@ class AssetManager : Disposable {
     }
 
     operator fun get(modelAsset: ModelAsset): Model? {
-        models[modelAsset] = models[modelAsset] ?: assetManager.get(
-            modelAsset.filename,
-            Model::class.java,
-            false
-        )
+        models[modelAsset] = models[modelAsset] ?: assetManager.get(modelAsset.filename, false)
         return models[modelAsset]
     }
 
