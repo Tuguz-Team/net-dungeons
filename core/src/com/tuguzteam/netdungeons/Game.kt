@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.tuguzteam.netdungeons.assets.AssetManager
+import com.tuguzteam.netdungeons.assets.ModelAsset
 import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -78,13 +80,13 @@ class Game : KtxApplicationAdapter {
         Gdx.input.inputProcessor = multiplexer
 
         assetManager = AssetManager()
-    }
-
-    private fun doneLoading() {
-        field = Field(side = 9, assetManager)
-        renderables.run {
-            addAll(field.map { it.renderableProvider })
-            trimToSize()
+        assetManager.addTask(ModelAsset.Suzanne) {
+            logger.debug { "Asset loading finished" }
+            field = Field(side = 9)
+            renderables.run {
+                addAll(field.map { it.renderableProvider })
+                trimToSize()
+            }
         }
     }
 
@@ -95,16 +97,13 @@ class Game : KtxApplicationAdapter {
     override fun render() {
         clearScreen(red = 0f, green = 0f, blue = 0f)
 
-        if (assetManager.isFinished) {
+        if (assetManager.update()) {
             rotationZoomGestureListener.update()
             modelBatch.use(camera) {
                 it.render(renderables, environment)
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
-            if (assetManager.update()) {
-                doneLoading()
-            }
         }
     }
 

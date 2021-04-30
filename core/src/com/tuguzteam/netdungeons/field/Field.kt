@@ -1,10 +1,9 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
-import com.tuguzteam.netdungeons.AssetManager
 import com.tuguzteam.netdungeons.ImmutableVector3
 
-class Field(val side: Int, val assetManager: AssetManager) : Disposable, Iterable<Cell> {
+class Field(private val side: Int) : Disposable, Iterable<Cell> {
     init {
         if (side <= 0 || side % 2 == 0) {
             throw IllegalArgumentException("Side of field must be positive and odd: $side given")
