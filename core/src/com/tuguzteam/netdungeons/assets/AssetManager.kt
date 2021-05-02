@@ -9,7 +9,7 @@ class AssetManager : Disposable {
     private val assetManager = AssetManager()
     private val taskQueue: Queue<Task> = LinkedList()
 
-    private val models: EnumMap<ModelAsset, Model?> = EnumMap(ModelAsset::class.java)
+    private val models: MutableMap<ModelAsset, Model?> = EnumMap(ModelAsset::class.java)
 
     val progress = assetManager.progress
 

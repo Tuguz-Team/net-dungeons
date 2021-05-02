@@ -8,10 +8,6 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class GameFragment : AndroidFragmentApplication() {
-    companion object {
-        const val TAG = "Game"
-    }
-
     private val game = Game()
 
     override fun onCreateView(

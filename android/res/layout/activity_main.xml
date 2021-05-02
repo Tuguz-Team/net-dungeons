@@ -5,5 +5,5 @@
     android:id="@+id/activity_main_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.tuguzteam.netdungeons.MainMenuFragment"
+    android:name="com.tuguzteam.netdungeons.GameFragment"
     tools:context=".MainActivity" />
