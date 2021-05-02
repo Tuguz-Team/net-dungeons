@@ -1,6 +1,5 @@
-package com.tuguzteam.netdungeons
+package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -11,76 +10,44 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.ModelAsset
 import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
-import ktx.app.KtxApplicationAdapter
+import com.tuguzteam.netdungeons.use
 import ktx.app.clearScreen
 import ktx.graphics.color
 import ktx.log.debug
 import ktx.log.logger
 import ktx.math.vec3
 
-class Game : KtxApplicationAdapter {
-    private lateinit var modelBatch: ModelBatch
-    private lateinit var environment: Environment
-
-    private lateinit var camera: OrthographicCamera
-    private lateinit var viewport: Viewport
-
-    private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
-    private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
-
-    private lateinit var assetManager: AssetManager
-    private lateinit var field: Field
-
-    private val renderables: ArrayList<RenderableProvider> = ArrayList()
-
-    private companion object {
-        private val logger = logger<Game>()
-    }
-
-    override fun create() {
-        Gdx.app.logLevel = Application.LOG_DEBUG
-
-        modelBatch = ModelBatch()
-        environment = Environment().apply {
-            set(
-                ColorAttribute(
-                    ColorAttribute.AmbientLight,
-                    color(red = 0.3f, green = 0.3f, blue = 0.3f)
-                )
+class GameScreen : Screen() {
+    private val modelBatch: ModelBatch = ModelBatch()
+    private val environment: Environment = Environment().apply {
+        set(
+            ColorAttribute(
+                ColorAttribute.AmbientLight,
+                color(red = 0.3f, green = 0.3f, blue = 0.3f)
             )
-            add(
-                DirectionalLight().set(
-                    color(red = 0.6f, green = 0.6f, blue = 0.6f),
-                    vec3(x = -1f, y = -0.8f, z = -0.2f)
-                )
-            )
-        }
-
-        camera = OrthographicCamera().apply {
-            position.set(vec3(x = 30f, y = 30f, z = 30f))
-            lookAt(vec3())
-            near = 20f
-            far = 120f
-            update()
-        }
-        viewport = ExtendViewport(50f, 50f, camera)
-
-        rotationZoomGestureListener = RotationZoomGestureListener(camera)
-        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
-        val multiplexer = InputMultiplexer(
-            GestureDetector(rotationZoomGestureListener),
-            GestureDetector(objectChooseGestureListener)
         )
-        Gdx.input.inputProcessor = multiplexer
-
-        assetManager = AssetManager()
-        assetManager.addTask(ModelAsset.Suzanne) {
+        add(
+            DirectionalLight().set(
+                color(red = 0.6f, green = 0.6f, blue = 0.6f),
+                vec3(x = -1f, y = -0.8f, z = -0.2f)
+            )
+        )
+    }
+    private val camera: OrthographicCamera = OrthographicCamera().apply {
+        position.set(vec3(x = 30f, y = 30f, z = 30f))
+        lookAt(vec3())
+        near = 20f
+        far = 120f
+        update()
+    }
+    private val renderables: ArrayList<RenderableProvider> = ArrayList()
+    private val assetManager: AssetManager = AssetManager().apply {
+        addTask(ModelAsset.Suzanne) {
             logger.debug { "Asset loading finished" }
             field = Field(side = 9)
             renderables.run {
@@ -90,11 +57,32 @@ class Game : KtxApplicationAdapter {
         }
     }
 
+    private val rotationZoomGestureListener: RotationZoomGestureListener
+    private val objectChooseGestureListener: ObjectChooseGestureListener
+
+    private lateinit var field: Field
+
+    private companion object {
+        private val logger = logger<GameScreen>()
+    }
+
+    init {
+        viewport = ExtendViewport(50f, 50f, camera)
+
+        rotationZoomGestureListener = RotationZoomGestureListener(camera)
+        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
+        val multiplexer = InputMultiplexer(
+            GestureDetector(rotationZoomGestureListener),
+            GestureDetector(objectChooseGestureListener)
+        )
+        Gdx.input.inputProcessor = multiplexer
+    }
+
     override fun resize(width: Int, height: Int) {
         viewport.update(width, height)
     }
 
-    override fun render() {
+    override fun render(delta: Float) {
         clearScreen(red = 0f, green = 0f, blue = 0f)
 
         if (assetManager.update()) {
@@ -108,6 +96,7 @@ class Game : KtxApplicationAdapter {
     }
 
     override fun dispose() {
+        super.dispose()
         modelBatch.dispose()
         field.dispose()
         assetManager.dispose()

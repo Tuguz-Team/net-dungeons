@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.toMutable
 
-abstract class GameObject(position: ImmutableVector3) : Disposable {
+abstract class GameObject(position: ImmutableVector3 = ImmutableVector3.ZERO) : Disposable {
     companion object : Iterable<GameObject> {
         private val gameObjects = arrayListOf<GameObject>()
 

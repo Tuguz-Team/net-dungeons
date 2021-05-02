@@ -8,7 +8,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 
 class GameFragment : AndroidFragmentApplication() {
-    private val game = Game()
+    private val loader = Loader()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,6 +20,6 @@ class GameFragment : AndroidFragmentApplication() {
             useAccelerometer = false
             useCompass = false
         }
-        return initializeForView(game, config)
+        return initializeForView(loader, config)
     }
 }

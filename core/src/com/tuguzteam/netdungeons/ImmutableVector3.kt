@@ -10,13 +10,13 @@ import kotlin.math.sqrt
 data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
     ImmutableVector<ImmutableVector3> {
     companion object {
-        val ZERO = ImmutableVector3(0f, 0f, 0f)
+        val ZERO = ImmutableVector3(x = 0f, y = 0f, z = 0f)
 
-        val X = ImmutableVector3(1f, 0f, 0f)
+        val X = ImmutableVector3(x = 1f, y = 0f, z = 0f)
 
-        val Y = ImmutableVector3(0f, 1f, 0f)
+        val Y = ImmutableVector3(x = 0f, y = 1f, z = 0f)
 
-        val Z = ImmutableVector3(0f, 0f, 1f)
+        val Z = ImmutableVector3(x = 0f, y = 0f, z = 1f)
 
         fun fromString(string: String) = Vector3().fromString(string).toImmutable()
     }
