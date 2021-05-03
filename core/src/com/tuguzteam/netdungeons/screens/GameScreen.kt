@@ -45,16 +45,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         update()
     }
     private val renderables: ArrayList<RenderableProvider> = ArrayList()
-    private val assetManager: AssetManager = loader.assetManager.apply {
-        addLoadTask(ModelAsset.Suzanne) {
-            logger.debug { "Asset loading finished" }
-            field = Field(side = 9)
-            renderables.run {
-                addAll(field.map { it.renderableProvider })
-                trimToSize()
-            }
-        }
-    }
+    private val assetManager: AssetManager = loader.assetManager
 
     private val rotationZoomGestureListener: RotationZoomGestureListener
     private val objectChooseGestureListener: ObjectChooseGestureListener
@@ -69,6 +60,25 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
         objectChooseGestureListener = ObjectChooseGestureListener(viewport)
         inputMultiplexer.addProcessor(GestureDetector(objectChooseGestureListener))
+    }
+
+    override fun show() {
+        super.show()
+        assetManager.addLoadTask(ModelAsset.Suzanne) {
+            logger.debug { "Asset loading finished" }
+            field = Field(side = 9)
+            renderables.run {
+                addAll(field.map { it.renderableProvider })
+                trimToSize()
+            }
+        }
+    }
+
+    override fun hide() {
+        super.hide()
+        assetManager.unload(ModelAsset.Suzanne)
+        field.dispose()
+        renderables.clear()
     }
 
     override fun render(delta: Float) {
@@ -86,6 +96,5 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     override fun dispose() {
         super.dispose()
         modelBatch.dispose()
-        field.dispose()
     }
 }
