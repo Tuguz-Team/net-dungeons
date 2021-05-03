@@ -10,26 +10,23 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.ModelAsset
 import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.use
-import ktx.app.clearScreen
 import ktx.graphics.color
 import ktx.log.debug
 import ktx.log.logger
 import ktx.math.vec3
 
-class GameScreen : Screen() {
+class GameScreen(loader: Loader) : Screen(loader) {
     private val modelBatch: ModelBatch = ModelBatch()
     private val environment: Environment = Environment().apply {
         set(
-            ColorAttribute(
-                ColorAttribute.AmbientLight,
-                color(red = 0.3f, green = 0.3f, blue = 0.3f)
-            )
+            ColorAttribute.createAmbientLight(color(red = 0.3f, green = 0.3f, blue = 0.3f))
         )
         add(
             DirectionalLight().set(
@@ -83,12 +80,10 @@ class GameScreen : Screen() {
     }
 
     override fun render(delta: Float) {
-        clearScreen(red = 0f, green = 0f, blue = 0f)
-
         if (assetManager.update()) {
             rotationZoomGestureListener.update()
             modelBatch.use(camera) {
-                it.render(renderables, environment)
+                render(renderables, environment)
             }
         } else {
             logger.debug { "Asset loading progress: ${assetManager.progress}" }
