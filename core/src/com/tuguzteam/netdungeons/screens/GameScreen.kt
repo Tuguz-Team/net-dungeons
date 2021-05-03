@@ -1,7 +1,5 @@
 package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
@@ -22,7 +20,11 @@ import ktx.log.debug
 import ktx.log.logger
 import ktx.math.vec3
 
-class GameScreen(loader: Loader) : StageScreen(loader) {
+class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
+    private companion object {
+        private val logger = logger<GameScreen>()
+    }
+
     private val modelBatch: ModelBatch = ModelBatch()
     private val environment: Environment = Environment().apply {
         set(
@@ -59,27 +61,18 @@ class GameScreen(loader: Loader) : StageScreen(loader) {
 
     private lateinit var field: Field
 
-    private companion object {
-        private val logger = logger<GameScreen>()
-    }
-
     init {
         viewport = ExtendViewport(50f, 50f, camera)
 
         rotationZoomGestureListener = RotationZoomGestureListener(camera)
-        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
-        val multiplexer = InputMultiplexer(
-            GestureDetector(rotationZoomGestureListener),
-            GestureDetector(objectChooseGestureListener)
-        )
-        Gdx.input.inputProcessor = multiplexer
-    }
+        inputMultiplexer.addProcessor(GestureDetector(rotationZoomGestureListener))
 
-    override fun resize(width: Int, height: Int) {
-        viewport.update(width, height)
+        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
+        inputMultiplexer.addProcessor(GestureDetector(objectChooseGestureListener))
     }
 
     override fun render(delta: Float) {
+        super.render(delta)
         if (assetManager.update()) {
             rotationZoomGestureListener.update()
             modelBatch.use(camera) {

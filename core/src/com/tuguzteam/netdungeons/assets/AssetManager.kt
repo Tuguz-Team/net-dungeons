@@ -3,6 +3,7 @@ package com.tuguzteam.netdungeons.assets
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import java.util.*
 
@@ -10,8 +11,9 @@ class AssetManager : Disposable {
     private val assetManager = AssetManager()
     private val loadTaskQueue: Queue<LoadTask> = LinkedList()
 
-    private val models: MutableMap<ModelAsset, Model?> = EnumMap(ModelAsset::class.java)
-    private val textures: MutableMap<TextureAsset, Texture?> = EnumMap(TextureAsset::class.java)
+    private val models: MutableMap<ModelAsset, Model> = EnumMap(ModelAsset::class.java)
+    private val textures: MutableMap<TextureAsset, Texture> = EnumMap(TextureAsset::class.java)
+    private val skins: MutableMap<SkinAsset, Skin> = EnumMap(SkinAsset::class.java)
 
     val progress = assetManager.progress
 
@@ -30,6 +32,10 @@ class AssetManager : Disposable {
         for (textureAsset in textureAssets(*assets)) {
             assetManager.unload(textureAsset.filename)
             textures.remove(textureAsset)
+        }
+        for (skinAsset in skinAssets(*assets)) {
+            assetManager.unload(skinAsset.filename)
+            skins.remove(skinAsset)
         }
     }
 
@@ -52,12 +58,17 @@ class AssetManager : Disposable {
 
     private fun textureAssets(vararg assets: Asset) = assets.filterIsInstance<TextureAsset>()
 
+    private fun skinAssets(vararg assets: Asset) = assets.filterIsInstance<SkinAsset>()
+
     private fun filterAndLoad(vararg assets: Asset) {
         for (modelAsset in modelAssets(*assets)) {
             assetManager.load(modelAsset.filename, Model::class.java)
         }
         for (textureAsset in textureAssets(*assets)) {
             assetManager.load(textureAsset.filename, Texture::class.java)
+        }
+        for (skinAsset in skinAssets(*assets)) {
+            assetManager.load(skinAsset.filename, Skin::class.java)
         }
     }
 
@@ -81,6 +92,11 @@ class AssetManager : Disposable {
         textures[textureAsset] =
             textures[textureAsset] ?: assetManager.get(textureAsset.filename, false)
         return textures[textureAsset]
+    }
+
+    operator fun get(skinAsset: SkinAsset): Skin? {
+        skins[skinAsset] = skins[skinAsset] ?: assetManager.get(skinAsset.filename, false)
+        return skins[skinAsset]
     }
 
     override fun dispose() {

@@ -1,6 +1,5 @@
 package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -11,7 +10,7 @@ import com.tuguzteam.netdungeons.isDoneActing
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign
 import ktx.actors.then
-import ktx.log.info
+import ktx.log.debug
 
 class SplashScreen(loader: Loader) : StageScreen(loader) {
     companion object {
@@ -30,30 +29,26 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
         this@SplashScreen += this
     }
 
-    init {
-        Gdx.input.inputProcessor = this
-    }
-
     override fun show() {
-        Loader.logger.info { "Splash screen in shown..." }
+        super.show()
+        Loader.logger.debug { "Splash screen in shown..." }
     }
 
     override fun render(delta: Float) {
-        act(delta)
-        draw()
+        super.render(delta)
         if (logoImage.isDoneActing()) {
-            goToMainMenu()
+            goToMainScreen()
         }
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        goToMainMenu()
+        goToMainScreen()
         return super.touchUp(screenX, screenY, pointer, button)
     }
 
-    private fun goToMainMenu() {
-        loader.addScreen(screen = GameScreen(loader))
-        loader.setScreen<GameScreen>()
+    private fun goToMainScreen() {
+        loader.addScreen(screen = MainScreen(loader))
+        loader.setScreen<MainScreen>()
         loader.removeScreen<SplashScreen>()?.dispose()
     }
 

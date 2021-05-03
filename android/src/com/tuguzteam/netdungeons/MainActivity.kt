@@ -41,5 +41,5 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
         }
     }
 
-    override fun exit() = Unit
+    override fun exit() = finish()
 }
