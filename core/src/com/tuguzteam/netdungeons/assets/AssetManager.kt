@@ -78,7 +78,8 @@ class AssetManager : Disposable {
     }
 
     operator fun get(textureAsset: TextureAsset): Texture? {
-        textures[textureAsset] = textures[textureAsset] ?: assetManager.get(textureAsset.filename, false)
+        textures[textureAsset] =
+            textures[textureAsset] ?: assetManager.get(textureAsset.filename, false)
         return textures[textureAsset]
     }
 

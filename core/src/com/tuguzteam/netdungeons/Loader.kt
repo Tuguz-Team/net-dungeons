@@ -3,8 +3,8 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.tuguzteam.netdungeons.assets.AssetManager
-import com.tuguzteam.netdungeons.screens.StageScreen
 import com.tuguzteam.netdungeons.screens.SplashScreen
+import com.tuguzteam.netdungeons.screens.StageScreen
 import ktx.app.KtxGame
 import ktx.log.info
 import ktx.log.logger
