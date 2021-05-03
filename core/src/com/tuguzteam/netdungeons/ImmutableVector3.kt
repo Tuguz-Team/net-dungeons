@@ -27,46 +27,43 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
     override val nor: ImmutableVector3
         get() = withLength2(1f)
 
-    override fun toString(): String = "($x,$y,$z)"
+    override fun toString() = "($x, $y, $z)"
 
-    override operator fun inc(): ImmutableVector3 =
-        ImmutableVector3(x + 1, y + 1, z + 1)
+    override operator fun inc() = ImmutableVector3(x + 1, y + 1, z + 1)
 
-    override operator fun dec(): ImmutableVector3 =
-        ImmutableVector3(x - 1, y - 1, z - 1)
+    override operator fun dec() = ImmutableVector3(x - 1, y - 1, z - 1)
 
-    override fun dot(vector: ImmutableVector3): Float = dot(vector.x, vector.y, vector.z)
+    override fun dot(vector: ImmutableVector3) = dot(vector.x, vector.y, vector.z)
 
     fun crs(x: Float, y: Float, z: Float) = this.toMutable().crs(x, y, z).toImmutable()
 
     fun dot(x: Float, y: Float, z: Float) = Vector3.dot(this.x, this.y, this.z, x, y, z)
 
-    override fun dst2(vector: ImmutableVector3): Float = dst2(vector.x, vector.y, vector.z)
+    override fun dst2(vector: ImmutableVector3) = dst2(vector.x, vector.y, vector.z)
 
     fun dst2(x: Float, y: Float, z: Float) = Vector3.dst2(this.x, this.y, this.z, x, y, z)
 
-    override fun epsilonEquals(other: ImmutableVector3, epsilon: Float): Boolean =
+    override fun epsilonEquals(other: ImmutableVector3, epsilon: Float) =
         abs(other.x - x) <= epsilon
                 && abs(other.y - y) <= epsilon
                 && abs(other.z - z) <= epsilon
 
-    override fun isOnLine(other: ImmutableVector3, epsilon: Float): Boolean =
+    override fun isOnLine(other: ImmutableVector3, epsilon: Float) =
         MathUtils.isZero(dot(other), epsilon) && isNotZero(0f) && other.isNotZero(0f)
 
-    override fun isZero(margin: Float): Boolean = (x == 0f && y == 0f && z == 0f) || len2 < margin
+    override fun isZero(margin: Float) = (x == 0f && y == 0f && z == 0f) || len2 < margin
 
     fun isNotZero(margin: Float) = !isZero(margin)
 
-    override operator fun minus(other: ImmutableVector3): ImmutableVector3 =
+    override operator fun minus(other: ImmutableVector3) =
         ImmutableVector3(x - other.x, y - other.y, z - other.z)
 
-    override operator fun plus(other: ImmutableVector3): ImmutableVector3 =
+    override operator fun plus(other: ImmutableVector3) =
         ImmutableVector3(x + other.x, y + other.y, z + other.z)
 
-    override operator fun times(vector: ImmutableVector3): ImmutableVector3 =
-        times(vector.x, vector.y, vector.z)
+    override operator fun times(vector: ImmutableVector3) = times(vector.x, vector.y, vector.z)
 
-    override operator fun times(scalar: Float): ImmutableVector3 = times(scalar, scalar, scalar)
+    override operator fun times(scalar: Float) = times(scalar, scalar, scalar)
 
     fun times(x: Float, y: Float, z: Float) =
         ImmutableVector3(this.x * x, this.y * y, this.z * z)
@@ -99,8 +96,7 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
         )
     }
 
-    override fun withLimit2(limit2: Float): ImmutableVector3 =
-        if (len2 <= limit2) this else withLength2(limit2)
+    override fun withLimit2(limit2: Float) = if (len2 <= limit2) this else withLength2(limit2)
 
     override fun withRandomDirection(rng: Random): ImmutableVector3 {
         TODO("Not yet implemented")
@@ -118,12 +114,10 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
         this.toMutable().rotateRad(radians, axisX, axisY, axisZ).toImmutable()
 }
 
-fun ImmutableVector3.toMutable(): Vector3 = Vector3(x, y, z)
+fun ImmutableVector3.toMutable() = Vector3(x, y, z)
 
-fun Vector3.toImmutable(): ImmutableVector3 = ImmutableVector3(x, y, z)
+fun Vector3.toImmutable() = ImmutableVector3(x, y, z)
 
-infix fun ImmutableVector3.x(other: ImmutableVector3): ImmutableVector3 =
-    crs(other.x, other.y, other.z)
+infix fun ImmutableVector3.x(other: ImmutableVector3) = crs(other.x, other.y, other.z)
 
-infix fun ImmutableVector3.crs(other: ImmutableVector3): ImmutableVector3 =
-    crs(other.x, other.y, other.z)
+infix fun ImmutableVector3.crs(other: ImmutableVector3) = crs(other.x, other.y, other.z)

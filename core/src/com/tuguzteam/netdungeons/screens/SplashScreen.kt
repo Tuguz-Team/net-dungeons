@@ -54,7 +54,7 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
     private fun goToMainMenu() {
         loader.addScreen(screen = GameScreen(loader))
         loader.setScreen<GameScreen>()
-        loader.removeScreen<SplashScreen>()
+        loader.removeScreen<SplashScreen>()?.dispose()
     }
 
     override fun dispose() {
