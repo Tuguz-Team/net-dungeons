@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.scenes.scene2d.Actor
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -42,3 +43,5 @@ interface KtxGestureAdapter : GestureDetector.GestureListener {
 
     override fun pinchStop() = Unit
 }
+
+fun <T : Actor> T.isDoneActing() = actions.isEmpty

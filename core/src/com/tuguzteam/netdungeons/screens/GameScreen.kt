@@ -22,7 +22,7 @@ import ktx.log.debug
 import ktx.log.logger
 import ktx.math.vec3
 
-class GameScreen(loader: Loader) : Screen(loader) {
+class GameScreen(loader: Loader) : StageScreen(loader) {
     private val modelBatch: ModelBatch = ModelBatch()
     private val environment: Environment = Environment().apply {
         set(
@@ -43,8 +43,8 @@ class GameScreen(loader: Loader) : Screen(loader) {
         update()
     }
     private val renderables: ArrayList<RenderableProvider> = ArrayList()
-    private val assetManager: AssetManager = AssetManager().apply {
-        addTask(ModelAsset.Suzanne) {
+    private val assetManager: AssetManager = loader.assetManager.apply {
+        addLoadTask(ModelAsset.Suzanne) {
             logger.debug { "Asset loading finished" }
             field = Field(side = 9)
             renderables.run {
@@ -94,6 +94,5 @@ class GameScreen(loader: Loader) : Screen(loader) {
         super.dispose()
         modelBatch.dispose()
         field.dispose()
-        assetManager.dispose()
     }
 }

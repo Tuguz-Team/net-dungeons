@@ -2,23 +2,30 @@ package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
-import com.tuguzteam.netdungeons.screens.GameScreen
-import com.tuguzteam.netdungeons.screens.Screen
+import com.tuguzteam.netdungeons.assets.AssetManager
+import com.tuguzteam.netdungeons.screens.StageScreen
+import com.tuguzteam.netdungeons.screens.SplashScreen
 import ktx.app.KtxGame
 import ktx.log.info
 import ktx.log.logger
 
-class Loader : KtxGame<Screen>() {
+class Loader : KtxGame<StageScreen>() {
     companion object {
         val logger = logger<Loader>()
     }
 
+    val assetManager = AssetManager()
+
     override fun create() {
         Gdx.app.logLevel = Application.LOG_DEBUG
-        logger.info { "Logger is creating now..." }
+        logger.info { "Loader is creating now..." }
 
-        addScreen(screen = GameScreen(this))
-        setScreen<GameScreen>()
-        super.create()
+        addScreen(screen = SplashScreen(this))
+        setScreen<SplashScreen>()
+    }
+
+    override fun dispose() {
+        super.dispose()
+        assetManager.dispose()
     }
 }
