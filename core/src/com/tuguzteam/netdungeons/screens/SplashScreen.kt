@@ -24,9 +24,12 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
     }
     private val logoImage = Image(logoTexture).apply {
-        centerPosition(this@SplashScreen.width, this@SplashScreen.height)
         this += alpha(0f) then fadeIn(1.25f) then delay(1.5f) then fadeOut(0.75f)
-        this@SplashScreen += this
+    }
+
+    init {
+        this += logoImage
+        logoImage.centerPosition()
     }
 
     override fun show() {
