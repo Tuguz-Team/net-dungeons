@@ -13,7 +13,7 @@ open class ReturnableScreen(loader: Loader, private val prevScreen: StageScreen)
         return super.keyDown(keyCode)
     }
 
-    private fun goToPreviousScreen() {
+    protected fun goToPreviousScreen() {
         loader.setScreen(prevScreen.javaClass)
     }
 }

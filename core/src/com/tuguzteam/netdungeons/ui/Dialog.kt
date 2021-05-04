@@ -21,6 +21,5 @@ open class Dialog(title: String, skin: Skin) : Dialog(title, skin) {
 
     override fun result(`object`: Any?) {
         isHidden = true
-        super.result(`object`)
     }
 }
