@@ -33,6 +33,7 @@ open class StageScreen(val loader: Loader) : Stage(), KtxScreen {
     override fun keyDown(keyCode: Int): Boolean {
         if (keyCode == Input.Keys.BACK) {
             onBackPressed()
+            return true
         }
         return super.keyDown(keyCode)
     }

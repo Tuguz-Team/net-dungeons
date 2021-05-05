@@ -1,5 +1,8 @@
 package com.tuguzteam.netdungeons.net
 
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -9,45 +12,61 @@ class AndroidNetworkManager : NetworkManager() {
     private val auth = Firebase.auth
 
     init {
-        setUser(auth.currentUser)
-    }
-
-    private fun setUser(firebaseUser: FirebaseUser?) {
-        firebaseUser?.let {
+        auth.currentUser?.let {
             user = AndroidUser(it)
         }
     }
 
-    override fun register(email: String, password: String, name: String, onCompleted: () -> Unit) {
-        if (user != null) {
-            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    setUser(auth.currentUser)
-                    user?.let { it.name = name }
-                } else {
-                    task.exception?.let {
-                        logger.error(it) { "Registration failed!" }
+    private fun authOnCompleteListener(callback: Callback) =
+        OnCompleteListener<AuthResult> { task ->
+            if (task.isSuccessful) {
+                var listener: FirebaseAuth.AuthStateListener? = null
+                val authStateListener = FirebaseAuth.AuthStateListener {
+                    val user: FirebaseUser? = it.currentUser
+                    if (user != null) {
+                        this.user = AndroidUser(user)
+                        callback.onSuccess(this.user as AndroidUser)
                     }
+                    auth.removeAuthStateListener(listener!!)
+                }
+                listener = authStateListener
+                auth.addAuthStateListener(authStateListener)
+            } else {
+                task.exception?.let {
+                    logger.error(it) { "Registration failed!" }
+                    callback.onFailure(it)
                 }
             }
         }
-        onCompleted()
-    }
 
-    override fun signIn(email: String, password: String, onCompleted: () -> Unit) {
+    override fun register(email: String, password: String, name: String, callback: Callback) {
+        super.register(email, password, name, callback)
         if (user == null) {
-            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    setUser(auth.currentUser)
-                } else {
-                    task.exception?.let {
-                        logger.error(it) { "Sign in failed!" }
-                    }
-                }
-            }
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(authOnCompleteListener(callback))
         }
-        onCompleted()
     }
 
-    override fun signOut() = auth.signOut()
+    override fun signIn(email: String, password: String, callback: Callback) {
+        super.signIn(email, password, callback)
+        if (user == null) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(authOnCompleteListener(callback))
+        }
+    }
+
+    override fun signOut(onSuccess: () -> Unit) {
+        auth.signOut()
+        var listener: FirebaseAuth.AuthStateListener? = null
+        val authStateListener = FirebaseAuth.AuthStateListener {
+            val user: FirebaseUser? = it.currentUser
+            if (user == null) {
+                this.user = null
+                onSuccess()
+            }
+            auth.removeAuthStateListener(listener!!)
+        }
+        listener = authStateListener
+        auth.addAuthStateListener(authStateListener)
+    }
 }
