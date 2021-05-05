@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.ui.ButtonListener
-import com.tuguzteam.netdungeons.ui.Header
+import com.tuguzteam.netdungeons.ui.ContentHeader
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import ktx.actors.plusAssign
 import ktx.log.debug
@@ -38,7 +38,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     private val emptyContent = Table().apply {
         center().add(gameScreenButton)
     }
-    private val header = Header(this, HorizontalGroup(), defaultSkin)
+    private val header = ContentHeader(this, HorizontalGroup(), defaultSkin)
     private val contentSplitPane = SplitPane(header,
         emptyContent, true, defaultSkin).apply {
         maxSplitAmount = 0.15f

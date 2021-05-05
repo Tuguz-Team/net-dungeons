@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 
-class Header(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
+class ContentHeader(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
     SplitPane(horGroup, null, false, skin) {
     private val yesNoDialog = YesNoDialog("Are you sure you want to exit?", skin, Gdx.app::exit) {
         settingsDialog.show(stage)
@@ -20,6 +20,7 @@ class Header(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
     }
     private val settingsDialog = Dialog("Settings", skin).apply {
         button("Return").button(exitButton)
+        buttonSpaceRight(0)
     }
     private val settingsButton = ImageButton(
         null, null, null).apply {
