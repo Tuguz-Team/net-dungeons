@@ -1,5 +1,6 @@
 package com.tuguzteam.netdungeons.ui
 
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
@@ -8,6 +9,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 open class Dialog(title: String, skin: Skin) : Dialog(title, skin) {
     var isHidden = true
         private set
+
+    fun buttonSpaceRight(index: Int) {
+        buttonTable.cells[index].spaceRight(50f)
+    }
 
     override fun hide(action: Action?) {
         isHidden = true
@@ -21,5 +26,11 @@ open class Dialog(title: String, skin: Skin) : Dialog(title, skin) {
 
     override fun result(`object`: Any?) {
         isHidden = true
+    }
+
+    init {
+        titleLabel.setAlignment(Align.top)
+        isResizable = false
+        isMovable = false
     }
 }

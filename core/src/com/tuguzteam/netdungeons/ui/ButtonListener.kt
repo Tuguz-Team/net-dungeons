@@ -7,13 +7,8 @@ import ktx.actors.KtxInputListener
 class ButtonListener(private val onTouch: () -> Unit) : KtxInputListener() {
     private var wasPressed = false
 
-    override fun touchDown(
-        event: InputEvent,
-        x: Float,
-        y: Float,
-        pointer: Int,
-        button: Int
-    ): Boolean {
+    override fun touchDown(event: InputEvent, x: Float, y: Float,
+                           pointer: Int, button: Int): Boolean {
         wasPressed = true
         return wasPressed
     }
