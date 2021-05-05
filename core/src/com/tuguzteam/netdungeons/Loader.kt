@@ -6,13 +6,14 @@ import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.SkinAsset
+import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
 import ktx.app.KtxGame
 import ktx.log.debug
 import ktx.log.logger
 
-class Loader : KtxGame<StageScreen>() {
+class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
     companion object {
         val logger = logger<Loader>()
     }
