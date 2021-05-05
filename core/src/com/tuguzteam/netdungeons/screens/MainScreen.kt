@@ -1,10 +1,8 @@
 package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.ui.ButtonListener
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import ktx.actors.centerPosition
@@ -12,7 +10,7 @@ import ktx.actors.plusAssign
 import ktx.log.debug
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
-    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
+    private val defaultSkin = loader.defaultSkin
     private val yesNoDialog = YesNoDialog("Are you sure you want to exit?", defaultSkin) {
         Gdx.app.exit()
     }
@@ -33,11 +31,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         Loader.logger.debug { "Main menu screen is shown..." }
     }
 
-    override fun keyDown(keyCode: Int): Boolean {
-        if (keyCode == Input.Keys.BACK && yesNoDialog.isHidden) {
-            yesNoDialog.show(this)
-            return true
-        }
-        return false
+    override fun onBackPressed() {
+        if (yesNoDialog.isHidden) yesNoDialog.show(this)
     }
 }

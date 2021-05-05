@@ -1,6 +1,7 @@
 package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.tuguzteam.netdungeons.Loader
@@ -25,5 +26,14 @@ open class StageScreen(val loader: Loader) : Stage(), KtxScreen {
 
     override fun dispose() {
         super<Stage>.dispose()
+    }
+
+    protected open fun onBackPressed() = Unit
+
+    override fun keyDown(keyCode: Int): Boolean {
+        if (keyCode == Input.Keys.BACK) {
+            onBackPressed()
+        }
+        return super.keyDown(keyCode)
     }
 }
