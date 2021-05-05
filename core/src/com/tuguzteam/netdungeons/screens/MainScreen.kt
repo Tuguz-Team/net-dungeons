@@ -24,9 +24,6 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         loader.addScreen(screen = GameScreen(loader, this))
         this += button
         button.centerPosition()
-        loader.networkManager.auth { user ->
-            Loader.logger.debug { user.toString() }
-        }
     }
 
     override fun show() {

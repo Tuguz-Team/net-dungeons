@@ -2,10 +2,17 @@ package com.tuguzteam.netdungeons.net
 
 import ktx.log.logger
 
-interface NetworkManager {
+abstract class NetworkManager {
     companion object {
         val logger = logger<NetworkManager>()
     }
 
-    fun auth(onAuth: (User?) -> Unit)
+    var user: User? = null
+        protected set
+
+    abstract fun signIn(email: String, password: String, onCompleted: () -> Unit)
+
+    abstract fun register(email: String, password: String, name: String, onCompleted: () -> Unit)
+
+    abstract fun signOut()
 }
