@@ -1,5 +1,5 @@
 package com.tuguzteam.netdungeons.assets
 
-interface Asset {
+sealed interface Asset {
     val filename: String
 }

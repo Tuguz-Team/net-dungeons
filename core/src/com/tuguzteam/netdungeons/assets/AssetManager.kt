@@ -25,17 +25,13 @@ class AssetManager : Disposable {
     }
 
     fun unload(vararg assets: Asset) {
-        for (modelAsset in modelAssets(*assets)) {
-            assetManager.unload(modelAsset.filename)
-            models.remove(modelAsset)
-        }
-        for (textureAsset in textureAssets(*assets)) {
-            assetManager.unload(textureAsset.filename)
-            textures.remove(textureAsset)
-        }
-        for (skinAsset in skinAssets(*assets)) {
-            assetManager.unload(skinAsset.filename)
-            skins.remove(skinAsset)
+        for (asset in assets) {
+            assetManager.unload(asset.filename)
+            when (asset) {
+                is ModelAsset -> models.remove(asset)
+                is SkinAsset -> skins.remove(asset)
+                is TextureAsset -> textures.remove(asset)
+            }
         }
     }
 
@@ -54,21 +50,14 @@ class AssetManager : Disposable {
         return res
     }
 
-    private fun modelAssets(vararg assets: Asset) = assets.filterIsInstance<ModelAsset>()
-
-    private fun textureAssets(vararg assets: Asset) = assets.filterIsInstance<TextureAsset>()
-
-    private fun skinAssets(vararg assets: Asset) = assets.filterIsInstance<SkinAsset>()
-
     private fun filterAndLoad(vararg assets: Asset) {
-        for (modelAsset in modelAssets(*assets)) {
-            assetManager.load(modelAsset.filename, Model::class.java)
-        }
-        for (textureAsset in textureAssets(*assets)) {
-            assetManager.load(textureAsset.filename, Texture::class.java)
-        }
-        for (skinAsset in skinAssets(*assets)) {
-            assetManager.load(skinAsset.filename, Skin::class.java)
+        for (asset in assets) {
+            val type = when (asset) {
+                is ModelAsset -> Model::class.java
+                is SkinAsset -> Skin::class.java
+                is TextureAsset -> Texture::class.java
+            }
+            assetManager.load(asset.filename, type)
         }
     }
 
