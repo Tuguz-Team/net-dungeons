@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.net.NetworkManager
-import com.tuguzteam.netdungeons.ui.ButtonListener
+import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.YesNoDialog
+import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign
 import ktx.log.debug
@@ -16,8 +16,11 @@ import ktx.log.error
 
 class RegistrationScreen(loader: Loader) : StageScreen(loader) {
     private val defaultSkin = loader.defaultSkin
-    private val yesNoDialog =
-        YesNoDialog("Cancel registration?", defaultSkin, { loader.setScreen<MainScreen>() })
+    private val yesNoDialog = YesNoDialog(
+        "Cancel registration?",
+        defaultSkin,
+        onYesOption = { loader.setScreen<MainScreen>() }
+    )
 
     private val nameLabel = Label("Enter your name", defaultSkin)
     private val nameTextField = TextField(null, defaultSkin).apply {
@@ -37,23 +40,19 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
     }
 
     private val registerButton = TextButton("Register", defaultSkin).apply {
-        addListener(ButtonListener {
+        addListener(ClickListener {
             val email = emailTextField.text
             val password = passwordTextField.text
             val name = nameTextField.text
-            try {
-                val callback = NetworkManager.Callback(
-                    onSuccess = { user ->
-                        Loader.logger.debug(user::toString)
-                        loader.setScreen<MainScreen>()
-                    },
-                    onFailure = {
-                        Loader.logger.error { "WTF!!!" }
-                    }
-                )
-                loader.networkManager.register(email, password, name, callback)
-            } catch (e: IllegalArgumentException) {
-                Loader.logger.error(e::toString)
+            loader.coroutineScope.launch {
+                try {
+                    loader.networkManager.register(name, email, password)
+                    loader.setScreen<MainScreen>()
+                } catch (throwable: Throwable) {
+                    Loader.logger.error(throwable) { "WTF!!!" }
+                } finally {
+                    Loader.logger.debug(loader.networkManager.user::toString)
+                }
             }
         })
     }

@@ -15,18 +15,20 @@ abstract class NetworkManager {
     var user: User? = null
         protected set
 
-    data class Callback(val onSuccess: (User) -> Unit, val onFailure: (Exception) -> Unit)
+    abstract suspend fun updateUser()
 
-    open fun signIn(email: String, password: String, callback: Callback) {
+    open suspend fun signIn(email: String, password: String) {
         require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
         require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
     }
 
-    open fun register(email: String, password: String, name: String, callback: Callback) {
-        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
-        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
+    open suspend fun register(name: String, email: String, password: String) {
         require(name matches NAME_REGEX) { "Name does not match pattern!" }
+        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
+        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
     }
 
-    abstract fun signOut(onSuccess: () -> Unit)
+    open suspend fun signOut() {
+        user = null
+    }
 }

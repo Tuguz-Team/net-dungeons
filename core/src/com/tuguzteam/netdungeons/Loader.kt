@@ -9,11 +9,14 @@ import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
+import kotlinx.coroutines.CoroutineScope
 import ktx.app.KtxGame
 import ktx.log.debug
 import ktx.log.logger
 
-class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
+class Loader(val networkManager: NetworkManager, val coroutineScope: CoroutineScope) :
+    KtxGame<StageScreen>() {
+
     companion object {
         val logger = logger<Loader>()
     }

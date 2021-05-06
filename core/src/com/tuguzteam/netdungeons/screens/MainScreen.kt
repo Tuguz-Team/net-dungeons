@@ -7,9 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.net.NetworkManager
-import com.tuguzteam.netdungeons.ui.ButtonListener
+import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.ContentHeader
 import com.tuguzteam.netdungeons.ui.YesNoDialog
+import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.log.debug
 
@@ -24,7 +25,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     private val navRatingButton =
         ImageTextButton("Rating", ImageTextButtonStyle(null, null, null, BitmapFont()))
     private val gameScreenButton = TextButton("Go to game screen", defaultSkin).apply {
-        addListener(ButtonListener {
+        addListener(ClickListener {
             loader.setScreen<GameScreen>()
         })
     }
@@ -61,10 +62,13 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         } catch (e: GdxRuntimeException) {
             null
         }
-        if (loader.networkManager.user == null && registrationScreen == null) {
-            loader.addScreen(screen = RegistrationScreen(loader))
-            loader.setScreen<RegistrationScreen>()
-        } else NetworkManager.logger.debug(loader.networkManager.user::toString)
+        loader.addScreen(screen = RegistrationScreen(loader))
+        loader.coroutineScope.launch {
+            loader.networkManager.updateUser()
+            if (loader.networkManager.user == null && registrationScreen == null) {
+                loader.setScreen<RegistrationScreen>()
+            } else NetworkManager.logger.debug(loader.networkManager.user::toString)
+        }
     }
 
     override fun onBackPressed() {
