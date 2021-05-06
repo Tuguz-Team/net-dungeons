@@ -6,7 +6,7 @@ abstract class NetworkManager {
     companion object {
         val logger = logger<NetworkManager>()
 
-        val EMAIL_REGEX = "^\\S+@\\S+$".toRegex()
+        val EMAIL_REGEX = "^\\S+@\\S+\\.\\S+$".toRegex()
         val PASSWORD_REGEX =
             "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[;:`*()№\\\\/|~?!.'\"_@#\$%^&+=-])(?=\\S+$).{6,}$".toRegex()
         val NAME_REGEX = "^(?=.*[a-zA-Z])(?=\\S+\$).{4,}\$".toRegex()

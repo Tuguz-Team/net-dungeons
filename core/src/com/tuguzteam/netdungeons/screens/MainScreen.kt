@@ -207,8 +207,12 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                 is Result.Failure -> Loader.logger.error(result.cause) { "User update failure!" }
                 is Result.Success -> {
-                    if (registrationScreen == null) loader.setScreen<RegistrationScreen>()
-                    else NetworkManager.logger.debug(result.data::toString)
+                    val data = result.data
+                    if (registrationScreen == null && data == null) {
+                        loader.setScreen<RegistrationScreen>()
+                    } else {
+                        NetworkManager.logger.debug(data::toString)
+                    }
                 }
             }
         }

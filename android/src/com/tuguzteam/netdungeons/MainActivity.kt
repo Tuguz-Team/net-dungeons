@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
             // Enable immersive mode
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.setDecorFitsSystemWindows(false)
-                window.insetsController?.apply {
+                window.insetsController?.run {
                     hide(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
                     systemBarsBehavior =
                         WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
