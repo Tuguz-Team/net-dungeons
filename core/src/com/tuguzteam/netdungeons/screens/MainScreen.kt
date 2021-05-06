@@ -8,9 +8,7 @@ import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
-import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.ContentHeader
-import com.tuguzteam.netdungeons.ui.YesNoDialog
+import com.tuguzteam.netdungeons.ui.*
 import com.tuguzteam.netdungeons.ui.Window
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
@@ -35,7 +33,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) modeLabel.setText("Slaughter")
                 })
             }
-            val buttonController = ButtonGroup(teamButton, slaughterButton)
+            val buttonController = RadioController(false, teamButton, slaughterButton)
             val window: Window = Window("Choose game mode", defaultSkin,
                 teamButton, slaughterButton)
         }
@@ -55,7 +53,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) sizeLabel.setText("Very Large")
                 })
             }
-            val buttonController = ButtonGroup(mediumButton, largeButton, vLargeButton)
+            val buttonController = RadioController(false,
+                mediumButton, largeButton, vLargeButton)
             val window: Window = Window("Choose map size", defaultSkin,
                 mediumButton, largeButton, vLargeButton)
         }
@@ -75,7 +74,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) typeLabel.setText("Slum")
                 })
             }
-            val buttonController = ButtonGroup(mansionButton, castleButton, slumButton)
+            val buttonController = RadioController(false,
+                mansionButton, castleButton, slumButton)
             val window: Window = Window("Choose amounts of treasure", defaultSkin,
                 mansionButton, castleButton, slumButton)
         }
@@ -99,11 +99,11 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         }
         private val inLabel = Label("in", defaultSkin)
         private val sizeLabel = Label("Size", defaultSkin).apply {
-//            addListener(ButtonListener {
-//                content.cancel()
-//                content.scrollTo(0f, scrollGroup.height / 2f,
-//                    0f, scrollGroup.height / 2f)
-//            })
+            addListener(ClickListener {
+                content.cancel()
+                content.scrollTo(0f, scrollGroup.height / 2f,
+                    0f, scrollGroup.height / 2f)
+            })
         }
         private val typeLabel = Label("Type", defaultSkin).apply {
             addListener(ClickListener {
@@ -142,18 +142,29 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         val navButton = ImageTextButton("Profile",
             ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
             addListener(ClickListener {
-                contentSplitPane.setSecondWidget(emptyContent)
+                contentSplitPane.setSecondWidget(null)
                 header.setFirstWidget(HorizontalGroup())
             })
         }
     }
 
     inner class NavRating {
+        private val levelButton = CheckBox("By level", defaultSkin)
+        private val winButton = CheckBox("By wins", defaultSkin)
+        private val killButton = CheckBox("By kills", defaultSkin)
+        private val buttonController = RadioController(true,
+            levelButton, winButton, killButton)
+        private val sortButtons = HorizontalGroup().apply {
+            left().space(Gdx.graphics.height / 20f).padLeft(Gdx.graphics.height / 20f)
+            this += levelButton
+            this += winButton
+            this += killButton
+        }
         val navButton = ImageTextButton("Rating",
             ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
             addListener(ClickListener {
-                contentSplitPane.setSecondWidget(emptyContent)
-                header.setFirstWidget(HorizontalGroup())
+                contentSplitPane.setSecondWidget(null)
+                header.setFirstWidget(sortButtons)
             })
         }
     }
@@ -163,11 +174,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         add(NavProfile().navButton).expand().row()
         add(NavRating().navButton).expand()
     }
-    private val emptyContent = Table().apply {
-        center().add(TextButton("Go to game screen", defaultSkin))
-    }
-    private val header = ContentHeader(this, HorizontalGroup(), defaultSkin)
-    private val contentSplitPane = SplitPane(header, emptyContent,
+    private val header = ContentHeader(this, null, defaultSkin)
+    private val contentSplitPane = SplitPane(header, null,
         true, defaultSkin).apply {
         maxSplitAmount = 0.15f
         minSplitAmount = 0.15f

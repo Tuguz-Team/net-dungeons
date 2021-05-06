@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 
-class ContentHeader(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
+class ContentHeader(stage: Stage, horGroup: HorizontalGroup?, skin: Skin) :
     SplitPane(horGroup, null, false, skin) {
     private val yesNoDialog = YesNoDialog("Are you sure you want to exit?", skin, Gdx.app::exit) {
         settingsDialog.show(stage)
