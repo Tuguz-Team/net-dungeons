@@ -15,18 +15,11 @@ abstract class NetworkManager {
     var user: User? = null
         protected set
 
-    abstract suspend fun updateUser()
+    abstract suspend fun updateUser(): Result<User?>
 
-    open suspend fun signIn(email: String, password: String) {
-        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
-        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-    }
+    abstract suspend fun signIn(email: String, password: String): Result<User>
 
-    open suspend fun register(name: String, email: String, password: String) {
-        require(name matches NAME_REGEX) { "Name does not match pattern!" }
-        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
-        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-    }
+    abstract suspend fun register(name: String, email: String, password: String): Result<User>
 
     open suspend fun signOut() {
         user = null

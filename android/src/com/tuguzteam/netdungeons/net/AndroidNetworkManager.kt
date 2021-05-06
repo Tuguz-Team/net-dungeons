@@ -5,6 +5,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
 class AndroidNetworkManager : NetworkManager() {
@@ -13,13 +14,17 @@ class AndroidNetworkManager : NetworkManager() {
 
     private val usersRef = firestore.collection("users")
 
-    override suspend fun updateUser() {
-        val query = auth.currentUser?.let {
-            usersRef.whereEqualTo("uid", it.uid).get().await()
-        }
-        val document = query?.documents?.get(0)
-        document?.let {
+    override suspend fun updateUser(): Result<User?> {
+        val firebaseUser = auth.currentUser ?: return Result.Success(data = null)
+        return try {
+            val query = usersRef.whereEqualTo("uid", firebaseUser.uid).get().await()
+            val document = query.documents[0]
             user = User(document["name"] as String?, document["level"] as Long?)
+            Result.Success(data = user)
+        } catch (e: CancellationException) {
+            Result.Cancel()
+        } catch (throwable: Throwable) {
+            Result.Failure(cause = throwable)
         }
     }
 
@@ -32,31 +37,43 @@ class AndroidNetworkManager : NetworkManager() {
         usersRef.add(userData).await()
     }
 
-    override suspend fun register(name: String, email: String, password: String) {
-        super.register(name, email, password)
-        if (user == null) {
-            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-            authResult?.user?.let {
-                it.updateProfile(userProfileChangeRequest {
-                    displayName = name
-                }).await()
-                createUserFirestore(name, it)
-                this.user = User(name, 0)
-            }
-            return
-        }
-        throw IllegalStateException("User is signed in!")
-    }
+    override suspend fun register(name: String, email: String, password: String): Result<User> =
+        try {
+            require(name matches NAME_REGEX) { "Name does not match pattern!" }
+            require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
+            require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
+            if (user != null) throw IllegalStateException("User is signed in!")
 
-    override suspend fun signIn(email: String, password: String) {
-        super.signIn(email, password)
-        if (user == null) {
+            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            val firebaseUser = authResult.user!!
+            firebaseUser.updateProfile(userProfileChangeRequest {
+                displayName = name
+            }).await()
+            createUserFirestore(name, firebaseUser)
+
+            user = User(name, 0)
+            Result.Success(data = user!!)
+        } catch (e: CancellationException) {
+            Result.Cancel()
+        } catch (throwable: Throwable) {
+            Result.Failure(cause = throwable)
+        }
+
+    override suspend fun signIn(email: String, password: String): Result<User> =
+        try {
+            require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
+            require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
+            if (user != null) throw IllegalStateException("User is signed in!")
+
             auth.signInWithEmailAndPassword(email, password).await()
             updateUser()
-            return
+
+            Result.Success(data = user!!)
+        } catch (e: CancellationException) {
+            Result.Cancel()
+        } catch (throwable: Throwable) {
+            Result.Failure(cause = throwable)
         }
-        throw IllegalStateException("User is already signed in!")
-    }
 
     override suspend fun signOut() {
         if (user != null) {

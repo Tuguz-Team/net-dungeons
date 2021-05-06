@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.net.NetworkManager
+import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.ContentHeader
 import com.tuguzteam.netdungeons.ui.YesNoDialog
@@ -14,6 +15,8 @@ import com.tuguzteam.netdungeons.ui.Window
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.log.debug
+import ktx.log.error
+import ktx.log.info
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
     private val defaultSkin = loader.defaultSkin
@@ -188,14 +191,18 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         val registrationScreen = try {
             loader.getScreen<RegistrationScreen>()
         } catch (e: GdxRuntimeException) {
+            loader.addScreen(screen = RegistrationScreen(loader))
             null
         }
-        loader.addScreen(screen = RegistrationScreen(loader))
         loader.coroutineScope.launch {
-            loader.networkManager.updateUser()
-            if (loader.networkManager.user == null && registrationScreen == null) {
-                loader.setScreen<RegistrationScreen>()
-            } else NetworkManager.logger.debug(loader.networkManager.user::toString)
+            when (val result = loader.networkManager.updateUser()) {
+                is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                is Result.Failure -> Loader.logger.error(result.cause) { "User update failure!" }
+                is Result.Success -> {
+                    if (registrationScreen == null) loader.setScreen<RegistrationScreen>()
+                    else NetworkManager.logger.debug(result.data::toString)
+                }
+            }
         }
     }
 

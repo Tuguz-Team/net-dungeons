@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import kotlinx.coroutines.launch
@@ -13,6 +14,7 @@ import ktx.actors.centerPosition
 import ktx.actors.plusAssign
 import ktx.log.debug
 import ktx.log.error
+import ktx.log.info
 
 class RegistrationScreen(loader: Loader) : StageScreen(loader) {
     private val defaultSkin = loader.defaultSkin
@@ -45,13 +47,10 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
             val password = passwordTextField.text
             val name = nameTextField.text
             loader.coroutineScope.launch {
-                try {
-                    loader.networkManager.register(name, email, password)
-                    loader.setScreen<MainScreen>()
-                } catch (throwable: Throwable) {
-                    Loader.logger.error(throwable) { "WTF!!!" }
-                } finally {
-                    Loader.logger.debug(loader.networkManager.user::toString)
+                when (val result = loader.networkManager.register(name, email, password)) {
+                    is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                    is Result.Failure -> Loader.logger.error(result.cause) { "Register failure!" }
+                    is Result.Success -> loader.setScreen<MainScreen>()
                 }
             }
         })
