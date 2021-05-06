@@ -11,9 +11,6 @@ import kotlinx.coroutines.tasks.await
 class AndroidNetworkManager : NetworkManager() {
     companion object {
         private const val USERS_COLLECTION = "users"
-
-        private const val NAME_FIELD = "name"
-        private const val LEVEL_FIELD = "level"
     }
 
     private val auth = Firebase.auth
@@ -25,7 +22,7 @@ class AndroidNetworkManager : NetworkManager() {
         val firebaseUser = auth.currentUser ?: return Result.Success(data = null)
         return try {
             val document = usersRef.document(firebaseUser.uid).get().await()
-            user = User(document[NAME_FIELD] as String?, document[LEVEL_FIELD] as Long?)
+            user = document.toObject(User::class.java)
             Result.Success(data = user)
         } catch (e: CancellationException) {
             Result.Cancel()
@@ -35,11 +32,8 @@ class AndroidNetworkManager : NetworkManager() {
     }
 
     private suspend fun createUserFirestore(name: String, firebaseUser: FirebaseUser) {
-        val userData = hashMapOf(
-            NAME_FIELD to name,
-            LEVEL_FIELD to 0,
-        )
-        usersRef.document(firebaseUser.uid).set(userData).await()
+        user = User(name, 0)
+        usersRef.document(firebaseUser.uid).set(user!!).await()
     }
 
     override suspend fun register(name: String, email: String, password: String): Result<User> =
@@ -56,7 +50,6 @@ class AndroidNetworkManager : NetworkManager() {
             }).await()
             createUserFirestore(name, firebaseUser)
 
-            user = User(name, 0)
             Result.Success(data = user!!)
         } catch (e: CancellationException) {
             Result.Cancel()
