@@ -2,11 +2,7 @@ package com.tuguzteam.netdungeons.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.scenes.scene2d.ui.*
 
 class ContentHeader(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
     SplitPane(horGroup, null, false, skin) {
@@ -31,6 +27,7 @@ class ContentHeader(stage: Stage, horGroup: HorizontalGroup, skin: Skin) :
 
     init {
         minSplitAmount = 0.9f
+        maxSplitAmount = 0.9f
         setSecondWidget(settingsButton)
     }
 }
