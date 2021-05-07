@@ -30,6 +30,7 @@ abstract class GameObject(position: ImmutableVector3 = ImmutableVector3.ZERO) : 
         protected set
 
     init {
+        @Suppress("LeakingThis")
         gameObjects.add(this)
     }
 

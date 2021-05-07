@@ -15,6 +15,9 @@ import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.use
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import ktx.async.KtxAsync
 import ktx.graphics.color
 import ktx.log.info
 import ktx.log.logger
@@ -64,7 +67,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun show() {
         super.show()
-        assetManager.addLoadTask(ModelAsset.Suzanne) {
+        KtxAsync.launch {
+            assetManager.load(ModelAsset.Suzanne)
             logger.info { "Asset loading finished" }
             field = Field(side = 9)
             renderables.run {
@@ -76,14 +80,16 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun hide() {
         super.hide()
-        assetManager.unload(ModelAsset.Suzanne)
+        runBlocking {
+            assetManager.unload(ModelAsset.Suzanne)
+        }
         field.dispose()
         renderables.clear()
     }
 
     override fun render(delta: Float) {
         super.render(delta)
-        if (assetManager.update()) {
+        if (assetManager.loaded(ModelAsset.Suzanne)) {
             rotationZoomGestureListener.update()
             modelBatch.use(camera) {
                 render(renderables, environment)

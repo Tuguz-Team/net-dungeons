@@ -12,6 +12,7 @@ import com.tuguzteam.netdungeons.ui.*
 import com.tuguzteam.netdungeons.ui.Window
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
+import ktx.async.KtxAsync
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
@@ -202,7 +203,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             loader.addScreen(screen = RegistrationScreen(loader))
             null
         }
-        loader.coroutineScope.launch {
+        KtxAsync.launch {
             when (val result = loader.networkManager.updateUser()) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                 is Result.Failure -> Loader.logger.error(result.cause) { "User update failure!" }

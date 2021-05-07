@@ -5,25 +5,24 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.I18NBundle
-import com.tuguzteam.netdungeons.assets.Asset
-import com.tuguzteam.netdungeons.assets.AssetManager
-import com.tuguzteam.netdungeons.assets.I18NBundleAsset
-import com.tuguzteam.netdungeons.assets.SkinAsset
+import com.tuguzteam.netdungeons.assets.*
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import ktx.app.KtxGame
+import ktx.async.KtxAsync
 import ktx.log.debug
 import ktx.log.logger
 
-class Loader(val networkManager: NetworkManager, val coroutineScope: CoroutineScope) :
-    KtxGame<StageScreen>() {
-
+class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
     companion object {
         val logger = logger<Loader>()
-
         val requiredAssets: Array<out Asset> = arrayOf(SkinAsset.Default, I18NBundleAsset.Default)
+    }
+
+    init {
+        KtxAsync.initiate()
     }
 
     val assetManager = AssetManager()
@@ -38,13 +37,15 @@ class Loader(val networkManager: NetworkManager, val coroutineScope: CoroutineSc
         Gdx.input.setCatchKey(Input.Keys.BACK, true)
 
         logger.debug { "Loader is creating now..." }
-        assetManager.addLoadTask(*requiredAssets) {
+        KtxAsync.launch {
+            assetManager.load(TextureAsset.LogoLibGDX)
+            addScreen(screen = SplashScreen(this@Loader))
+            setScreen<SplashScreen>()
+
+            assetManager.load(*requiredAssets)
             defaultSkin = assetManager[SkinAsset.Default]!!
             defaultBundle = assetManager[I18NBundleAsset.Default]!!
         }
-
-        addScreen(screen = SplashScreen(this))
-        setScreen<SplashScreen>()
     }
 
     override fun dispose() {

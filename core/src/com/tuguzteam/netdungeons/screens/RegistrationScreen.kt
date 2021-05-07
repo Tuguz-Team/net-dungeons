@@ -12,6 +12,7 @@ import com.tuguzteam.netdungeons.ui.YesNoDialog
 import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign
+import ktx.async.KtxAsync
 import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
@@ -46,7 +47,7 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
             val email = emailTextField.text
             val password = passwordTextField.text
             val name = nameTextField.text
-            loader.coroutineScope.launch {
+            KtxAsync.launch {
                 when (val result = loader.networkManager.register(name, email, password)) {
                     is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                     is Result.Failure -> Loader.logger.error(result.cause) { "Register failure!" }

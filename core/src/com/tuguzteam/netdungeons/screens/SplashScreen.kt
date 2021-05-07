@@ -6,17 +6,16 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.isDoneActing
+import kotlinx.coroutines.runBlocking
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign
 import ktx.actors.then
 import ktx.log.debug
 
 class SplashScreen(loader: Loader) : StageScreen(loader) {
-    private val assetManager = loader.assetManager.apply {
-        loadNow(TextureAsset.LogoLibGDX)
-    }
+    private val assetManager = loader.assetManager
 
-    private val logoTexture = assetManager[TextureAsset.LogoLibGDX]?.apply {
+    private val logoTexture = assetManager[TextureAsset.LogoLibGDX]!!.apply {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
     }
     private val logoImage = Image(logoTexture).apply {
@@ -35,7 +34,7 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
 
     override fun render(delta: Float) {
         super.render(delta)
-        if (logoImage.isDoneActing() && assetManager.update()) {
+        if (logoImage.isDoneActing() && assetManager.loaded(*Loader.requiredAssets)) {
             goToMainScreen()
         }
     }
@@ -46,7 +45,6 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
     }
 
     private fun goToMainScreen() {
-        assetManager.loadNow(*Loader.requiredAssets)
         loader.addScreen(screen = MainScreen(loader))
         loader.setScreen<MainScreen>()
         loader.removeScreen<SplashScreen>()?.dispose()
@@ -54,6 +52,8 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
 
     override fun dispose() {
         super.dispose()
-        assetManager.unload(TextureAsset.LogoLibGDX)
+        runBlocking {
+            assetManager.unload(TextureAsset.LogoLibGDX)
+        }
     }
 }
