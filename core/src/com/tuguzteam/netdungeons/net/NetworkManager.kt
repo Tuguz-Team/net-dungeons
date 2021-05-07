@@ -21,7 +21,8 @@ abstract class NetworkManager {
 
     abstract suspend fun register(name: String, email: String, password: String): Result<User>
 
-    open suspend fun signOut() {
+    open suspend fun signOut(): Result<Unit> {
         user = null
+        return Result.Success(Unit)
     }
 }

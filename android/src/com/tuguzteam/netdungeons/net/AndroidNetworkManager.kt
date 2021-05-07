@@ -1,12 +1,15 @@
 package com.tuguzteam.netdungeons.net
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.resume
 
 class AndroidNetworkManager : NetworkManager() {
     companion object {
@@ -79,10 +82,23 @@ class AndroidNetworkManager : NetworkManager() {
             Result.Failure(cause = throwable)
         }
 
-    override suspend fun signOut() {
-        if (user != null) {
+    override suspend fun signOut(): Result<Unit> =
+        if (user == null) {
+            Result.Failure(cause = IllegalStateException("User is not signed in!"))
+        } else {
             auth.signOut()
+            suspendCancellableCoroutine<Unit> { cont ->
+                var listener: FirebaseAuth.AuthStateListener? = null
+                val authStateListener = FirebaseAuth.AuthStateListener {
+                    val user: FirebaseUser? = it.currentUser
+                    if (user == null) {
+                        auth.removeAuthStateListener(listener!!)
+                        cont.resume(Unit)
+                    }
+                }
+                listener = authStateListener
+                auth.addAuthStateListener(authStateListener)
+            }
+            super.signOut()
         }
-        super.signOut()
-    }
 }
