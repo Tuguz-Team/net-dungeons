@@ -16,7 +16,7 @@ import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.use
 import ktx.graphics.color
-import ktx.log.debug
+import ktx.log.info
 import ktx.log.logger
 import ktx.math.vec3
 
@@ -65,7 +65,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     override fun show() {
         super.show()
         assetManager.addLoadTask(ModelAsset.Suzanne) {
-            logger.debug { "Asset loading finished" }
+            logger.info { "Asset loading finished" }
             field = Field(side = 9)
             renderables.run {
                 addAll(field.map { it.renderableProvider })
@@ -89,7 +89,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 render(renderables, environment)
             }
         } else {
-            logger.debug { "Asset loading progress: ${assetManager.progress}" }
+            logger.info { "Asset loading progress: ${assetManager.progress}" }
         }
     }
 

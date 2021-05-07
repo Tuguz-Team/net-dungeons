@@ -6,7 +6,7 @@ import com.tuguzteam.netdungeons.KtxGestureAdapter
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.toImmutable
-import ktx.log.debug
+import ktx.log.info
 import ktx.log.logger
 
 class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAdapter {
@@ -34,7 +34,7 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
             (chosenGameObject as? Focusable)?.onLoseFocus()
             chosenGameObject = gameObject
             (chosenGameObject as? Focusable)?.onAcquireFocus()
-            logger.debug { "Chosen object: $chosenGameObject" }
+            logger.info { "Chosen object: $chosenGameObject" }
         }
 
         return chosenGameObject != null

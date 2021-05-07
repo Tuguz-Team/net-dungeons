@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
+import com.badlogic.gdx.utils.I18NBundle
 import java.util.*
 
 class AssetManager : Disposable {
@@ -14,6 +15,7 @@ class AssetManager : Disposable {
     private val models: MutableMap<ModelAsset, Model> = EnumMap(ModelAsset::class.java)
     private val textures: MutableMap<TextureAsset, Texture> = EnumMap(TextureAsset::class.java)
     private val skins: MutableMap<SkinAsset, Skin> = EnumMap(SkinAsset::class.java)
+    private val bundles: MutableMap<I18NBundleAsset, I18NBundle> = EnumMap(I18NBundleAsset::class.java)
 
     val progress = assetManager.progress
 
@@ -31,15 +33,17 @@ class AssetManager : Disposable {
                 is ModelAsset -> models.remove(asset)
                 is SkinAsset -> skins.remove(asset)
                 is TextureAsset -> textures.remove(asset)
+                is I18NBundleAsset -> bundles.remove(asset)
             }
         }
     }
 
     fun loadNow(vararg assets: Asset) {
         filterAndLoad(*assets)
-        while (!assetManager.update()) {
+        do {
+            checkLoadTask()
             if (loaded(*assets)) break
-        }
+        } while (!assetManager.update())
     }
 
     fun finishNow() = assetManager.finishLoading()
@@ -56,6 +60,7 @@ class AssetManager : Disposable {
                 is ModelAsset -> Model::class.java
                 is SkinAsset -> Skin::class.java
                 is TextureAsset -> Texture::class.java
+                is I18NBundleAsset -> I18NBundle::class.java
             }
             assetManager.load(asset.filename, type)
         }
@@ -86,6 +91,11 @@ class AssetManager : Disposable {
     operator fun get(skinAsset: SkinAsset): Skin? {
         skins[skinAsset] = skins[skinAsset] ?: assetManager.get(skinAsset.filename, false)
         return skins[skinAsset]
+    }
+
+    operator fun get(bundleAsset: I18NBundleAsset): I18NBundle? {
+        bundles[bundleAsset] = bundles[bundleAsset] ?: assetManager.get(bundleAsset.filename, false)
+        return bundles[bundleAsset]
     }
 
     override fun dispose() {
