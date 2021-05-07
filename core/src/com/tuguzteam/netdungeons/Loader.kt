@@ -3,8 +3,6 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.utils.I18NBundle
 import com.tuguzteam.netdungeons.assets.*
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
@@ -21,18 +19,12 @@ class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
         val requiredAssets: Array<out Asset> = arrayOf(SkinAsset.Default, I18NBundleAsset.Default)
     }
 
-    init {
-        KtxAsync.initiate()
+    val assetManager by lazy {
+        AssetManager()
     }
 
-    val assetManager = AssetManager()
-
-    lateinit var defaultSkin: Skin
-        private set
-    lateinit var defaultBundle: I18NBundle
-        private set
-
     override fun create() {
+        KtxAsync.initiate()
         Gdx.app.logLevel = Application.LOG_DEBUG
         Gdx.input.setCatchKey(Input.Keys.BACK, true)
 
@@ -43,8 +35,6 @@ class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
             setScreen<SplashScreen>()
 
             assetManager.load(*requiredAssets)
-            defaultSkin = assetManager[SkinAsset.Default]!!
-            defaultBundle = assetManager[I18NBundleAsset.Default]!!
         }
     }
 

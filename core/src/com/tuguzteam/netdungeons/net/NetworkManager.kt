@@ -23,6 +23,10 @@ abstract class NetworkManager {
 
     open suspend fun signOut(): Result<Unit> {
         user = null
-        return Result.Success(Unit)
+        return Result.Success(data = Unit)
     }
+
+    abstract suspend fun insertToMatchmakingQueue(): Result<Unit>
+
+    abstract suspend fun removeFromMatchmakingQueue(): Result<Unit>
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.*
@@ -17,7 +18,7 @@ import ktx.log.error
 import ktx.log.info
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
-    private val defaultSkin = loader.defaultSkin
+    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog =
         YesNoDialog("Are you sure you want to exit?", defaultSkin, Gdx.app::exit)
 

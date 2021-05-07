@@ -40,7 +40,7 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        goToMainScreen()
+        if (assetManager.loaded(*Loader.requiredAssets)) goToMainScreen()
         return super.touchUp(screenX, screenY, pointer, button)
     }
 

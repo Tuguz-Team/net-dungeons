@@ -4,6 +4,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CancellationException
@@ -14,12 +15,15 @@ import kotlin.coroutines.resume
 class AndroidNetworkManager : NetworkManager() {
     companion object {
         private const val USERS_COLLECTION = "users"
+        private const val MATCHMAKING_QUEUE_REF = "matchmaking-queue"
     }
 
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
+    private val database = Firebase.database
 
     private val usersRef = firestore.collection(USERS_COLLECTION)
+    private val matchmakingQueueRef = database.reference.child(MATCHMAKING_QUEUE_REF)
 
     override suspend fun updateUser(): Result<User?> {
         val firebaseUser = auth.currentUser ?: return Result.Success(data = null)
@@ -101,4 +105,24 @@ class AndroidNetworkManager : NetworkManager() {
             }
             super.signOut()
         }
+
+    override suspend fun insertToMatchmakingQueue(): Result<Unit> =
+        try {
+            if (auth.currentUser == null || user == null) {
+                throw IllegalStateException("User is not signed in!")
+            }
+            val firebaseUser = auth.currentUser!!
+            val user = user!!
+            // TODO: bug - await never returns (no response from Realtime Database)
+            matchmakingQueueRef.child(firebaseUser.uid).setValue(user.name).await()
+            Result.Success(data = Unit)
+        } catch (e: CancellationException) {
+            Result.Cancel()
+        } catch (throwable: Throwable) {
+            Result.Failure(cause = throwable)
+        }
+
+    override suspend fun removeFromMatchmakingQueue(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
 }

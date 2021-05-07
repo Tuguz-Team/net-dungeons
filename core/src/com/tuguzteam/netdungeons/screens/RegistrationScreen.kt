@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.YesNoDialog
@@ -18,7 +19,7 @@ import ktx.log.error
 import ktx.log.info
 
 class RegistrationScreen(loader: Loader) : StageScreen(loader) {
-    private val defaultSkin = loader.defaultSkin
+    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog = YesNoDialog(
         "Cancel registration?",
         defaultSkin,
