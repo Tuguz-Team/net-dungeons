@@ -34,7 +34,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) modeLabel.setText("Slaughter")
                 })
             }
-            val buttonController = RadioController(false, teamButton, slaughterButton)
+            val radioController = RadioController(false, teamButton, slaughterButton)
             val window: Window = Window("Choose game mode", defaultSkin,
                 teamButton, slaughterButton)
         }
@@ -54,7 +54,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) sizeLabel.setText("Very Large")
                 })
             }
-            val buttonController = RadioController(false,
+            val radioController = RadioController(false,
                 mediumButton, largeButton, vLargeButton)
             val window: Window = Window("Choose map size", defaultSkin,
                 mediumButton, largeButton, vLargeButton)
@@ -75,7 +75,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (isChecked) typeLabel.setText("Slum")
                 })
             }
-            val buttonController = RadioController(false,
+            val radioController = RadioController(false,
                 mansionButton, castleButton, slumButton)
             val window: Window = Window("Choose amounts of treasure", defaultSkin,
                 mansionButton, castleButton, slumButton)
@@ -83,7 +83,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
 
         private val scrollGroup = VerticalGroup().apply {
             pad(Gdx.graphics.height / 6f)
-            space(Gdx.graphics.height / 4f)
+            space(Gdx.graphics.height / 6f)
             Loader.logger.debug { "${this.height}" }
             this += GameMode().window
             this += GameSize().window
@@ -91,25 +91,28 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         }
         private val content = ScrollPane(scrollGroup).apply {
             setOverscroll(false, false)
+            setFlingTime(0f)
         }
         private val modeLabel = Label("Mode", defaultSkin).apply {
             addListener(ClickListener {
                 content.cancel()
-                content.scrollTo(0f, scrollGroup.height, 0f, scrollGroup.height)
+                content.layout()
+                content.scrollPercentY = 0f
             })
         }
         private val inLabel = Label("in", defaultSkin)
         private val sizeLabel = Label("Size", defaultSkin).apply {
             addListener(ClickListener {
                 content.cancel()
-                content.scrollTo(0f, scrollGroup.height / 2f,
-                    0f, scrollGroup.height / 2f)
+                content.layout()
+                content.scrollPercentY = .5f
             })
         }
         private val typeLabel = Label("Type", defaultSkin).apply {
             addListener(ClickListener {
                 content.cancel()
-                content.scrollTo(0f, 0f, 0f, 0f)
+                content.layout()
+                content.scrollPercentY = 1f
             })
         }
         private val headerContent = HorizontalGroup().apply {
