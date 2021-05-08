@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui
+package com.tuguzteam.netdungeons.ui.navigation
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.screens.GameScreen
+import com.tuguzteam.netdungeons.ui.ClickListener
 import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {

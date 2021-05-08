@@ -1,6 +1,9 @@
-package com.tuguzteam.netdungeons.ui
+package com.tuguzteam.netdungeons.ui.navigation
 
 import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.Window
 
 class NavGameElement(skin: Skin, scrollPane: ScrollPane, percentage: Float,
                      private val labelName: String, windowTitle: String,
