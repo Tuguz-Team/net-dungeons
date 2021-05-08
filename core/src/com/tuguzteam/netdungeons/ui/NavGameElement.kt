@@ -1,11 +1,14 @@
 package com.tuguzteam.netdungeons.ui
 
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
 
-class NavGameElement(skin: Skin, scrollPane: ScrollPane, percentage: Float,
-                     private val labelName: String, windowTitle: String,
-                     vararg buttonNames: String) {
-
+class NavGameElement(
+    skin: Skin, scrollPane: ScrollPane, percentage: Float,
+    private val labelName: String, windowTitle: String,
+    vararg buttonNames: String
+) {
     private val radioButton = RadioButton(false, skin, *buttonNames).apply {
         for (i in 0 until buttons.size)
             buttons[i].apply {

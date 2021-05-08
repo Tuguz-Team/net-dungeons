@@ -4,8 +4,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 
-class YesNoDialog(title: String, skin: Skin, private val onYesOption: () -> Unit,
-                  private val onNoOption: () -> Unit = {}) : Dialog(title, skin) {
+class YesNoDialog(
+    title: String, skin: Skin, private val onYesOption: () -> Unit,
+    private val onNoOption: () -> Unit = {}
+) : Dialog(title, skin) {
     init {
         button("Yes", true).button("No", false)
         buttonSpaceRight(0)

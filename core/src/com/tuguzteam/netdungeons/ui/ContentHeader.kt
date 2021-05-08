@@ -19,7 +19,8 @@ class ContentHeader(stage: Stage, horGroup: HorizontalGroup?, skin: Skin) :
         buttonSpaceRight(0)
     }
     private val settingsButton = ImageButton(
-        null, null, null).apply {
+        null, null, null
+    ).apply {
         addListener(ClickListener {
             settingsDialog.show(stage)
         })

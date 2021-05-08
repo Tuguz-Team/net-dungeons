@@ -2,8 +2,11 @@ package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
@@ -23,8 +26,10 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         YesNoDialog("Are you sure you want to exit?", defaultSkin, Gdx.app::exit)
 
     inner class NavProfile {
-        val navButton = ImageTextButton("Profile",
-            ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
+        val navButton = ImageTextButton(
+            "Profile",
+            ImageTextButtonStyle(null, null, null, BitmapFont())
+        ).apply {
             addListener(ClickListener {
                 contentSplitPane.setSecondWidget(null)
                 header.setFirstWidget(HorizontalGroup())
@@ -34,15 +39,19 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     }
 
     inner class NavRating {
-        private val radioButton = RadioButton(true, defaultSkin,
-    "By level", "By wins", "By kills")
+        private val radioButton = RadioButton(
+            true, defaultSkin,
+            "By level", "By wins", "By kills"
+        )
         private val sortButtons = HorizontalGroup().apply {
             left().space(Gdx.graphics.height / 20f).padLeft(Gdx.graphics.height / 20f)
             for (button in radioButton.buttons)
                 this += button
         }
-        val navButton = ImageTextButton("Rating",
-            ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
+        val navButton = ImageTextButton(
+            "Rating",
+            ImageTextButtonStyle(null, null, null, BitmapFont())
+        ).apply {
             addListener(ClickListener {
                 contentSplitPane.setSecondWidget(null)
                 header.setFirstWidget(sortButtons)
@@ -52,8 +61,10 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     }
 
     private val header = ContentHeader(this, null, defaultSkin)
-    private val contentSplitPane = SplitPane(header, null,
-        true, defaultSkin).apply {
+    private val contentSplitPane = SplitPane(
+        header, null,
+        true, defaultSkin
+    ).apply {
         maxSplitAmount = 0.15f
         minSplitAmount = 0.15f
     }
@@ -63,8 +74,10 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         add(NavProfile().navButton).expand().row()
         add(NavRating().navButton).expand()
     }
-    private val mainSplitPane = SplitPane(navigation, contentSplitPane,
-        false, defaultSkin).apply {
+    private val mainSplitPane = SplitPane(
+        navigation, contentSplitPane,
+        false, defaultSkin
+    ).apply {
         setFillParent(true)
         maxSplitAmount = 0.15f
         minSplitAmount = 0.15f

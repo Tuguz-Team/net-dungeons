@@ -1,10 +1,10 @@
 package com.tuguzteam.netdungeons.ui
 
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.utils.Align
 
 open class Dialog(title: String, skin: Skin) : Dialog(title, skin) {
     var isHidden = true

@@ -16,12 +16,19 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
         setOverscroll(false, false)
         setFlingTime(0f)
     }
-    private val gameMode = NavGameElement(skin, content, 0f, "Mode",
-        "Choose game mode", "Team Fight", "Slaughter")
-    private val gameSize = NavGameElement(skin, content, .5f, "Size",
-        "Choose map size", "Medium", "Large", "Very Large")
-    private val gameType = NavGameElement(skin, content, 1f, "Type",
-        "Choose amounts of treasure", "Mansion", "Castle", "Slum")
+    private val gameMode = NavGameElement(
+        skin, content, 0f, "Mode",
+        "Choose game mode", "Team Fight", "Slaughter"
+    )
+    private val gameSize = NavGameElement(
+        skin, content, .5f, "Size",
+        "Choose map size", "Medium", "Large", "Very Large"
+    )
+    private val gameType = NavGameElement(
+        skin, content, 1f, "Type",
+        "Choose amounts of treasure", "Mansion", "Castle", "Slum"
+    )
+
     init {
         scrollGroup.apply {
             this += gameMode.window
@@ -37,19 +44,25 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
         this += gameSize.innerLabel
         this += gameType.innerLabel
     }
-    private val playButton = ImageTextButton("Play",
-        ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
+    private val playButton = ImageTextButton(
+        "Play",
+        ImageTextButtonStyle(null, null, null, BitmapFont())
+    ).apply {
         addListener(ClickListener {
             loader.setScreen<GameScreen>()
         })
     }
-    private val headerSplitPane = SplitPane(headerContent, Container(playButton),
-        false, skin).apply {
+    private val headerSplitPane = SplitPane(
+        headerContent, Container(playButton),
+        false, skin
+    ).apply {
         maxSplitAmount = 0.85f
         minSplitAmount = 0.85f
     }
-    val navButton = ImageTextButton("Game",
-        ImageTextButtonStyle(null, null, null, BitmapFont())).apply {
+    val navButton = ImageTextButton(
+        "Game",
+        ImageTextButtonStyle(null, null, null, BitmapFont())
+    ).apply {
         addListener(ClickListener {
             contentSplitPane.setSecondWidget(content)
             header.setFirstWidget(headerSplitPane)

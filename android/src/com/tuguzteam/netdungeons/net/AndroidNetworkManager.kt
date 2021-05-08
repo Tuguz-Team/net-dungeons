@@ -108,13 +108,8 @@ class AndroidNetworkManager : NetworkManager() {
 
     override suspend fun insertToMatchmakingQueue(): Result<Unit> =
         try {
-            if (auth.currentUser == null || user == null) {
-                throw IllegalStateException("User is not signed in!")
-            }
-            val firebaseUser = auth.currentUser!!
-            val user = user!!
-            // TODO: bug - await never returns (no response from Realtime Database)
-            matchmakingQueueRef.child(firebaseUser.uid).setValue(user.name).await()
+            val user = this.user ?: throw IllegalStateException("User is not signed in!")
+            matchmakingQueueRef.child(user.name).setValue(user.level).await()
             Result.Success(data = Unit)
         } catch (e: CancellationException) {
             Result.Cancel()
