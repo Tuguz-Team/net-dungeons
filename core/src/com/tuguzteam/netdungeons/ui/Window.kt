@@ -14,7 +14,8 @@ class Window(title: String, skin: Skin, vararg tables: Table) : Window(title, sk
         isResizable = false
         isMovable = false
         isModal = false
-        for (table in tables)
+        tables.forEach { table ->
             add(table)
+        }
     }
 }

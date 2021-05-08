@@ -8,8 +8,9 @@ class RadioButton(checked: Boolean, skin: Skin, vararg buttonNames: String) {
     val buttons = mutableListOf<CheckBox>()
 
     init {
-        for (name in buttonNames)
+        buttonNames.forEach { name ->
             buttons += CheckBox(name, skin)
+        }
     }
 
     private val controller = ButtonGroup(*buttons.toTypedArray()).apply {

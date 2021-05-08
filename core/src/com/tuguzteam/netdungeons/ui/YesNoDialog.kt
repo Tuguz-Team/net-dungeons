@@ -11,7 +11,7 @@ class YesNoDialog(
     init {
         button("Yes", true).button("No", false)
         buttonSpaceRight(0)
-        for (cell in buttonTable.cells) {
+        buttonTable.cells.forEach { cell ->
             (cell.actor as TextButton).label.setAlignment(Align.top)
         }
     }

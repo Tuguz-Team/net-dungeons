@@ -12,7 +12,9 @@ import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
-import com.tuguzteam.netdungeons.ui.*
+import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
 import com.tuguzteam.netdungeons.ui.navigation.NavGame
 import kotlinx.coroutines.launch
