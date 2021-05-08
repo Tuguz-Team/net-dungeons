@@ -1,3 +1,31 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.gms.google-services'
+}
+
+configurations { natives }
+
+dependencies {
+    implementation project(':core')
+    api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+    natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0-RC'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1'
+
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.fragment:fragment-ktx:1.3.3'
+
+    implementation platform('com.google.firebase:firebase-bom:27.1.0')
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-database-ktx'
+}
+
 android {
     buildToolsVersion '30.0.3'
     compileSdkVersion 30
@@ -21,6 +49,7 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
+        exclude 'DebugProbesKt.bin'
     }
     defaultConfig {
         applicationId 'com.tuguzteam.netdungeons'
@@ -93,7 +122,10 @@ task run(type: Exec) {
     }
 
     def adb = "$path/platform-tools/adb"
-    commandLine adb, 'shell', 'am', 'start', '-n', 'com.tuguzteam.netdungeons/com.tuguzteam.netdungeons.AndroidLauncher'
+    commandLine(
+            adb, 'shell', 'am', 'start', '-n',
+            'com.tuguzteam.netdungeons/com.tuguzteam.netdungeons.MainActivity'
+    )
 }
 
 eclipse.project.name = appName + '-android'
