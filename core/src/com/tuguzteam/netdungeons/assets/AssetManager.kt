@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.I18NBundle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import ktx.assets.async.AssetStorage
-import ktx.async.KtxAsync
 import java.util.*
 
 class AssetManager : Disposable {
@@ -24,18 +24,19 @@ class AssetManager : Disposable {
 
     suspend fun load(vararg assets: Asset) {
         val mutableList = mutableListOf<Deferred<Any>>()
+        val coroutineScope = CoroutineScope(assetStorage.asyncContext)
         assets.forEach { asset ->
             when (asset) {
-                is I18NBundleAsset -> mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                is I18NBundleAsset -> mutableList += coroutineScope.async {
                     bundles[asset] = assetStorage.load(asset.filename)
                 }
-                is ModelAsset -> mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                is ModelAsset -> mutableList += coroutineScope.async {
                     models[asset] = assetStorage.load(asset.filename)
                 }
-                is SkinAsset -> mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                is SkinAsset -> mutableList += coroutineScope.async {
                     skins[asset] = assetStorage.load(asset.filename)
                 }
-                is TextureAsset -> mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                is TextureAsset -> mutableList += coroutineScope.async {
                     textures[asset] = assetStorage.load(asset.filename)
                 }
             }
@@ -62,29 +63,30 @@ class AssetManager : Disposable {
 
     suspend fun unload(vararg assets: Asset) {
         val mutableList = mutableListOf<Deferred<Boolean>>()
+        val coroutineScope = CoroutineScope(assetStorage.asyncContext)
         assets.forEach { asset ->
             when (asset) {
                 is ModelAsset -> {
                     models.remove(asset)
-                    mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                    mutableList += coroutineScope.async {
                         assetStorage.unload<Model>(asset.filename)
                     }
                 }
                 is SkinAsset -> {
                     skins.remove(asset)
-                    mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                    mutableList += coroutineScope.async {
                         assetStorage.unload<Skin>(asset.filename)
                     }
                 }
                 is TextureAsset -> {
                     textures.remove(asset)
-                    mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                    mutableList += coroutineScope.async {
                         assetStorage.unload<Texture>(asset.filename)
                     }
                 }
                 is I18NBundleAsset -> {
                     bundles.remove(asset)
-                    mutableList += KtxAsync.async(assetStorage.asyncContext) {
+                    mutableList += coroutineScope.async {
                         assetStorage.unload<I18NBundle>(asset.filename)
                     }
                 }

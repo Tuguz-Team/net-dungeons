@@ -95,7 +95,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 render(renderables, environment)
             }
         } else {
-            logger.info { "Asset loading progress: ${assetManager.progress}" }
+            logger.info { "Asset loading progress: ${assetManager.progress.percent * 100}%" }
         }
     }
 

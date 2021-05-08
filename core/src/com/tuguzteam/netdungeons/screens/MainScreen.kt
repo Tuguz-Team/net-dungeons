@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
 import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.utils.GdxRuntimeException
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.NetworkManager
@@ -96,11 +95,9 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     override fun show() {
         super.show()
         Loader.logger.debug { "Main menu screen is shown..." }
-        val registrationScreen = try {
-            loader.getScreen<RegistrationScreen>()
-        } catch (e: GdxRuntimeException) {
-            loader.addScreen(screen = RegistrationScreen(loader))
-            null
+        val registrationScreen = when {
+            loader.containsScreen<RegistrationScreen>() -> loader.getScreen<RegistrationScreen>()
+            else -> null
         }
         KtxAsync.launch {
             when (val result = loader.networkManager.updateUser()) {

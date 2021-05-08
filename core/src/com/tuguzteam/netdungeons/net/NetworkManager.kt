@@ -15,6 +15,9 @@ abstract class NetworkManager {
     var user: User? = null
         protected set
 
+    var game: Game? = null
+        protected set
+
     abstract suspend fun updateUser(): Result<User?>
 
     abstract suspend fun signIn(email: String, password: String): Result<User>
@@ -26,7 +29,9 @@ abstract class NetworkManager {
         return Result.Success(data = Unit)
     }
 
-    abstract suspend fun insertToMatchmakingQueue(): Result<Unit>
+    abstract suspend fun createRoom(): Result<Game>
 
-    abstract suspend fun removeFromMatchmakingQueue(): Result<Unit>
+    abstract suspend fun insertIntoQueue(): Result<Game?>
+
+    abstract suspend fun removeFromQueue(): Result<Unit>
 }
