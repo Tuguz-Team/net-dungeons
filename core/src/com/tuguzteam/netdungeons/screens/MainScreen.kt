@@ -13,6 +13,8 @@ import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.*
+import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
+import com.tuguzteam.netdungeons.ui.navigation.NavGame
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync

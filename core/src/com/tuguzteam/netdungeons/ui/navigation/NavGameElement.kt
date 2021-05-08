@@ -1,5 +1,9 @@
-package com.tuguzteam.netdungeons.ui
+package com.tuguzteam.netdungeons.ui.navigation
 
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.Window
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
