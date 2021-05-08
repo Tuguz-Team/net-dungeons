@@ -1,6 +1,5 @@
 package com.tuguzteam.netdungeons.ui.navigation
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
@@ -11,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
@@ -18,7 +18,10 @@ import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {
     private val scrollGroup = VerticalGroup().apply {
-        pad(Gdx.graphics.height / 6f).space(Gdx.graphics.height / 6f)
+        pad(
+            getHeightPerc(.1f), getHeightPerc(1 / 8f),
+            getHeightPerc(.1f), getHeightPerc(1 / 8f)
+        ).space(getHeightPerc(1 / 8f))
     }
     private val content = ScrollPane(scrollGroup).apply {
         setOverscroll(false, false)
@@ -46,7 +49,7 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
     }
 
     private val headerContent = HorizontalGroup().apply {
-        center().space(Gdx.graphics.height / 20f)
+        center().space(getHeightPerc(.05f))
         this += gameMode.innerLabel
         this += Label("in", skin)
         this += gameSize.innerLabel

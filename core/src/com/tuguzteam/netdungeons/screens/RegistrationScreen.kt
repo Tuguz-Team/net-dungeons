@@ -1,14 +1,16 @@
 package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
-import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.widget.VisTable
+import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.assets.SkinAsset
+import com.tuguzteam.netdungeons.dec
+import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.net.NetworkManager.Companion.EMAIL_REGEX
+import com.tuguzteam.netdungeons.net.NetworkManager.Companion.NAME_REGEX
+import com.tuguzteam.netdungeons.net.NetworkManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.ExtValidTextField
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
@@ -19,31 +21,34 @@ import ktx.log.error
 import ktx.log.info
 
 class RegistrationScreen(loader: Loader) : StageScreen(loader) {
-    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog = YesNoDialog(
         "Cancel registration?",
         onYesOption = { loader.setScreen<MainScreen>() }
     )
-
-    private val nameLabel = Label("Enter your name", defaultSkin)
-    private val nameTextField = TextField(null, defaultSkin).apply {
-        alignment = Align.center
+    private val nameTextField = ExtValidTextField(
+        NAME_REGEX, "Enter your name",
+        "name error", "empty name",
+    )
+    private val emailTextField = ExtValidTextField(
+        EMAIL_REGEX, "Enter your email",
+        "email error", "empty email"
+    )
+    private val passwordTextField = ExtValidTextField(
+        PASSWORD_REGEX, "Enter your password",
+        "password error", "empty password"
+    ).apply {
+        setPasswordMode('*')
     }
 
-    private val emailLabel = Label("Enter your email", defaultSkin)
-    private val emailTextField = TextField(null, defaultSkin).apply {
-        alignment = Align.center
+    init {
+        nameTextField.addListener(ClickListener { check(false) })
+        emailTextField.addListener(ClickListener { check(false) })
+        passwordTextField.addListener(ClickListener { check(false) })
     }
 
-    private val passwordLabel = Label("Enter your password", defaultSkin)
-    private val passwordTextField = TextField(null, defaultSkin).apply {
-        alignment = Align.center
-        isPasswordMode = true
-        setPasswordCharacter('*')
-    }
-
-    private val registerButton = TextButton("Register", defaultSkin).apply {
+    private val registerButton = VisTextButton("Register").apply {
         addListener(ClickListener {
+            check(true)
             val email = emailTextField.text
             val password = passwordTextField.text
             val name = nameTextField.text
@@ -57,25 +62,32 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
         })
     }
 
-    private val table = Table().apply {
+    private val table = VisTable(true).apply {
         center()
-
-        add(nameLabel).space(10f).row()
-        add(nameTextField).spaceBottom(40f).row()
-
-        add(emailLabel).space(10f).row()
-        add(emailTextField).spaceBottom(40f).row()
-
-        add(passwordLabel).space(10f).row()
-        add(passwordTextField).spaceBottom(40f).row()
-
-        add(registerButton)
+        nameTextField.addInto(this)
+        emailTextField.addInto(this)
+        passwordTextField.addInto(
+            this, VisTextButton("<  >", "toggle"
+            ).apply {
+                isFocusBorderEnabled = false
+                addListener(ClickListener {
+                    check(false)
+                    passwordTextField.isPasswordMode--
+                })
+        })
+        add(registerButton).colspan(2).pad(getHeightPerc(.05f))
     }
 
     init {
         isDebugAll = true
         this += table
         table.centerPosition()
+    }
+
+    private fun check(fromButton: Boolean) {
+        nameTextField.check(fromButton)
+        emailTextField.check(fromButton)
+        passwordTextField.check(fromButton)
     }
 
     override fun show() {

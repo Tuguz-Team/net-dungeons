@@ -1,5 +1,6 @@
 package com.tuguzteam.netdungeons
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.input.GestureDetector
@@ -45,3 +46,8 @@ interface KtxGestureAdapter : GestureDetector.GestureListener {
 }
 
 fun <T : Actor> T.isDoneActing() = actions.isEmpty
+
+fun getWidthPerc(perc: Float) = Gdx.graphics.width * perc
+fun getHeightPerc(perc: Float) = Gdx.graphics.height * perc
+
+operator fun Boolean.dec() = !this

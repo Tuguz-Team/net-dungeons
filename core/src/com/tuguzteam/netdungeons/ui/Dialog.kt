@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisDialog
+import com.tuguzteam.netdungeons.getHeightPerc
 
 open class Dialog(title: String) : VisDialog(title, "noborder") {
     var isHidden = true
@@ -26,7 +27,7 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
 
     fun pad() {
         buttonsTable.cells.forEach { cell ->
-            cell.pad(Gdx.graphics.height / 60f)
+            cell.pad(getHeightPerc(1 / 60f))
         }
     }
 

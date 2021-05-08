@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
+import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
@@ -46,7 +47,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             true, "By level", "By wins", "By kills"
         )
         private val sortButtons = HorizontalGroup().apply {
-            left().space(Gdx.graphics.height / 20f).padLeft(Gdx.graphics.height / 20f)
+            left().space(getHeightPerc(.05f)).padLeft(getHeightPerc(.05f))
             for (button in radioButton.buttons)
                 this += button
         }
