@@ -3,6 +3,7 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.kotcrab.vis.ui.VisUI
 import com.tuguzteam.netdungeons.assets.*
 import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
@@ -30,6 +31,7 @@ class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
 
         logger.debug { "Loader is creating now..." }
         KtxAsync.launch {
+            VisUI.load()
             assetManager.load(TextureAsset.LogoLibGDX)
             addScreen(screen = SplashScreen(this@Loader))
             setScreen<SplashScreen>()

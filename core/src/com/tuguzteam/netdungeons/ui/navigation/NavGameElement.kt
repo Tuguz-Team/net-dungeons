@@ -12,10 +12,13 @@ class NavGameElement(
     private val labelName: String, windowTitle: String,
     vararg buttonNames: String
 ) {
-    private val radioButton = RadioButton(false, skin, *buttonNames).apply {
-        buttons.forEachIndexed { index, checkBox ->
-            checkBox.addListener(ClickListener {
-                if (checkBox.isChecked) innerLabel.setText(buttonNames[index])
+    private val radioButton = RadioButton(false, *buttonNames).apply {
+        buttons.forEachIndexed { index, button ->
+            button.addListener(ClickListener {
+                    if (innerLabel.textEquals(buttonNames[index]))
+                        this@NavGameElement.uncheck()
+                    else
+                        innerLabel.setText(buttonNames[index])
             })
         }
     }
@@ -26,10 +29,18 @@ class NavGameElement(
             scrollPane.scrollPercentY = percentage
         })
     }
-    val window = Window(windowTitle, skin, *radioButton.buttons.toTypedArray())
+    val window = Window(windowTitle, false, *radioButton.buttons.toTypedArray())
+
+    fun anyChecked() = radioButton.anyChecked()
 
     fun uncheck() {
         innerLabel.setText(labelName)
         radioButton.uncheck()
     }
+
+    fun click() =
+        innerLabel.listeners.forEach { listener ->
+            (listener as ClickListener).clicked(null, 0f, 0f)
+        }
+
 }

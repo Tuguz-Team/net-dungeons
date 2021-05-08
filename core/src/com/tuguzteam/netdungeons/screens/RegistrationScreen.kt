@@ -22,7 +22,6 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
     private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog = YesNoDialog(
         "Cancel registration?",
-        defaultSkin,
         onYesOption = { loader.setScreen<MainScreen>() }
     )
 

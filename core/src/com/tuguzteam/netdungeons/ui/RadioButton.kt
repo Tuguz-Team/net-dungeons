@@ -1,15 +1,16 @@
 package com.tuguzteam.netdungeons.ui
 
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.kotcrab.vis.ui.widget.VisTextButton
 
-class RadioButton(checked: Boolean, skin: Skin, vararg buttonNames: String) {
-    val buttons = mutableListOf<CheckBox>()
+class RadioButton(checked: Boolean, vararg buttonNames: String) {
+    val buttons = mutableListOf<VisTextButton>()
 
     init {
         buttonNames.forEach { name ->
-            buttons += CheckBox(name, skin)
+            buttons += VisTextButton(name, "toggle").apply {
+                isFocusBorderEnabled = false
+            }
         }
     }
 
@@ -17,7 +18,7 @@ class RadioButton(checked: Boolean, skin: Skin, vararg buttonNames: String) {
         if (checked) buttons[0].isChecked = true
     }
 
-    fun uncheck() {
-        controller.uncheckAll()
-    }
+    fun uncheck() = controller.uncheckAll()
+
+    fun anyChecked() = buttons.find { button -> button.isChecked } != null
 }

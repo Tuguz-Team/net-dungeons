@@ -16,6 +16,8 @@ dependencies {
     api "io.github.libktx:ktx-math:$ktxVersion"
     api "io.github.libktx:ktx-graphics:$ktxVersion"
     api "io.github.libktx:ktx-log:$ktxVersion"
+
+    api "com.kotcrab.vis:vis-ui:$visuiVersion"
 }
 
 sourceCompatibility = 1.7

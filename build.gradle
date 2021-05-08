@@ -23,6 +23,7 @@ allprojects {
         appName = 'Net Dungeons'
         gdxVersion = '1.10.0'
         ktxVersion = '1.10.0-b1'
+        visuiVersion = '1.5.0'
     }
 
     repositories {

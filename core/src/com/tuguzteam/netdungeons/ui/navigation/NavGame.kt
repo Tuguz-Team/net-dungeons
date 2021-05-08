@@ -2,11 +2,18 @@ package com.tuguzteam.netdungeons.ui.navigation
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {
@@ -50,16 +57,18 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
         ImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {
-            loader.setScreen<GameScreen>()
+            when {
+                !gameMode.anyChecked() -> gameMode.click()
+                !gameSize.anyChecked() -> gameSize.click()
+                !gameType.anyChecked() -> gameType.click()
+                else -> loader.setScreen<GameScreen>()
+            }
+//            loader.setScreen<GameScreen>()
         })
     }
     private val headerSplitPane = SplitPane(
-        headerContent, Container(playButton),
-        false, skin
-    ).apply {
-        maxSplitAmount = 0.85f
-        minSplitAmount = 0.85f
-    }
+        headerContent, Container(playButton), false, 0.8f
+    )
     val navButton = ImageTextButton(
         "Game",
         ImageTextButtonStyle(null, null, null, BitmapFont())

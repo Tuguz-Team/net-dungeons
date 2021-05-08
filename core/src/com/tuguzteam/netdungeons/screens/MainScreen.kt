@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.SplitPane
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
@@ -13,6 +12,7 @@ import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.SplitPane
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
 import com.tuguzteam.netdungeons.ui.navigation.NavGame
@@ -26,7 +26,7 @@ import ktx.log.info
 class MainScreen(loader: Loader) : StageScreen(loader) {
     private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog =
-        YesNoDialog("Are you sure you want to exit?", defaultSkin, Gdx.app::exit)
+        YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
 
     inner class NavProfile {
         val navButton = ImageTextButton(
@@ -43,8 +43,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
 
     inner class NavRating {
         private val radioButton = RadioButton(
-            true, defaultSkin,
-            "By level", "By wins", "By kills"
+            true, "By level", "By wins", "By kills"
         )
         private val sortButtons = HorizontalGroup().apply {
             left().space(Gdx.graphics.height / 20f).padLeft(Gdx.graphics.height / 20f)
@@ -63,14 +62,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         }
     }
 
-    private val header = ContentHeader(this, null, defaultSkin)
-    private val contentSplitPane = SplitPane(
-        header, null,
-        true, defaultSkin
-    ).apply {
-        maxSplitAmount = 0.15f
-        minSplitAmount = 0.15f
-    }
+    private val header = ContentHeader(this, null, 0.9f)
+    private val contentSplitPane = SplitPane(header, null, true, 0.2f)
     private val navGame = NavGame(loader, defaultSkin, contentSplitPane, header)
     private val navigation = Table().apply {
         center().add(navGame.navButton).expand().row()
@@ -78,12 +71,9 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         add(NavRating().navButton).expand()
     }
     private val mainSplitPane = SplitPane(
-        navigation, contentSplitPane,
-        false, defaultSkin
+        navigation, contentSplitPane, false, 0.15f
     ).apply {
         setFillParent(true)
-        maxSplitAmount = 0.15f
-        minSplitAmount = 0.15f
     }
 
     init {
@@ -97,7 +87,10 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         Loader.logger.debug { "Main menu screen is shown..." }
         val registrationScreen = when {
             loader.containsScreen<RegistrationScreen>() -> loader.getScreen<RegistrationScreen>()
-            else -> null
+            else -> {
+                loader.addScreen(screen = RegistrationScreen(loader))
+                null
+            }
         }
         KtxAsync.launch {
             when (val result = loader.networkManager.updateUser()) {
