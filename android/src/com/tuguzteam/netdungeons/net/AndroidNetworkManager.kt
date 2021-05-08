@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
 import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
@@ -25,6 +26,11 @@ class AndroidNetworkManager : NetworkManager() {
 
     private val usersRef = firestore.collection(USERS_COLLECTION)
     private val gamesRef = firestore.collection(GAMES_COLLECTION)
+
+    private var currentGameRef: DocumentReference? = null
+
+    private fun gameAdminReference(documentReference: DocumentReference) =
+        documentReference.collection("private").document("admin")
 
     override suspend fun updateUser(): Result<User?> {
         val firebaseUser = auth.currentUser ?: return Result.Success(data = null)
@@ -71,9 +77,8 @@ class AndroidNetworkManager : NetworkManager() {
         Result.Failure(cause = throwable)
     }
 
-    override suspend fun signOut() = if (user == null) {
-        Result.Failure(cause = IllegalStateException("User is not signed in!"))
-    } else {
+    override suspend fun signOut(): Result<Unit> = resultFrom {
+        check(user != null) { "User is not signed in!" }
         auth.signOut()
         suspendCancellableCoroutine<Unit> { cont ->
             var listener: FirebaseAuth.AuthStateListener? = null
@@ -90,8 +95,6 @@ class AndroidNetworkManager : NetworkManager() {
         super.signOut()
     }
 
-    private var currentGameRef: DocumentReference? = null
-
     override suspend fun createRoom() = resultFrom {
         val exception by lazy {
             IllegalStateException("User is not signed in!")
@@ -103,7 +106,11 @@ class AndroidNetworkManager : NetworkManager() {
         val userID = firebaseUser.uid
         val game = Game(mutableListOf(userID), null)
         try {
-            gamesRef.document(userID).set(game).await()
+            val reference = gamesRef.document(userID)
+            val userIDs = mapOf("userIDs" to game.userIDs)
+            reference.set(userIDs).await()
+            val seed = mapOf("seed" to null)
+            gameAdminReference(reference).set(seed).await()
         } catch (e: FirebaseFirestoreException) {
             if (e.code != FirebaseFirestoreException.Code.PERMISSION_DENIED) throw e
         }
@@ -120,10 +127,12 @@ class AndroidNetworkManager : NetworkManager() {
         val firebaseUser = auth.currentUser ?: throw exception
         check(this.currentGameRef == null) { "Already in queue!" }
 
-        val allGames = gamesRef.whereEqualTo("seed", null).get().await().documents
+        val allGames = gamesRef.get().await().documents
         val mutableList = mutableListOf<Deferred<Boolean>>()
         val scope = CoroutineScope(coroutineContext)
         allGames.forEach { game ->
+            val seed = gameAdminReference(gamesRef.document(game.id)).get().await()["seed"] as Long?
+            if (seed != null) return@forEach
             mutableList += scope.async {
                 val document = usersRef.document(game.id).get().await()
                 val user = document.toObject(User::class.java)
@@ -140,7 +149,8 @@ class AndroidNetworkManager : NetworkManager() {
         )
         currentGameRef.update(updates).await()
         this.currentGameRef = currentGameRef
-        this.game = suitableGame.toObject(Game::class.java)
+        @Suppress("UNCHECKED_CAST")
+        this.game = Game(suitableGame["userIDs"] as MutableList<String>)
         game
     }
 
@@ -155,7 +165,9 @@ class AndroidNetworkManager : NetworkManager() {
 
         val userID = firebaseUser.uid
         if (currentGameRef.id == userID) {
-            currentGameRef.delete().await()
+            val adminReference = gameAdminReference(currentGameRef).delete().asDeferred()
+            val game = currentGameRef.delete().asDeferred()
+            awaitAll(adminReference, game)
         } else {
             val updates = mapOf(
                 "userIDs" to FieldValue.arrayRemove(userID)
