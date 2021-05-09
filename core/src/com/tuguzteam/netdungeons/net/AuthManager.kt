@@ -2,20 +2,17 @@ package com.tuguzteam.netdungeons.net
 
 import ktx.log.logger
 
-abstract class NetworkManager {
+abstract class AuthManager {
     companion object {
-        val logger = logger<NetworkManager>()
+        val logger = logger<AuthManager>()
 
         val EMAIL_REGEX = "^\\S+@\\S+\\.\\S+$".toRegex()
         val PASSWORD_REGEX =
-            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[;:`*()№\\\\/|~?!.'\"_@#\$%^&+=-])(?=\\S+$).{6,}$".toRegex()
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[;:`*()№\\\\/|~\\[\\]{},?!.'\"_@#\$%^&+=-])(?=\\S+$).{6,}$".toRegex()
         val NAME_REGEX = "^(?=.*[a-zA-Z])(?=\\S+\$).{4,}\$".toRegex()
     }
 
     var user: User? = null
-        protected set
-
-    var game: Game? = null
         protected set
 
     abstract suspend fun updateUser(): Result<User?>
@@ -28,12 +25,4 @@ abstract class NetworkManager {
         user = null
         return Result.Success(data = Unit)
     }
-
-    abstract suspend fun createGame(): Result<Game>
-
-    abstract suspend fun insertIntoQueue(): Result<Game?>
-
-    abstract suspend fun removeFromQueue(): Result<Unit>
-
-    abstract suspend fun startGame(seed: Long): Result<Game>
 }

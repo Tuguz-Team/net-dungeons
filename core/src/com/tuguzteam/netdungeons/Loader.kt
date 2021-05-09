@@ -5,7 +5,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.kotcrab.vis.ui.VisUI
 import com.tuguzteam.netdungeons.assets.*
-import com.tuguzteam.netdungeons.net.NetworkManager
+import com.tuguzteam.netdungeons.net.AuthManager
+import com.tuguzteam.netdungeons.net.GameManager
 import com.tuguzteam.netdungeons.screens.SplashScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
 import kotlinx.coroutines.launch
@@ -14,15 +15,13 @@ import ktx.async.KtxAsync
 import ktx.log.debug
 import ktx.log.logger
 
-class Loader(val networkManager: NetworkManager) : KtxGame<StageScreen>() {
+class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGame<StageScreen>() {
     companion object {
         val logger = logger<Loader>()
         val requiredAssets: Array<out Asset> = arrayOf(SkinAsset.Default, I18NBundleAsset.Default)
     }
 
-    val assetManager by lazy {
-        AssetManager()
-    }
+    val assetManager by lazy { AssetManager() }
 
     override fun create() {
         KtxAsync.initiate()

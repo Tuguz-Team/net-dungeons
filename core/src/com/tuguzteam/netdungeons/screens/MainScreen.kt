@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.getHeightPerc
-import com.tuguzteam.netdungeons.net.NetworkManager
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.RadioButton
@@ -94,7 +93,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             }
         }
         KtxAsync.launch {
-            when (val result = loader.networkManager.updateUser()) {
+            when (val result = loader.authManager.updateUser()) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                 is Result.Failure -> Loader.logger.error(result.cause) { "User update failure!" }
                 is Result.Success -> {
@@ -102,7 +101,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                     if (registrationScreen == null && data == null) {
                         loader.setScreen<RegistrationScreen>()
                     } else {
-                        NetworkManager.logger.debug(data::toString)
+                        Loader.logger.debug(data::toString)
                     }
                 }
             }

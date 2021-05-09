@@ -5,9 +5,9 @@ import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.dec
 import com.tuguzteam.netdungeons.getHeightPerc
-import com.tuguzteam.netdungeons.net.NetworkManager.Companion.EMAIL_REGEX
-import com.tuguzteam.netdungeons.net.NetworkManager.Companion.NAME_REGEX
-import com.tuguzteam.netdungeons.net.NetworkManager.Companion.PASSWORD_REGEX
+import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
+import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
+import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.ExtValidTextField
@@ -58,10 +58,11 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
             nameTextField.setEmptyError()
             emailTextField.setEmptyError()
             passwordTextField.setEmptyError()
+            val name = nameTextField.text
+            val email = emailTextField.text
+            val password = passwordTextField.text
             KtxAsync.launch {
-                when (val result = loader.networkManager.register(
-                    nameTextField.text, emailTextField.text, passwordTextField.text
-                )) {
+                when (val result = loader.authManager.register(name, email, password)) {
                     is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                     is Result.Failure -> Loader.logger.error(result.cause) { "Register failure!" }
                     is Result.Success -> loader.setScreen<MainScreen>()

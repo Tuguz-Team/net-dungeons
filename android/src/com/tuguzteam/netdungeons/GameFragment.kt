@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
-import com.tuguzteam.netdungeons.net.AndroidNetworkManager
+import com.tuguzteam.netdungeons.net.AndroidAuthManager
+import com.tuguzteam.netdungeons.net.AndroidGameManager
 
 @Suppress("unused")
 class GameFragment : AndroidFragmentApplication() {
-    private val loader = Loader(AndroidNetworkManager())
+    private val loader = Loader(AndroidAuthManager, AndroidGameManager)
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -1,20 +1,16 @@
 package com.tuguzteam.netdungeons.ui.navigation
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
+import ktx.log.error
 
 class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {
     private val scrollGroup = VerticalGroup().apply {
@@ -64,9 +60,16 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
                 !gameMode.anyChecked() -> gameMode.click()
                 !gameSize.anyChecked() -> gameSize.click()
                 !gameType.anyChecked() -> gameType.click()
-                else -> loader.setScreen<GameScreen>()
+                else -> try {
+                    val seed = loader.gameManager.game?.seed
+                    checkNotNull(seed) { "Game was not started on the server" }
+                    MathUtils.random.setSeed(seed)
+
+                    loader.setScreen<GameScreen>()
+                } catch (e: Exception) {
+                    Loader.logger.error(e) { "Game starting failure" }
+                }
             }
-//            loader.setScreen<GameScreen>()
         })
     }
     private val headerSplitPane = SplitPane(

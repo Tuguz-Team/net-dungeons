@@ -1,6 +1,5 @@
 package com.tuguzteam.netdungeons.ui
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.Align
