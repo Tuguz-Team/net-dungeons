@@ -22,6 +22,10 @@ class AndroidNetworkManager : NetworkManager() {
     companion object {
         private const val USERS_COLLECTION = "users"
         private const val GAMES_COLLECTION = "games"
+        private const val GAME_PRIVATE_COLLECTION = "private"
+        private const val GAME_PRIVATE_ADMIN_DOCUMENT = "admin"
+
+        private const val ONLINE_USERS_CHILD = "online-users"
     }
 
     private val auth = Firebase.auth
@@ -43,10 +47,10 @@ class AndroidNetworkManager : NetworkManager() {
     }
 
     private fun gameAdminReference(documentReference: DocumentReference) =
-        documentReference.collection("private").document("admin")
+        documentReference.collection(GAME_PRIVATE_COLLECTION).document(GAME_PRIVATE_ADMIN_DOCUMENT)
 
     private suspend fun setupOnDisconnectRef(firebaseUser: FirebaseUser) {
-        val ref = database.reference.child("online-users").child(firebaseUser.uid)
+        val ref = database.reference.child(ONLINE_USERS_CHILD).child(firebaseUser.uid)
         ref.setValue(true).await()
         onDisconnect?.cancel()
         onDisconnect = ref.onDisconnect().apply {
@@ -131,9 +135,10 @@ class AndroidNetworkManager : NetworkManager() {
         val userID = firebaseUser.uid
         val game = Game(mutableListOf(userID), null)
         val reference = gamesRef.document(userID)
-        val userIDsMap = mapOf("userIDs" to game.userIDs)
+
+        val userIDsMap = mapOf(Game.USER_IDS to game.userIDs)
         reference.set(userIDsMap).await()
-        val seedMap = mapOf("seed" to null)
+        val seedMap = mapOf(Game.SEED to null)
         gameAdminReference(reference).set(seedMap).await()
 
         currentGameRef = gamesRef.document(userID)
@@ -167,11 +172,11 @@ class AndroidNetworkManager : NetworkManager() {
         val suitableGame = allGames[index]
         val userID = firebaseUser.uid
         val currentGameRef = suitableGame.reference
-        val updates = mapOf("userIDs" to FieldValue.arrayUnion(userID))
+        val updates = mapOf(Game.USER_IDS to FieldValue.arrayUnion(userID))
         currentGameRef.update(updates).await()
         this.currentGameRef = currentGameRef
         @Suppress("UNCHECKED_CAST")
-        this.game = Game(suitableGame["userIDs"] as MutableList<String>)
+        this.game = Game(suitableGame[Game.USER_IDS] as MutableList<String>)
         game
     }
 
@@ -187,7 +192,7 @@ class AndroidNetworkManager : NetworkManager() {
             val game = currentGameRef.delete().asDeferred()
             awaitAll(adminReference, game)
         } else {
-            val updates = mapOf("userIDs" to FieldValue.arrayRemove(userID))
+            val updates = mapOf(Game.USER_IDS to FieldValue.arrayRemove(userID))
             currentGameRef.update(updates).await()
         }
         this.currentGameRef = null
@@ -202,7 +207,7 @@ class AndroidNetworkManager : NetworkManager() {
         check(currentGameRef != null && game != null) { "Game was not created!" }
 
         val adminReference = gameAdminReference(currentGameRef)
-        val seedMap = mapOf("seed" to seed)
+        val seedMap = mapOf(Game.SEED to seed)
         adminReference.set(seedMap).await()
 
         game.seed = seed
