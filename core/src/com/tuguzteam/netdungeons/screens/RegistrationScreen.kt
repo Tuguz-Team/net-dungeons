@@ -11,6 +11,7 @@ import com.tuguzteam.netdungeons.net.NetworkManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.ExtValidTextField
+import com.tuguzteam.netdungeons.ui.KeyTypeListener
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
@@ -41,19 +42,26 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
     }
 
     init {
-        nameTextField.addListener(ClickListener { check(false) })
-        emailTextField.addListener(ClickListener { check(false) })
-        passwordTextField.addListener(ClickListener { check(false) })
+        nameTextField.setTextFieldListener(
+            KeyTypeListener { nameTextField.setInputError() }
+        )
+        emailTextField.setTextFieldListener(
+            KeyTypeListener { emailTextField.setInputError() }
+        )
+        passwordTextField.setTextFieldListener(
+            KeyTypeListener { passwordTextField.setInputError() }
+        )
     }
 
     private val registerButton = VisTextButton("Register").apply {
         addListener(ClickListener {
-            check(true)
-            val email = emailTextField.text
-            val password = passwordTextField.text
-            val name = nameTextField.text
+            nameTextField.setEmptyError()
+            emailTextField.setEmptyError()
+            passwordTextField.setEmptyError()
             KtxAsync.launch {
-                when (val result = loader.networkManager.register(name, email, password)) {
+                when (val result = loader.networkManager.register(
+                    nameTextField.text, emailTextField.text, passwordTextField.text
+                )) {
                     is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                     is Result.Failure -> Loader.logger.error(result.cause) { "Register failure!" }
                     is Result.Success -> loader.setScreen<MainScreen>()
@@ -62,32 +70,24 @@ class RegistrationScreen(loader: Loader) : StageScreen(loader) {
         })
     }
 
-    private val table = VisTable(true).apply {
-        center()
-        nameTextField.addInto(this)
-        emailTextField.addInto(this)
-        passwordTextField.addInto(
-            this, VisTextButton("<  >", "toggle"
-            ).apply {
+    private val registrationContent = VisTable(true).apply {
+        center().padTop(getHeightPerc(1 / 20f))
+        nameTextField.addTo(this)
+        emailTextField.addTo(this)
+        passwordTextField.addTo(this,
+            VisTextButton("<  >", "toggle").apply {
                 isFocusBorderEnabled = false
                 addListener(ClickListener {
-                    check(false)
                     passwordTextField.isPasswordMode--
                 })
         })
-        add(registerButton).colspan(2).pad(getHeightPerc(.05f))
+        add(registerButton).colspan(2).fillX().pad(getHeightPerc(.05f))
     }
 
     init {
         isDebugAll = true
-        this += table
-        table.centerPosition()
-    }
-
-    private fun check(fromButton: Boolean) {
-        nameTextField.check(fromButton)
-        emailTextField.check(fromButton)
-        passwordTextField.check(fromButton)
+        this += registrationContent
+        registrationContent.centerPosition()
     }
 
     override fun show() {
