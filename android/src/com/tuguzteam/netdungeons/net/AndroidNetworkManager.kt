@@ -6,7 +6,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
@@ -45,10 +44,11 @@ class AndroidNetworkManager : NetworkManager() {
         require(name matches NAME_REGEX) { "Name does not match pattern!" }
         require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
         require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-        if (user != null) throw IllegalStateException("User is signed in!")
+        check(user == null) { "User is signed in!" }
 
         val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-        val firebaseUser = authResult.user!!
+        val firebaseUser: FirebaseUser? = authResult.user
+        check(firebaseUser != null) { "WTF user is null?" }
         firebaseUser.updateProfile(userProfileChangeRequest {
             displayName = name
         }).await()
@@ -60,12 +60,13 @@ class AndroidNetworkManager : NetworkManager() {
     override suspend fun signIn(email: String, password: String) = try {
         require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
         require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-        if (user != null) throw IllegalStateException("User is signed in!")
+        check(user == null) { "User is signed in!" }
 
         auth.signInWithEmailAndPassword(email, password).await()
         val result = this.updateUser()
         if (result is Result.Success) {
-            val data = result.data ?: throw IllegalStateException("WTF user is null?")
+            val data = result.data
+            check(data != null) { "WTF user is null?" }
             Result.Success(data)
         } else {
             @Suppress("UNCHECKED_CAST")
@@ -95,37 +96,29 @@ class AndroidNetworkManager : NetworkManager() {
         super.signOut()
     }
 
-    override suspend fun createRoom() = resultFrom {
-        val exception by lazy {
-            IllegalStateException("User is not signed in!")
-        }
-        this.user ?: throw exception
-        val firebaseUser = auth.currentUser ?: throw exception
-        check(this.currentGameRef == null) { "Room already created!" }
+    override suspend fun createGame() = resultFrom {
+        val firebaseUser: FirebaseUser? = auth.currentUser
+        check(user != null && firebaseUser != null) { "User is not signed in!" }
+        check(currentGameRef == null && game == null) { "Game already created!" }
 
         val userID = firebaseUser.uid
         val game = Game(mutableListOf(userID), null)
-        try {
-            val reference = gamesRef.document(userID)
-            val userIDs = mapOf("userIDs" to game.userIDs)
-            reference.set(userIDs).await()
-            val seed = mapOf("seed" to null)
-            gameAdminReference(reference).set(seed).await()
-        } catch (e: FirebaseFirestoreException) {
-            if (e.code != FirebaseFirestoreException.Code.PERMISSION_DENIED) throw e
-        }
+        val reference = gamesRef.document(userID)
+        val userIDsMap = mapOf("userIDs" to game.userIDs)
+        reference.set(userIDsMap).await()
+        val seedMap = mapOf("seed" to null)
+        gameAdminReference(reference).set(seedMap).await()
+
         currentGameRef = gamesRef.document(userID)
         this.game = game
         game
     }
 
     override suspend fun insertIntoQueue() = resultFrom {
-        val exception by lazy {
-            IllegalStateException("User is not signed in!")
-        }
-        this.user ?: throw exception
-        val firebaseUser = auth.currentUser ?: throw exception
-        check(this.currentGameRef == null) { "Already in queue!" }
+        val firebaseUser: FirebaseUser? = auth.currentUser
+        val currentUser = user
+        check(currentUser != null && firebaseUser != null) { "User is not signed in!" }
+        check(currentGameRef == null && game == null) { "Already in queue!" }
 
         val allGames = gamesRef.get().await().documents
         val mutableList = mutableListOf<Deferred<Boolean>>()
@@ -136,7 +129,10 @@ class AndroidNetworkManager : NetworkManager() {
             mutableList += scope.async {
                 val document = usersRef.document(game.id).get().await()
                 val user = document.toObject(User::class.java)
-                user?.let { it.level in 0..3 } == true
+                val threshold = 2
+                user?.let {
+                    it.level in (currentUser.level - threshold)..(currentUser.level + threshold)
+                } == true
             }
         }
 
@@ -144,9 +140,7 @@ class AndroidNetworkManager : NetworkManager() {
         val suitableGame = allGames[index]
         val userID = firebaseUser.uid
         val currentGameRef = suitableGame.reference
-        val updates = mapOf(
-            "userIDs" to FieldValue.arrayUnion(userID)
-        )
+        val updates = mapOf("userIDs" to FieldValue.arrayUnion(userID))
         currentGameRef.update(updates).await()
         this.currentGameRef = currentGameRef
         @Suppress("UNCHECKED_CAST")
@@ -155,13 +149,10 @@ class AndroidNetworkManager : NetworkManager() {
     }
 
     override suspend fun removeFromQueue() = resultFrom {
-        val exception by lazy {
-            IllegalStateException("User is not signed in!")
-        }
-        user ?: throw exception
-        val firebaseUser = auth.currentUser ?: throw exception
+        val firebaseUser: FirebaseUser? = auth.currentUser
         val currentGameRef = currentGameRef
-            ?: throw IllegalStateException("No current game to quit from!")
+        check(user != null && firebaseUser != null) { "User is not signed in!" }
+        check(currentGameRef != null && game != null) { "No current game to quit from!" }
 
         val userID = firebaseUser.uid
         if (currentGameRef.id == userID) {
@@ -169,12 +160,25 @@ class AndroidNetworkManager : NetworkManager() {
             val game = currentGameRef.delete().asDeferred()
             awaitAll(adminReference, game)
         } else {
-            val updates = mapOf(
-                "userIDs" to FieldValue.arrayRemove(userID)
-            )
+            val updates = mapOf("userIDs" to FieldValue.arrayRemove(userID))
             currentGameRef.update(updates).await()
         }
         this.currentGameRef = null
         this.game = null
+    }
+
+    override suspend fun startGame(seed: Long) = resultFrom {
+        val firebaseUser: FirebaseUser? = auth.currentUser
+        val currentGameRef = currentGameRef
+        val game = game
+        check(user != null && firebaseUser != null) { "User is not signed in!" }
+        check(currentGameRef != null && game != null) { "Game was not created!" }
+
+        val adminReference = gameAdminReference(currentGameRef)
+        val seedMap = mapOf("seed" to seed)
+        adminReference.set(seedMap).await()
+
+        game.seed = seed
+        game
     }
 }

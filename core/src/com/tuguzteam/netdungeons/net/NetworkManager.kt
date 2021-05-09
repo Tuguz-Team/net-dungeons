@@ -29,9 +29,11 @@ abstract class NetworkManager {
         return Result.Success(data = Unit)
     }
 
-    abstract suspend fun createRoom(): Result<Game>
+    abstract suspend fun createGame(): Result<Game>
 
     abstract suspend fun insertIntoQueue(): Result<Game?>
 
     abstract suspend fun removeFromQueue(): Result<Unit>
+
+    abstract suspend fun startGame(seed: Long): Result<Game>
 }
