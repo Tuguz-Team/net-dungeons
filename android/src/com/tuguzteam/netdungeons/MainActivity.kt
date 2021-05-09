@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
         MultiDex.install(this)
     }
 
+    @Suppress("DEPRECATION")
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)

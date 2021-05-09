@@ -8,6 +8,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
 import com.tuguzteam.netdungeons.net.AndroidNetworkManager
 
+@Suppress("unused")
 class GameFragment : AndroidFragmentApplication() {
     private val loader = Loader(AndroidNetworkManager())
 
