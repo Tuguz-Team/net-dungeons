@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui
+package com.tuguzteam.netdungeons.ui.auth
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.ui.Button
@@ -28,6 +28,8 @@ class ExtValidTextField(
     }
 
     fun addTo(table: Table, fieldButton: Button? = null) {
+        errorLabel.setText(null)
+        setText(null)
         if (fieldButton == null) {
             table.add(infoLabel).colspan(2).fillX().row()
             table.add(this).colspan(2).fillX().row()

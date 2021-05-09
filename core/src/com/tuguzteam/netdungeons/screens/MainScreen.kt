@@ -11,7 +11,7 @@ import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.SplitPane
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
@@ -42,12 +42,12 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     }
 
     inner class NavRating {
-        private val radioButton = RadioButton(
+        private val radioButton = RadioButtonGroup(
             true, "By level", "By wins", "By kills"
         )
         private val sortButtons = HorizontalGroup().apply {
             left().space(getHeightPerc(.05f)).padLeft(getHeightPerc(.05f))
-            for (button in radioButton.buttons)
+            for (button in radioButton.groupButtons)
                 this += button
         }
         val navButton = ImageTextButton(
@@ -86,9 +86,9 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         super.show()
         Loader.logger.debug { "Main menu screen is shown..." }
         val registrationScreen = when {
-            loader.containsScreen<RegistrationScreen>() -> loader.getScreen<RegistrationScreen>()
+            loader.containsScreen<AuthScreen>() -> loader.getScreen<AuthScreen>()
             else -> {
-                loader.addScreen(screen = RegistrationScreen(loader))
+                loader.addScreen(screen = AuthScreen(loader))
                 null
             }
         }
@@ -99,7 +99,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
                 is Result.Success -> {
                     val data = result.data
                     if (registrationScreen == null && data == null) {
-                        loader.setScreen<RegistrationScreen>()
+                        loader.setScreen<AuthScreen>()
                     } else {
                         Loader.logger.debug(data::toString)
                     }

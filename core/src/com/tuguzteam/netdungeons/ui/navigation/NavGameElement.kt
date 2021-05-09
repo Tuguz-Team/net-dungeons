@@ -4,16 +4,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.RadioButton
+import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.Window
+import com.tuguzteam.netdungeons.ui.doClick
 
 class NavGameElement(
     skin: Skin, scrollPane: ScrollPane, percentage: Float,
     private val labelName: String, windowTitle: String,
     vararg buttonNames: String
 ) {
-    private val radioButton = RadioButton(false, *buttonNames).apply {
-        buttons.forEachIndexed { index, button ->
+    private val radioButton = RadioButtonGroup(false, *buttonNames).apply {
+        groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
                     if (innerLabel.textEquals(buttonNames[index]))
                         this@NavGameElement.uncheck()
@@ -29,7 +30,7 @@ class NavGameElement(
             scrollPane.scrollPercentY = percentage
         })
     }
-    val window = Window(windowTitle, false, *radioButton.buttons.toTypedArray())
+    val window = Window(windowTitle, false, *radioButton.groupButtons.toTypedArray())
 
     fun anyChecked() = radioButton.anyChecked()
 
@@ -38,9 +39,5 @@ class NavGameElement(
         radioButton.uncheck()
     }
 
-    fun click() =
-        innerLabel.listeners.forEach { listener ->
-            (listener as ClickListener).clicked(null, 0f, 0f)
-        }
-
+    fun click() = doClick(innerLabel)
 }
