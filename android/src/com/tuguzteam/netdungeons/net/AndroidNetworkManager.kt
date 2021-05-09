@@ -4,6 +4,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.OnDisconnect
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
@@ -11,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
+import ktx.log.error
 import kotlin.coroutines.coroutineContext
 import kotlin.coroutines.resume
 
@@ -22,18 +26,38 @@ class AndroidNetworkManager : NetworkManager() {
 
     private val auth = Firebase.auth
     private val firestore = Firebase.firestore
+    private val database = Firebase.database
 
     private val usersRef = firestore.collection(USERS_COLLECTION)
     private val gamesRef = firestore.collection(GAMES_COLLECTION)
 
     private var currentGameRef: DocumentReference? = null
 
+    private var onDisconnect: OnDisconnect? = null
+    private val onDisconnectCompletionListener = DatabaseReference.CompletionListener { error, _ ->
+        error?.let {
+            logger.error(it.toException()) {
+                "Could not establish disconnect event: ${it.message}"
+            }
+        }
+    }
+
     private fun gameAdminReference(documentReference: DocumentReference) =
         documentReference.collection("private").document("admin")
+
+    private suspend fun setupOnDisconnectRef(firebaseUser: FirebaseUser) {
+        val ref = database.reference.child("online-users").child(firebaseUser.uid)
+        ref.setValue(true).await()
+        onDisconnect?.cancel()
+        onDisconnect = ref.onDisconnect().apply {
+            setValue(false, onDisconnectCompletionListener)
+        }
+    }
 
     override suspend fun updateUser(): Result<User?> {
         val firebaseUser = auth.currentUser ?: return Result.Success(data = null)
         return resultFrom {
+            setupOnDisconnectRef(firebaseUser)
             val document = usersRef.document(firebaseUser.uid).get().await()
             user = document.toObject(User::class.java)
             user
@@ -52,9 +76,12 @@ class AndroidNetworkManager : NetworkManager() {
         firebaseUser.updateProfile(userProfileChangeRequest {
             displayName = name
         }).await()
-        user = User(name, 0)
-        usersRef.document(firebaseUser.uid).set(user!!).await()
-        user!!
+
+        setupOnDisconnectRef(firebaseUser)
+        val user = User(name, 0)
+        usersRef.document(firebaseUser.uid).set(user).await()
+        this.user = user
+        user
     }
 
     override suspend fun signIn(email: String, password: String) = try {
@@ -65,9 +92,9 @@ class AndroidNetworkManager : NetworkManager() {
         auth.signInWithEmailAndPassword(email, password).await()
         val result = this.updateUser()
         if (result is Result.Success) {
-            val data = result.data
-            check(data != null) { "WTF user is null?" }
-            Result.Success(data)
+            val user = result.data
+            check(user != null) { "WTF user is null?" }
+            Result.Success(data = user)
         } else {
             @Suppress("UNCHECKED_CAST")
             result as Result<User>
