@@ -12,8 +12,8 @@ class ExtValidTextField(
     regex: Regex, infoText: String, private val inputError: String,
     private val emptyError: String? = null, align: Int = Align.center
 ) : VisValidatableTextField() {
-    private val infoLabel = VisLabel(infoText, align)
-    private val errorLabel = VisLabel(null, align).apply {
+    private var infoLabel = VisLabel(infoText, align)
+    private var errorLabel = VisLabel(null, align).apply {
         color = Color.RED
     }
 
@@ -40,6 +40,13 @@ class ExtValidTextField(
             table.add(fieldButton).spaceLeft(getHeightPerc(1 / 60f)).row()
             table.add(errorLabel).colspan(2).fillX().row()
         }
+    }
+
+    fun getState() = Pair(text, errorLabel.text.toString())
+
+    fun setState(state: Pair<String, String>) {
+        setText(state.first)
+        errorLabel.setText(state.second)
     }
 
     fun setInputError() {

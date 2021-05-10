@@ -9,7 +9,6 @@ import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.KeyTypeListener
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.auth.AuthContent
@@ -31,24 +30,15 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     private val nameTextField = ExtValidTextField(
         NAME_REGEX, "Enter your name",
         "name error", "empty name",
-    ).apply {
-        setTextFieldListener(KeyTypeListener { setInputError() })
-    }
-
+    )
     private val emailTextField = ExtValidTextField(
         EMAIL_REGEX, "Enter your email",
         "email error", "empty email"
-    ).apply {
-        setTextFieldListener(KeyTypeListener { setInputError() })
-    }
-
+    )
     private val passwordTextField = ExtValidTextField(
         PASSWORD_REGEX, "Enter your password",
         "password error", "empty password"
-    ).apply {
-        setPasswordMode('*')
-        setTextFieldListener(KeyTypeListener { setInputError() })
-    }
+    ).apply { setPasswordMode('*') }
 
     private val optionContent = VisTable(true)
     private val registerContent = AuthContent("Register", ClickListener {
@@ -77,7 +67,12 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }, optionContent, passwordTextField, emailTextField)
 
     private val radioButton = RadioButtonGroup(true, true,
-        registerContent.radioButton, loginContent.radioButton
+        registerContent.radioButton.apply {
+            addListener(ClickListener { registerContent.updateState() })
+        },
+        loginContent.radioButton.apply {
+            addListener(ClickListener { loginContent.updateState() })
+        }
     )
     private val chooseOptionButtons = HorizontalGroup().apply {
         center().space(getHeightPerc(.05f))
