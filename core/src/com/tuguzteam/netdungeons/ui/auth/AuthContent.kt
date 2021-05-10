@@ -49,6 +49,7 @@ class AuthContent(
     }
 
     fun updateState() {
+        passwordTextField.isPasswordMode = !viewPasswordButton.isChecked
         wasChecked = false
 
         textFields.forEach { textField ->
