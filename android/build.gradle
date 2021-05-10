@@ -50,6 +50,8 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
+
+        // [kotlinx-coroutines-android]
         exclude 'DebugProbesKt.bin'
     }
     defaultConfig {

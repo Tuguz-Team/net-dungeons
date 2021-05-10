@@ -1,14 +1,15 @@
 package com.tuguzteam.netdungeons.screens
 
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.kotcrab.vis.ui.layout.FlowGroup
 import com.kotcrab.vis.ui.widget.VisTable
-import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.OkDialog
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.auth.AuthContent
@@ -22,22 +23,27 @@ import ktx.log.error
 import ktx.log.info
 
 class AuthScreen(loader: Loader) : StageScreen(loader) {
-    private val yesNoDialog = YesNoDialog(
+    private val cancelDialog = YesNoDialog(
         "Cancel registration?",
         onYesOption = { loader.setScreen<MainScreen>() }
     )
+    private val registrationErrorDialog = OkDialog("Registration error!").apply { text("") }
+    private val signInErrorDialog = OkDialog("Sign in error!").apply { text("") }
 
     private val nameTextField = ExtValidTextField(
         NAME_REGEX, "Enter your name",
-        "name error", "empty name",
+        "Name doesn't match pattern",
+        "Name couldn't be empty",
     )
     private val emailTextField = ExtValidTextField(
         EMAIL_REGEX, "Enter your email",
-        "email error", "empty email"
+        "Email doesn't match pattern",
+        "Email couldn't be empty",
     )
     private val passwordTextField = ExtValidTextField(
         PASSWORD_REGEX, "Enter your password",
-        "password error", "empty password"
+        "Password doesn't match pattern",
+        "Password couldn't be empty",
     ).apply { setPasswordMode('*') }
 
     private val optionContent = VisTable(true)
@@ -48,26 +54,59 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
             val password = passwordTextField.text
             when (val result = loader.authManager.register(name, email, password)) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
-                is Result.Failure -> Loader.logger.error(result.cause) { "Registration failure!" }
+                is Result.Failure -> {
+                    Loader.logger.error(result.cause) { "Registration failure!" }
+                    registrationErrorDialog.apply {
+                        val message: String = when {
+                            email.isBlank() -> "Email cannot be empty"
+                            password.isBlank() -> "Password cannot be empty"
+                            else -> when (result.cause) {
+                                is AuthInvalidPasswordException -> "Server rejected given password: it is too weak"
+                                is AuthInvalidEmailException -> "Server rejected given email"
+                                is AuthUserCollisionException -> "User with given email already exists"
+                                is WeakNetworkException -> "Check your Internet connection and try again"
+                                else -> "Internal server error"
+                            }
+                        }
+                        (contentTable.cells[0].actor as Label).setText(message)
+                        this.show(this@AuthScreen)
+                    }
+                }
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
         }
     }, optionContent, passwordTextField, nameTextField, emailTextField)
 
-    private val loginContent = AuthContent("Login", ClickListener {
+    private val signInContent = AuthContent("Login", ClickListener {
         KtxAsync.launch {
             val email = emailTextField.text
             val password = passwordTextField.text
             when (val result = loader.authManager.signIn(email, password)) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
-                is Result.Failure -> Loader.logger.error(result.cause) { "Sign in failure!" }
+                is Result.Failure -> {
+                    Loader.logger.error(result.cause) { "Sign in failure!" }
+                    signInErrorDialog.apply {
+                        val message = when {
+                            email.isBlank() -> "Email cannot be empty"
+                            password.isBlank() -> "Password cannot be empty"
+                            else -> when (result.cause) {
+                                is AuthInvalidPasswordException -> "Wrong password for account with given email"
+                                is AuthInvalidUserException -> "No user exists with given email"
+                                is WeakNetworkException -> "Check your Internet connection and try again"
+                                else -> "Internal server error"
+                            }
+                        }
+                        (contentTable.cells[0].actor as Label).setText(message)
+                        this.show(this@AuthScreen)
+                    }
+                }
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
         }
     }, optionContent, passwordTextField, emailTextField)
 
     private val radioButton = RadioButtonGroup(true, true,
-        registerContent.radioButton, loginContent.radioButton
+        registerContent.radioButton, signInContent.radioButton
     )
     private val chooseOptionButtons = FlowGroup(
         false, getHeightPerc(.05f)
@@ -93,6 +132,6 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }
 
     override fun onBackPressed() {
-        if (yesNoDialog.isHidden) yesNoDialog.show(this)
+        if (cancelDialog.isHidden) cancelDialog.show(this)
     }
 }

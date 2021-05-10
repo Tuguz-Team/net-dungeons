@@ -1,10 +1,10 @@
 package com.tuguzteam.netdungeons.net
 
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.*
+import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.MainActivity.Companion.auth
 import com.tuguzteam.netdungeons.MainActivity.Companion.database
 import com.tuguzteam.netdungeons.MainActivity.Companion.firestore
@@ -59,7 +59,18 @@ object AndroidAuthManager : AuthManager() {
         require(password matches PASSWORD_REGEX) { "Password does not match pattern" }
         check(user == null) { "User is signed in" }
 
-        auth.signInWithEmailAndPassword(email, password).await()
+        // Throw exception based on Firebase exception type
+        try {
+            auth.signInWithEmailAndPassword(email, password).await()
+        } catch (e: Exception) {
+            throw when (e) {
+                is FirebaseAuthInvalidCredentialsException -> AuthInvalidPasswordException()
+                is FirebaseAuthInvalidUserException -> AuthInvalidUserException()
+                is FirebaseNetworkException -> WeakNetworkException()
+                else -> e
+            }
+        }
+
         when (val result = this.syncUser()) {
             is Result.Cancel -> Result.Cancel()
             is Result.Failure -> Result.Failure(cause = result.cause)
@@ -81,7 +92,19 @@ object AndroidAuthManager : AuthManager() {
         require(password matches PASSWORD_REGEX) { "Password does not match pattern" }
         check(user == null) { "User is signed in" }
 
-        val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+        val authResult: AuthResult
+        try {
+            authResult = auth.createUserWithEmailAndPassword(email, password).await()
+        } catch (e: Exception) {
+            throw when (e) {
+                is FirebaseAuthUserCollisionException -> AuthUserCollisionException()
+                is FirebaseAuthWeakPasswordException -> AuthInvalidPasswordException()
+                is FirebaseAuthInvalidCredentialsException -> AuthInvalidEmailException()
+                is FirebaseNetworkException -> WeakNetworkException()
+                else -> e
+            }
+        }
+
         val firebaseUser: FirebaseUser? = authResult.user
         check(firebaseUser != null) { "WTF user is null?" }
         firebaseUser.updateProfile(userProfileChangeRequest {
