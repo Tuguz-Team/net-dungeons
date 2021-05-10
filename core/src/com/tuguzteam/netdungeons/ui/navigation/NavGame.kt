@@ -2,8 +2,13 @@ package com.tuguzteam.netdungeons.ui.navigation
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.scenes.scene2d.ui.*
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
+import com.badlogic.gdx.scenes.scene2d.ui.Container
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
+import com.kotcrab.vis.ui.widget.VisImageTextButton
+import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.net.GameState
@@ -19,27 +24,29 @@ import ktx.log.debug
 import ktx.log.error
 import ktx.log.info
 
-class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {
+class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader) {
     private val scrollGroup = VerticalGroup().apply {
         pad(
             getHeightPerc(.1f), getHeightPerc(1 / 8f),
             getHeightPerc(.1f), getHeightPerc(1 / 8f)
         ).space(getHeightPerc(1 / 8f))
     }
-    private val content = ScrollPane(scrollGroup).apply {
+    private val content = VisScrollPane(scrollGroup).apply {
         setOverscroll(false, false)
+        setScrollbarsVisible(true)
+        fadeScrollBars = false
         setFlingTime(0f)
     }
     private val gameMode = NavGameElement(
-        skin, content, 0f, "Mode",
+        content, 0f, "Mode",
         "Choose game mode", "Team Fight", "Slaughter"
     )
     private val gameSize = NavGameElement(
-        skin, content, .5f, "Size",
+        content, .5f, "Size",
         "Choose map size", "Medium", "Large", "Very Large"
     )
     private val gameType = NavGameElement(
-        skin, content, 1f, "Type",
+        content, 1f, "Type",
         "Choose amounts of treasure", "Mansion", "Castle", "Slum"
     )
 
@@ -54,13 +61,12 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
     private val headerContent = HorizontalGroup().apply {
         center().space(getHeightPerc(.05f))
         this += gameMode.innerLabel
-        this += Label("in", skin)
+        this += VisLabel("in")
         this += gameSize.innerLabel
         this += gameType.innerLabel
     }
-    private val playButton = ImageTextButton(
-        "Play",
-        ImageTextButtonStyle(null, null, null, BitmapFont())
+    private val playButton = VisImageTextButton("Play",
+        VisImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {
             when {
@@ -109,9 +115,8 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
     private val headerSplitPane = SplitPane(
         headerContent, Container(playButton), false, 0.8f
     )
-    val navButton = ImageTextButton(
-        "Game",
-        ImageTextButtonStyle(null, null, null, BitmapFont())
+    val navButton = VisImageTextButton("Game",
+        VisImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {
             contentSplitPane.setSecondWidget(content)

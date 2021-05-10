@@ -3,11 +3,11 @@ package com.tuguzteam.netdungeons.screens
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton
-import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.kotcrab.vis.ui.layout.FlowGroup
+import com.kotcrab.vis.ui.widget.VisImageTextButton
+import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
+import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.assets.SkinAsset
 import com.tuguzteam.netdungeons.getHeightPerc
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
@@ -24,18 +24,17 @@ import ktx.log.error
 import ktx.log.info
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
-    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
+//    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog =
         YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
 
     inner class NavProfile {
-        val navButton = ImageTextButton(
-            "Profile",
-            ImageTextButtonStyle(null, null, null, BitmapFont())
+        val navButton = VisImageTextButton("Profile",
+            VisImageTextButtonStyle(null, null, null, BitmapFont())
         ).apply {
             addListener(ClickListener {
                 contentSplitPane.setSecondWidget(null)
-                header.setFirstWidget(HorizontalGroup())
+                header.setFirstWidget(FlowGroup(false))
                 navGame.uncheck()
             })
         }
@@ -50,9 +49,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             for (button in radioButton.groupButtons)
                 this += button
         }
-        val navButton = ImageTextButton(
-            "Rating",
-            ImageTextButtonStyle(null, null, null, BitmapFont())
+        val navButton = VisImageTextButton("Rating",
+            VisImageTextButtonStyle(null, null, null, BitmapFont())
         ).apply {
             addListener(ClickListener {
                 contentSplitPane.setSecondWidget(null)
@@ -64,8 +62,9 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
 
     private val header = ContentHeader(this, null, 0.9f)
     private val contentSplitPane = SplitPane(header, null, true, 0.2f)
-    private val navGame = NavGame(loader, defaultSkin, contentSplitPane, header)
-    private val navigation = Table().apply {
+    private val navGame = NavGame(loader, contentSplitPane, header)
+
+    private val navigation = VisTable().apply {
         center().add(navGame.navButton).expand().row()
         add(NavProfile().navButton).expand().row()
         add(NavRating().navButton).expand()

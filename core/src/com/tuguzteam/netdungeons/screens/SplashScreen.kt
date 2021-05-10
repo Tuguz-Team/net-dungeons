@@ -2,7 +2,7 @@ package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.scenes.scene2d.actions.Actions.*
-import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.kotcrab.vis.ui.widget.VisImage
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.isDoneActing
@@ -18,8 +18,9 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
     private val logoTexture = assetManager[TextureAsset.LogoLibGDX]!!.apply {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
     }
-    private val logoImage = Image(logoTexture).apply {
-        this += alpha(0f) then fadeIn(1.25f) then delay(1.5f) then fadeOut(0.75f)
+    private val logoImage = VisImage(logoTexture).apply {
+        this += alpha(0f) then fadeIn(1.25f) then
+                delay(1.5f) then fadeOut(0.75f)
     }
 
     init {

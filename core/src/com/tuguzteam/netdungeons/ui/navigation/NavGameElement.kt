@@ -1,15 +1,14 @@
 package com.tuguzteam.netdungeons.ui.navigation
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.Window
 import com.tuguzteam.netdungeons.ui.doClick
 
 class NavGameElement(
-    skin: Skin, scrollPane: ScrollPane, percentage: Float,
+    scrollPane: VisScrollPane, percentage: Float,
     private val labelName: String, windowTitle: String,
     vararg buttonNames: String
 ) {
@@ -23,7 +22,7 @@ class NavGameElement(
             })
         }
     }
-    val innerLabel = Label(labelName, skin).apply {
+    val innerLabel = VisLabel(labelName).apply {
         addListener(ClickListener {
             scrollPane.cancel()
             scrollPane.layout()

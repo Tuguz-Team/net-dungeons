@@ -1,6 +1,6 @@
 package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
+import com.kotcrab.vis.ui.layout.FlowGroup
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.getHeightPerc
@@ -74,14 +74,14 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
             addListener(ClickListener { loginContent.updateState() })
         }
     )
-    private val chooseOptionButtons = HorizontalGroup().apply {
-        center().space(getHeightPerc(.05f))
-        for (button in radioButton.groupButtons)
-            this += button
+    private val chooseOptionButtons = FlowGroup(
+        false, getHeightPerc(.05f)
+    ).apply {
+        radioButton.groupButtons.forEach { button -> this += button }
     }
 
     private val contentGroup = VisTable(true).apply {
-        add(chooseOptionButtons).fillX().row()
+        add(chooseOptionButtons).expandX().row()
         addSeparator().padBottom(getHeightPerc(.025f))
         add(optionContent)
     }

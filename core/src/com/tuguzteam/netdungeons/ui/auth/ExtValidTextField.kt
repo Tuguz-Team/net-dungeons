@@ -1,10 +1,10 @@
 package com.tuguzteam.netdungeons.ui.auth
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.ui.Button
-import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisTable
+import com.kotcrab.vis.ui.widget.VisTextButton
 import com.kotcrab.vis.ui.widget.VisValidatableTextField
 import com.tuguzteam.netdungeons.getHeightPerc
 
@@ -27,17 +27,17 @@ class ExtValidTextField(
         setPasswordCharacter(passwordChar)
     }
 
-    fun addTo(table: Table, fieldButton: Button? = null) {
+    fun addTo(table: VisTable, button: VisTextButton? = null) {
         errorLabel.setText(null)
         setText(null)
-        if (fieldButton == null) {
+        if (button == null) {
             table.add(infoLabel).colspan(2).fillX().row()
             table.add(this).colspan(2).fillX().row()
             table.add(errorLabel).colspan(2).fillX().row()
         } else {
             table.add(infoLabel).colspan(2).fillX().row()
             table.add(this)
-            table.add(fieldButton).spaceLeft(getHeightPerc(1 / 60f)).row()
+            table.add(button).spaceLeft(getHeightPerc(1 / 60f)).row()
             table.add(errorLabel).colspan(2).fillX().row()
         }
     }
