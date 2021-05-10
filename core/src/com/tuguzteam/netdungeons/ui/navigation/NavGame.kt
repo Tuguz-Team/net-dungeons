@@ -6,11 +6,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton.ImageTextButtonStyle
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.net.GameState
+import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
+import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
+import ktx.async.KtxAsync
+import ktx.log.debug
 import ktx.log.error
+import ktx.log.info
 
 class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: ContentHeader) {
     private val scrollGroup = VerticalGroup().apply {
@@ -61,11 +67,37 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
                 !gameSize.anyChecked() -> gameSize.click()
                 !gameType.anyChecked() -> gameType.click()
                 else -> try {
-                    val seed = loader.gameManager.game?.seed
-                    checkNotNull(seed) { "Game was not started on the server" }
-                    MathUtils.random.setSeed(seed)
+                    KtxAsync.launch {
+                        when (val result = loader.gameManager.createGame()) {
+                            is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                            is Result.Failure -> throw result.cause
+                            is Result.Success -> loader.gameManager.gameStateListener = {
+                                when (it) {
+                                    is GameState.Destroyed -> TODO()
+                                    is GameState.Ended -> TODO()
+                                    is GameState.Failure -> Loader.logger.error(it.cause) {
+                                        "General game data listening failure"
+                                    }
+                                    is GameState.PlayerAdded -> Loader.logger.debug {
+                                        "Added ${it.player}"
+                                    }
+                                    is GameState.PlayerRemoved -> Loader.logger.debug {
+                                        "Removed ${it.player}"
+                                    }
+                                    is GameState.PlayerUpdated -> Loader.logger.debug {
+                                        "Updated ${it.player}"
+                                    }
+                                    is GameState.Started -> {
+                                        val seed = it.game.seed
+                                        checkNotNull(seed) { "Game was not started on the server" }
+                                        MathUtils.random.setSeed(seed)
 
-                    loader.setScreen<GameScreen>()
+                                        loader.setScreen<GameScreen>()
+                                    }
+                                }
+                            }
+                        }
+                    }
                 } catch (e: Exception) {
                     Loader.logger.error(e) { "Game starting failure" }
                 }

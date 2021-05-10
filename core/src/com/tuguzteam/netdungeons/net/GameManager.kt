@@ -10,6 +10,8 @@ abstract class GameManager {
     var game: Game? = null
         protected set
 
+    open var gameStateListener: ((GameState) -> Unit)? = null
+
     abstract suspend fun createGame(): Result<Game>
 
     abstract suspend fun insertIntoQueue(): Result<Game?>

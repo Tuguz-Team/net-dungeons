@@ -49,9 +49,9 @@ object AndroidAuthManager : AuthManager() {
     }
 
     override suspend fun signIn(email: String, password: String) = try {
-        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
-        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-        check(user == null) { "User is signed in!" }
+        require(email matches EMAIL_REGEX) { "Email does not match pattern" }
+        require(password matches PASSWORD_REGEX) { "Password does not match pattern" }
+        check(user == null) { "User is signed in" }
 
         auth.signInWithEmailAndPassword(email, password).await()
         val result = this.updateUser()
@@ -70,10 +70,10 @@ object AndroidAuthManager : AuthManager() {
     }
 
     override suspend fun register(name: String, email: String, password: String) = resultFrom {
-        require(name matches NAME_REGEX) { "Name does not match pattern!" }
-        require(email matches EMAIL_REGEX) { "Email does not match pattern!" }
-        require(password matches PASSWORD_REGEX) { "Password does not match pattern!" }
-        check(user == null) { "User is signed in!" }
+        require(name matches NAME_REGEX) { "Name does not match pattern" }
+        require(email matches EMAIL_REGEX) { "Email does not match pattern" }
+        require(password matches PASSWORD_REGEX) { "Password does not match pattern" }
+        check(user == null) { "User is signed in" }
 
         val authResult = auth.createUserWithEmailAndPassword(email, password).await()
         val firebaseUser: FirebaseUser? = authResult.user
@@ -90,7 +90,7 @@ object AndroidAuthManager : AuthManager() {
     }
 
     override suspend fun signOut(): Result<Unit> = resultFrom {
-        checkNotNull(user) { "User is not signed in!" }
+        checkNotNull(user) { "User is not signed in" }
         auth.signOut()
         suspendCancellableCoroutine<Unit> { cont ->
             var listener: FirebaseAuth.AuthStateListener? = null

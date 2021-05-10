@@ -5,7 +5,6 @@ import android.os.Build
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.multidex.MultiDex
 import com.badlogic.gdx.backends.android.AndroidFragmentApplication
@@ -18,8 +17,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
         MultiDex.install(this)
     }
 
-    @Suppress("DEPRECATION")
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -31,7 +28,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main),
                     systemBarsBehavior =
                         WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
-            } else {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                @Suppress("DEPRECATION")
                 window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION

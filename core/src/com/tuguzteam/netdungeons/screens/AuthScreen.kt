@@ -12,7 +12,8 @@ import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.KeyTypeListener
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.YesNoDialog
-import com.tuguzteam.netdungeons.ui.auth.*
+import com.tuguzteam.netdungeons.ui.auth.AuthContent
+import com.tuguzteam.netdungeons.ui.auth.ExtValidTextField
 import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign
@@ -57,17 +58,23 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
             val password = passwordTextField.text
             when (val result = loader.authManager.register(name, email, password)) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
-                is Result.Failure -> Loader.logger.error(result.cause) { "Register failure!" }
+                is Result.Failure -> Loader.logger.error(result.cause) { "Registration failure!" }
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
         }
-    },
-        optionContent, passwordTextField, nameTextField, emailTextField)
+    }, optionContent, passwordTextField, nameTextField, emailTextField)
 
     private val loginContent = AuthContent("Login", ClickListener {
-        TODO("Обработка нажатия кнопки")
-    },
-        optionContent, passwordTextField, emailTextField)
+        KtxAsync.launch {
+            val email = emailTextField.text
+            val password = passwordTextField.text
+            when (val result = loader.authManager.signIn(email, password)) {
+                is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                is Result.Failure -> Loader.logger.error(result.cause) { "Sign in failure!" }
+                is Result.Success -> loader.setScreen<MainScreen>()
+            }
+        }
+    }, optionContent, passwordTextField, emailTextField)
 
     private val radioButton = RadioButtonGroup(true, true,
         registerContent.radioButton, loginContent.radioButton
