@@ -4,41 +4,44 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.OnDisconnect
+import com.google.firebase.database.*
 import com.tuguzteam.netdungeons.MainActivity.Companion.auth
 import com.tuguzteam.netdungeons.MainActivity.Companion.database
 import com.tuguzteam.netdungeons.MainActivity.Companion.firestore
 import com.tuguzteam.netdungeons.net.FirebaseConstants.USERS_COLLECTION
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
+import ktx.async.KtxAsync
 import ktx.log.error
 import kotlin.coroutines.resume
 
 object AndroidAuthManager : AuthManager() {
     val usersRef by lazy { firestore.collection(USERS_COLLECTION) }
 
-    private var onDisconnect: OnDisconnect? = null
-    private val onDisconnectCompletionListener = DatabaseReference.CompletionListener { error, _ ->
-        error?.let {
-            logger.error(it.toException()) {
-                "Could not establish disconnect event: ${it.message}"
-            }
-        }
-    }
-
     private suspend fun setupOnDisconnectRef(firebaseUser: FirebaseUser) {
-        val ref = database.reference
+        val userRef = database.reference
             .child(FirebaseConstants.USERS_ONLINE_CHILD)
             .child(firebaseUser.uid)
-        ref.setValue(true).await()
-        onDisconnect?.cancel()
-        onDisconnect = ref.onDisconnect().apply {
-            setValue(false, onDisconnectCompletionListener)
-        }
+        database.reference.child(".info/connected").addValueEventListener(
+            object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.value == false) return
+                    KtxAsync.launch {
+                        userRef.onDisconnect().setValue(false).await()
+                        userRef.setValue(true)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    val exception = error.toException()
+                    logger.error(cause = exception) { "Listening for .info/connected cancelled" }
+                }
+            }
+        )
     }
 
     override suspend fun syncUser(): Result<User?> {
@@ -57,14 +60,14 @@ object AndroidAuthManager : AuthManager() {
         check(user == null) { "User is signed in" }
 
         auth.signInWithEmailAndPassword(email, password).await()
-        val result = this.syncUser()
-        if (result is Result.Success) {
-            val user = result.data
-            check(user != null) { "WTF user is null?" }
-            Result.Success(data = user)
-        } else {
-            @Suppress("UNCHECKED_CAST")
-            result as Result<User>
+        when (val result = this.syncUser()) {
+            is Result.Cancel -> Result.Cancel()
+            is Result.Failure -> Result.Failure(cause = result.cause)
+            is Result.Success -> {
+                val user = result.data
+                check(user != null) { "WTF user is null?" }
+                Result.Success(data = user)
+            }
         }
     } catch (e: CancellationException) {
         Result.Cancel()
