@@ -67,12 +67,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }, optionContent, passwordTextField, emailTextField)
 
     private val radioButton = RadioButtonGroup(true, true,
-        registerContent.radioButton.apply {
-            addListener(ClickListener { registerContent.updateState() })
-        },
-        loginContent.radioButton.apply {
-            addListener(ClickListener { loginContent.updateState() })
-        }
+        registerContent.radioButton, loginContent.radioButton
     )
     private val chooseOptionButtons = FlowGroup(
         false, getHeightPerc(.05f)

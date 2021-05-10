@@ -49,6 +49,9 @@ class ExtValidTextField(
         errorLabel.setText(state.second)
     }
 
+    fun isError() =
+        errorLabel.textEquals(inputError) || errorLabel.textEquals(emptyError)
+
     fun setInputError() {
         if (isInputValid && !errorLabel.textEquals(emptyError))
             errorLabel.setText(null)

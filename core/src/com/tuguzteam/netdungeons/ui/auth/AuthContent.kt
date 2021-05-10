@@ -1,5 +1,6 @@
 package com.tuguzteam.netdungeons.ui.auth
 
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.dec
@@ -13,7 +14,7 @@ class AuthContent(
     private vararg val textFields: ExtValidTextField
 ) : VisTable(true) {
 
-    var textFieldsStates = mutableListOf<Pair<String, String>>()
+    private var textFieldsStates = mutableListOf<Pair<String, String>>()
 
     private val authButton = VisTextButton(context).apply {
         isFocusBorderEnabled = false
@@ -30,7 +31,7 @@ class AuthContent(
         })
     }
 
-    var wasChecked = false
+    private var wasChecked = false
     val radioButton = VisTextButton(context, "toggle").apply {
         addListener(ClickListener {
             if (!wasChecked) {
@@ -40,15 +41,18 @@ class AuthContent(
                 parent.clearChildren()
                 parent.add(this@AuthContent)
             }
+            updateState()
+            anyError()
         })
     }
 
     init {
+        authButton.addListener(ClickListener { anyError() })
         center().padTop(getHeightPerc(.005f))
         addChildren()
     }
 
-    fun updateState() {
+    private fun updateState() {
         passwordTextField.isPasswordMode = !viewPasswordButton.isChecked
         wasChecked = false
 
@@ -56,10 +60,12 @@ class AuthContent(
             textField.setTextFieldListener(KeyTypeListener {
                 textField.setInputError()
                 storeState()
+                anyError()
             }) }
         passwordTextField.setTextFieldListener(KeyTypeListener {
             passwordTextField.setInputError()
             storeState()
+            anyError()
         })
 
         setState()
@@ -81,6 +87,21 @@ class AuthContent(
             }
             passwordTextField.setState(textFieldsStates.last())
         }
+    }
+
+    private fun anyError() {
+        authButton.isDisabled = false
+        authButton.touchable = Touchable.enabled
+
+        textFields.forEach { textField ->
+            if (!authButton.isDisabled)
+                authButton.isDisabled = textField.isError()
+        }
+        if (!authButton.isDisabled)
+            authButton.isDisabled = passwordTextField.isError()
+
+        if (authButton.isDisabled)
+            authButton.touchable = Touchable.disabled
     }
 
     private fun addChildren() {
