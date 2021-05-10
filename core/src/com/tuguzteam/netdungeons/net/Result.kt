@@ -11,7 +11,8 @@ sealed class Result<out T> {
 }
 
 suspend fun <T> resultFrom(block: suspend () -> T): Result<T> = try {
-    Result.Success(data = block())
+    val data = block()
+    Result.Success(data)
 } catch (e: CancellationException) {
     Result.Cancel()
 } catch (throwable: Throwable) {

@@ -93,7 +93,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             }
         }
         KtxAsync.launch {
-            when (val result = loader.authManager.updateUser()) {
+            when (val result = loader.authManager.syncUser()) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                 is Result.Failure -> Loader.logger.error(result.cause) { "User update failure" }
                 is Result.Success -> {

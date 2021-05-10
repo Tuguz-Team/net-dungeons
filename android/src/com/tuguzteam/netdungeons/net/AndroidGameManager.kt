@@ -5,12 +5,12 @@ import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ListenerRegistration
+import com.tuguzteam.netdungeons.MainActivity.Companion.auth
+import com.tuguzteam.netdungeons.MainActivity.Companion.firestore
 import com.tuguzteam.netdungeons.net.AndroidAuthManager.usersRef
-import com.tuguzteam.netdungeons.net.Firebase.GAMES_COLLECTION
-import com.tuguzteam.netdungeons.net.Firebase.GAME_PRIVATE_ADMIN_DOCUMENT
-import com.tuguzteam.netdungeons.net.Firebase.GAME_PRIVATE_COLLECTION
-import com.tuguzteam.netdungeons.net.Firebase.auth
-import com.tuguzteam.netdungeons.net.Firebase.firestore
+import com.tuguzteam.netdungeons.net.FirebaseConstants.GAMES_COLLECTION
+import com.tuguzteam.netdungeons.net.FirebaseConstants.GAME_PRIVATE_ADMIN_DOCUMENT
+import com.tuguzteam.netdungeons.net.FirebaseConstants.GAME_PRIVATE_COLLECTION
 import kotlinx.coroutines.*
 import kotlinx.coroutines.tasks.asDeferred
 import kotlinx.coroutines.tasks.await
@@ -70,7 +70,7 @@ object AndroidGameManager : GameManager() {
                                 val serverGame = Game(userIDs, seed)
                                 // Start game if needed
                                 if (serverGame.seed != null && game.seed == null) {
-                                    game.seed = serverGame.seed
+                                    this@AndroidGameManager.game = Game(game.userIDs, serverGame.seed)
                                     function?.let {
                                         it(GameState.Started(game))
                                     }
@@ -219,7 +219,7 @@ object AndroidGameManager : GameManager() {
         game
     }
 
-    override suspend fun removeFromQueue(): Result<Unit> = resultFrom {
+    override suspend fun removeFromQueue() = resultFrom {
         val firebaseUser: FirebaseUser? = auth.currentUser
         val user = AndroidAuthManager.user
         val currentGameRef = currentGameRef
@@ -237,7 +237,7 @@ object AndroidGameManager : GameManager() {
         }
 
         this.currentGameRef = null
-        super.removeFromQueue()
+        this.game = null
     }
 
     override suspend fun startGame(seed: Long) = resultFrom {
@@ -252,7 +252,7 @@ object AndroidGameManager : GameManager() {
         val seedMap = mapOf(Game.SEED to seed)
         adminReference.set(seedMap).await()
 
-        game.seed = seed
+        this.game = Game(game.userIDs, seed)
         game
     }
 }

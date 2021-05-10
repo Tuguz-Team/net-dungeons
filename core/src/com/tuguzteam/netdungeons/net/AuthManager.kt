@@ -15,14 +15,21 @@ abstract class AuthManager {
     var user: User? = null
         protected set
 
-    abstract suspend fun updateUser(): Result<User?>
+    abstract suspend fun syncUser(): Result<User?>
 
     abstract suspend fun signIn(email: String, password: String): Result<User>
 
     abstract suspend fun register(name: String, email: String, password: String): Result<User>
 
-    open suspend fun signOut(): Result<Unit> {
-        user = null
-        return Result.Success(data = Unit)
-    }
+    abstract suspend fun signOut(): Result<Unit>
+
+    abstract suspend fun updateName(name: String): Result<User>
+
+    abstract suspend fun updateEmail(email: String): Result<User>
+
+    abstract suspend fun updatePassword(password: String): Result<User>
+
+    abstract suspend fun deleteUser(): Result<Unit>
+
+    abstract suspend fun reAuth(email: String, password: String): Result<Unit>
 }

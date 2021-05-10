@@ -16,10 +16,7 @@ abstract class GameManager {
 
     abstract suspend fun insertIntoQueue(): Result<Game?>
 
-    open suspend fun removeFromQueue(): Result<Unit> {
-        game = null
-        return Result.Success(data = Unit)
-    }
+    abstract suspend fun removeFromQueue(): Result<Unit>
 
     abstract suspend fun startGame(seed: Long): Result<Game>
 }

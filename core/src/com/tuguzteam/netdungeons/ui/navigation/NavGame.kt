@@ -11,6 +11,7 @@ import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync
@@ -66,8 +67,11 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
                 !gameMode.anyChecked() -> gameMode.click()
                 !gameSize.anyChecked() -> gameSize.click()
                 !gameType.anyChecked() -> gameType.click()
-                else -> try {
-                    KtxAsync.launch {
+                else -> {
+                    val handler = CoroutineExceptionHandler { _, throwable ->
+                        Loader.logger.error(cause = throwable) { "Game starting failure" }
+                    }
+                    KtxAsync.launch(handler) {
                         when (val result = loader.gameManager.createGame()) {
                             is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                             is Result.Failure -> throw result.cause
@@ -98,8 +102,6 @@ class NavGame(loader: Loader, skin: Skin, contentSplitPane: SplitPane, header: C
                             }
                         }
                     }
-                } catch (e: Exception) {
-                    Loader.logger.error(e) { "Game starting failure" }
                 }
             }
         })
