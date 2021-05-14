@@ -1,3 +1,5 @@
+@file:Suppress("unused", "MemberVisibilityCanBePrivate")
+
 package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.math.MathUtils
