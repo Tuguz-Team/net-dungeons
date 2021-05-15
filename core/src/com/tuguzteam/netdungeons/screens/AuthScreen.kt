@@ -75,7 +75,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
         }
-    }, optionContent, passwordTextField, nameTextField, emailTextField)
+    }, optionContent, passwordTextField, arrayListOf(nameTextField, emailTextField))
 
     private val signInContent = AuthContent("Login", ClickListener {
         KtxAsync.launch {
@@ -103,10 +103,11 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
         }
-    }, optionContent, passwordTextField, emailTextField)
+    }, optionContent, passwordTextField, listOf(emailTextField))
 
-    private val radioButton = RadioButtonGroup(true, true,
-        registerContent.radioButton, signInContent.radioButton
+    private val radioButton = RadioButtonGroup(
+        checked = true, clicked = true,
+        buttons = arrayListOf(registerContent.radioButton, signInContent.radioButton)
     )
     private val chooseOptionButtons = FlowGroup(
         false, getHeightPerc(.05f)

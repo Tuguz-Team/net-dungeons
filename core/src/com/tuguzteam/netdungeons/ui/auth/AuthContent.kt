@@ -9,9 +9,11 @@ import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.KeyTypeListener
 
 class AuthContent(
-    context: String, clickListener: ClickListener, parent: VisTable,
+    context: String,
+    clickListener: ClickListener,
+    parent: VisTable,
     private val passwordTextField: ExtValidTextField,
-    private vararg val textFields: ExtValidTextField
+    private val textFields: Iterable<ExtValidTextField>
 ) : VisTable(true) {
 
     private var textFieldsStates = mutableListOf<Pair<String, String>>()

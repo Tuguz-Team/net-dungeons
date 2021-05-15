@@ -39,15 +39,15 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     }
     private val gameMode = NavGameElement(
         content, 0f, "Mode",
-        "Choose game mode", "Team Fight", "Slaughter"
+        "Choose game mode", listOf("Team Fight", "Slaughter")
     )
     private val gameSize = NavGameElement(
         content, .5f, "Size",
-        "Choose map size", "Medium", "Large", "Very Large"
+        "Choose map size", listOf("Medium", "Large", "Very Large")
     )
     private val gameType = NavGameElement(
         content, 1f, "Type",
-        "Choose amounts of treasure", "Mansion", "Castle", "Slum"
+        "Choose amounts of treasure", listOf("Mansion", "Castle", "Slum")
     )
 
     init {

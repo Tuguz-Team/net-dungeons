@@ -42,7 +42,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
 
     inner class NavRating {
         private val radioButton = RadioButtonGroup(
-            true, "By level", "By wins", "By kills"
+            true, arrayListOf("By level", "By wins", "By kills")
         )
         private val sortButtons = HorizontalGroup().apply {
             left().space(getHeightPerc(.05f)).padLeft(getHeightPerc(.05f))

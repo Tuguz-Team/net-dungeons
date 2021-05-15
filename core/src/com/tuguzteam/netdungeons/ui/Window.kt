@@ -5,7 +5,9 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisWindow
 import com.tuguzteam.netdungeons.getHeightPerc
 
-class Window(title: String, isBorder: Boolean, vararg tables: Table) : VisWindow(title, isBorder) {
+class Window(title: String, isBorder: Boolean, tables: Iterable<Table>) :
+    VisWindow(title, isBorder) {
+
     init {
         titleLabel.setAlignment(Align.center)
         isResizable = false

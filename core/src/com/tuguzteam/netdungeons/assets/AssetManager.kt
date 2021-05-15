@@ -12,6 +12,7 @@ import kotlinx.coroutines.awaitAll
 import ktx.assets.async.AssetStorage
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 class AssetManager : Disposable {
     private val assetStorage = AssetStorage()
 
@@ -22,35 +23,31 @@ class AssetManager : Disposable {
 
     val progress = assetStorage.progress
 
-    suspend fun load(vararg assets: Asset) {
-        val mutableList = mutableListOf<Deferred<Any>>()
-        val coroutineScope = CoroutineScope(assetStorage.asyncContext)
-        assets.forEach { asset ->
-            when (asset) {
-                is I18NBundleAsset -> mutableList += coroutineScope.async {
-                    bundles[asset] = assetStorage.load(asset.filename)
-                }
-                is ModelAsset -> mutableList += coroutineScope.async {
-                    models[asset] = assetStorage.load(asset.filename)
-                }
-                is SkinAsset -> mutableList += coroutineScope.async {
-                    skins[asset] = assetStorage.load(asset.filename)
-                }
-                is TextureAsset -> mutableList += coroutineScope.async {
-                    textures[asset] = assetStorage.load(asset.filename)
-                }
-            }
-        }
-        mutableList.awaitAll()
+    suspend fun load(assets: Iterable<Asset>) {
+        assets.map(::loadAsync).awaitAll()
     }
 
-    fun loaded(vararg assets: Asset) = assets.all { asset ->
-        when (asset) {
-            is I18NBundleAsset -> bundles[asset] != null
-            is ModelAsset -> models[asset] != null
-            is SkinAsset -> skins[asset] != null
-            is TextureAsset -> textures[asset] != null
+    suspend fun load(asset: Asset): Unit = loadAsync(asset).await()
+
+    fun loadAsync(asset: Asset): Deferred<Unit> {
+        val coroutineScope = CoroutineScope(assetStorage.asyncContext)
+        return coroutineScope.async {
+            when (asset) {
+                is I18NBundleAsset -> bundles[asset] = assetStorage.load(asset.filename)
+                is ModelAsset -> models[asset] = assetStorage.load(asset.filename)
+                is SkinAsset -> skins[asset] = assetStorage.load(asset.filename)
+                is TextureAsset -> textures[asset] = assetStorage.load(asset.filename)
+            }
         }
+    }
+
+    fun loaded(assets: Iterable<Asset>): Boolean = assets.all(::loaded)
+
+    fun loaded(asset: Asset): Boolean = when (asset) {
+        is I18NBundleAsset -> bundles[asset] != null
+        is ModelAsset -> models[asset] != null
+        is SkinAsset -> skins[asset] != null
+        is TextureAsset -> textures[asset] != null
     }
 
     operator fun get(modelAsset: ModelAsset) = models[modelAsset]
@@ -61,38 +58,34 @@ class AssetManager : Disposable {
 
     operator fun get(bundleAsset: I18NBundleAsset) = bundles[bundleAsset]
 
-    suspend fun unload(vararg assets: Asset) {
-        val mutableList = mutableListOf<Deferred<Boolean>>()
+    suspend fun unload(assets: Iterable<Asset>) {
+        assets.map(::unloadAsync).awaitAll()
+    }
+
+    suspend fun unload(asset: Asset): Boolean = unloadAsync(asset).await()
+
+    fun unloadAsync(asset: Asset): Deferred<Boolean> {
         val coroutineScope = CoroutineScope(assetStorage.asyncContext)
-        assets.forEach { asset ->
+        return coroutineScope.async {
             when (asset) {
+                is I18NBundleAsset -> {
+                    bundles.remove(asset)
+                    assetStorage.unload<I18NBundle>(asset.filename)
+                }
                 is ModelAsset -> {
                     models.remove(asset)
-                    mutableList += coroutineScope.async {
-                        assetStorage.unload<Model>(asset.filename)
-                    }
+                    assetStorage.unload<Model>(asset.filename)
                 }
                 is SkinAsset -> {
                     skins.remove(asset)
-                    mutableList += coroutineScope.async {
-                        assetStorage.unload<Skin>(asset.filename)
-                    }
+                    assetStorage.unload<Skin>(asset.filename)
                 }
                 is TextureAsset -> {
                     textures.remove(asset)
-                    mutableList += coroutineScope.async {
-                        assetStorage.unload<Texture>(asset.filename)
-                    }
-                }
-                is I18NBundleAsset -> {
-                    bundles.remove(asset)
-                    mutableList += coroutineScope.async {
-                        assetStorage.unload<I18NBundle>(asset.filename)
-                    }
+                    assetStorage.unload<Texture>(asset.filename)
                 }
             }
         }
-        mutableList.awaitAll()
     }
 
     override fun dispose() {

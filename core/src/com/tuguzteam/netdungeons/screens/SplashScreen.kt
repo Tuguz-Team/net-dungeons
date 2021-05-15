@@ -19,8 +19,7 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
         setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear)
     }
     private val logoImage = VisImage(logoTexture).apply {
-        this += alpha(0f) then fadeIn(1.25f) then
-                delay(1.5f) then fadeOut(0.75f)
+        this += alpha(0f) then fadeIn(1.25f) then delay(1.5f) then fadeOut(0.75f)
     }
 
     init {
@@ -35,13 +34,13 @@ class SplashScreen(loader: Loader) : StageScreen(loader) {
 
     override fun render(delta: Float) {
         super.render(delta)
-        if (logoImage.isDoneActing() && assetManager.loaded(*Loader.requiredAssets)) {
+        if (logoImage.isDoneActing() && assetManager.loaded(Loader.requiredAssets)) {
             goToMainScreen()
         }
     }
 
     override fun touchUp(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean {
-        if (assetManager.loaded(*Loader.requiredAssets) && !loader.containsScreen<MainScreen>()) {
+        if (assetManager.loaded(Loader.requiredAssets) && !loader.containsScreen<MainScreen>()) {
             goToMainScreen()
         }
         return super.touchUp(screenX, screenY, pointer, button)

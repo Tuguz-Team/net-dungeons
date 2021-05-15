@@ -10,9 +10,9 @@ import com.tuguzteam.netdungeons.ui.doClick
 class NavGameElement(
     scrollPane: VisScrollPane, percentage: Float,
     private val labelName: String, windowTitle: String,
-    vararg buttonNames: String
+    buttonNames: List<String>
 ) {
-    private val radioButton = RadioButtonGroup(false, *buttonNames).apply {
+    private val radioButton = RadioButtonGroup(false, buttonNames).apply {
         groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
                     if (innerLabel.textEquals(buttonNames[index]))
@@ -29,7 +29,7 @@ class NavGameElement(
             scrollPane.scrollPercentY = percentage
         })
     }
-    val window = Window(windowTitle, false, *radioButton.groupButtons.toTypedArray())
+    val window = Window(windowTitle, false, radioButton.groupButtons)
 
     fun anyChecked() = radioButton.anyChecked()
 

@@ -7,7 +7,7 @@ class RadioButtonGroup private constructor(private val ifChecked: Boolean) {
     private lateinit var controller: ButtonGroup<VisTextButton>
     val groupButtons = mutableListOf<VisTextButton>()
 
-    constructor(checked: Boolean, vararg buttonNames: String) : this(checked) {
+    constructor(checked: Boolean, buttonNames: Iterable<String>) : this(checked) {
         buttonNames.forEach { name ->
             groupButtons += VisTextButton(name, "toggle").apply {
                 isFocusBorderEnabled = false
@@ -16,7 +16,7 @@ class RadioButtonGroup private constructor(private val ifChecked: Boolean) {
         initController()
     }
 
-    constructor(checked: Boolean, clicked: Boolean, vararg buttons: VisTextButton) : this(checked) {
+    constructor(checked: Boolean, clicked: Boolean, buttons: Iterable<VisTextButton>) : this(checked) {
         buttons.forEach { button ->
             groupButtons += button.apply {
                 isFocusBorderEnabled = false

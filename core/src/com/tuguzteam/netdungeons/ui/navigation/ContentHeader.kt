@@ -30,9 +30,7 @@ class ContentHeader(stage: Stage, horGroup: WidgetGroup?, splitAmount: Float) :
 
     init {
         horGroup?.centerPosition()
-        setSecondWidget(VisImageButton(
-            null, null, null
-        ).apply {
+        setSecondWidget(VisImageButton(null, null, null).apply {
             addListener(ClickListener {
                 settingsDialog.show(stage)
             })

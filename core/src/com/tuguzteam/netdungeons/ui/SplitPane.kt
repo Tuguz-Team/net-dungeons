@@ -4,8 +4,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.kotcrab.vis.ui.widget.VisSplitPane
 
 open class SplitPane(
-    first: Actor?, second: Actor?, vertical: Boolean, private val splitAmount: Float
+    first: Actor?,
+    second: Actor?,
+    vertical: Boolean,
+    private val splitAmount: Float
 ) : VisSplitPane(first, second, vertical) {
+
     init {
         init()
     }

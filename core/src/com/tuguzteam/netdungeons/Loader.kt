@@ -18,7 +18,7 @@ import ktx.log.logger
 class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGame<StageScreen>() {
     companion object {
         val logger = logger<Loader>()
-        val requiredAssets: Array<out Asset> = arrayOf(SkinAsset.Default, I18NBundleAsset.Default)
+        val requiredAssets: List<Asset> = arrayListOf(SkinAsset.Default, I18NBundleAsset.Default)
     }
 
     val assetManager by lazy { AssetManager() }
@@ -35,7 +35,7 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
             addScreen(screen = SplashScreen(this@Loader))
             setScreen<SplashScreen>()
 
-            assetManager.load(*requiredAssets)
+            assetManager.load(requiredAssets)
         }
     }
 
