@@ -107,3 +107,6 @@ Thumbs.db
 /ios/xcode/native/
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
+
+## Firebase configuration
+/android/google-services.json
