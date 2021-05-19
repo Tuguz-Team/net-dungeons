@@ -17,7 +17,7 @@
 docker service create \
     --name android-builder-service \
     --secret source=google-services,target=/home/gradle/android/google-services.json \
-    --mount type=bind,source="$(pwd)/docker",target=/home/gradle/ \
+    --mount type=bind,source="$(pwd)",target=/home/gradle/ \
     -w /home/gradle/ android-builder gradle assembleDebug
 ```
 - состояние выполнения сервиса можно посмотреть:
