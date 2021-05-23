@@ -40,7 +40,7 @@
     - создать секрет командой `docker secret create google-services google-services.json`
 - создать новый образ командой `docker build -t android-builder docker`
 - создать новый сервис командой:
-```
+```bash
 docker service create \
     --name android-builder-service \
     --secret source=google-services,target=/home/gradle/android/google-services.json \
@@ -59,9 +59,9 @@ docker service create \
 - Баллы: 1 балл
 
 ### 2. Работа над проектом. Оформление ReadMe
-  * Дата сдачи: 20 мая 2021г
-  * Баллы: 0 баллов
+- Дата сдачи: 20 мая 2021 года
+- Баллы: 0 баллов
 
 ### 3. Docker
-  * Дата сдачи: 20 мая 2021г
-  * Баллы: 1 балл
+- Дата сдачи: 20 мая 2021 года
+- Баллы: 1 балл

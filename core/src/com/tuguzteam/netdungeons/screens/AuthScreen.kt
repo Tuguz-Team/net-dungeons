@@ -8,10 +8,7 @@ import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
-import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.OkDialog
-import com.tuguzteam.netdungeons.ui.RadioButtonGroup
-import com.tuguzteam.netdungeons.ui.YesNoDialog
+import com.tuguzteam.netdungeons.ui.*
 import com.tuguzteam.netdungeons.ui.auth.AuthContent
 import com.tuguzteam.netdungeons.ui.auth.ExtValidTextField
 import kotlinx.coroutines.launch
@@ -27,8 +24,10 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
         "Cancel registration?",
         onYesOption = { loader.setScreen<MainScreen>() }
     )
-    private val registrationErrorDialog = OkDialog("Registration error!").apply { text("") }
+    private val registerErrorDialog = OkDialog("Registration error!").apply { text("") }
     private val signInErrorDialog = OkDialog("Sign in error!").apply { text("") }
+    private val registerWaitDialog = Dialog("Waiting server for registration...")
+    private val signInWaitDialog = Dialog("Waiting for server for sign in...")
 
     private val nameTextField = ExtValidTextField(
         NAME_REGEX, "Enter your name",
@@ -49,6 +48,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     private val optionContent = VisTable(true)
     private val registerContent = AuthContent("Register", ClickListener {
         KtxAsync.launch {
+            registerWaitDialog.show(this@AuthScreen)
             val name = nameTextField.text
             val email = emailTextField.text
             val password = passwordTextField.text
@@ -56,7 +56,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
                 is Result.Failure -> {
                     Loader.logger.error(result.cause) { "Registration failure!" }
-                    registrationErrorDialog.apply {
+                    registerErrorDialog.apply {
                         val message: String = when {
                             email.isBlank() -> "Email cannot be empty"
                             password.isBlank() -> "Password cannot be empty"
@@ -74,11 +74,13 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 }
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
+            registerWaitDialog.hide()
         }
     }, optionContent, passwordTextField, arrayListOf(nameTextField, emailTextField))
 
     private val signInContent = AuthContent("Login", ClickListener {
         KtxAsync.launch {
+            signInWaitDialog.show(this@AuthScreen)
             val email = emailTextField.text
             val password = passwordTextField.text
             when (val result = loader.authManager.signIn(email, password)) {
@@ -102,6 +104,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 }
                 is Result.Success -> loader.setScreen<MainScreen>()
             }
+            signInWaitDialog.hide()
         }
     }, optionContent, passwordTextField, listOf(emailTextField))
 
@@ -129,7 +132,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
 
     override fun show() {
         super.show()
-        Loader.logger.debug { "Registration screen is shown..." }
+        Loader.logger.debug { "Auth screen is shown..." }
     }
 
     override fun onBackPressed() {
