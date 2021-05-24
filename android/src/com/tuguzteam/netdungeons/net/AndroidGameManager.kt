@@ -214,7 +214,8 @@ object AndroidGameManager : GameManager() {
         @Suppress("UNCHECKED_CAST")
         val userIDs = suitableGame[Game.USER_IDS] as? MutableList<String>?
         checkNotNull(userIDs) { "No user IDs in game data" }
-        this.game = Game(userIDs)
+        val game = Game(userIDs)
+        this.game = game
         this.currentGameRef = currentGameRef
         game
     }
@@ -244,7 +245,7 @@ object AndroidGameManager : GameManager() {
         val firebaseUser: FirebaseUser? = auth.currentUser
         val user = AndroidAuthManager.user
         val currentGameRef = currentGameRef
-        val game = game
+        var game = game
         check(user != null && firebaseUser != null) { "User is not signed in" }
         check(currentGameRef != null && game != null) { "Game was not created" }
 
@@ -252,7 +253,8 @@ object AndroidGameManager : GameManager() {
         val seedMap = mapOf(Game.SEED to seed)
         adminReference.set(seedMap).await()
 
-        this.game = Game(game.userIDs, seed)
+        game = Game(game.userIDs, seed)
+        this.game = game
         game
     }
 }
