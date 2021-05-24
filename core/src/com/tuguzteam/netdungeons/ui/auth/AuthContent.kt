@@ -63,7 +63,8 @@ class AuthContent(
                 textField.setInputError()
                 storeState()
                 anyError()
-            }) }
+            })
+        }
         passwordTextField.setTextFieldListener(KeyTypeListener {
             passwordTextField.setInputError()
             storeState()

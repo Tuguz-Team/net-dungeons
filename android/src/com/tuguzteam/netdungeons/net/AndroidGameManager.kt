@@ -70,7 +70,8 @@ object AndroidGameManager : GameManager() {
                                 val serverGame = Game(userIDs, seed)
                                 // Start game if needed
                                 if (serverGame.seed != null && game.seed == null) {
-                                    this@AndroidGameManager.game = Game(game.userIDs, serverGame.seed)
+                                    this@AndroidGameManager.game =
+                                        Game(game.userIDs, serverGame.seed)
                                     function?.let {
                                         it(GameState.Started(game))
                                     }

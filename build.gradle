@@ -1,5 +1,12 @@
 buildscript {
-    ext.kotlinVersion = '1.5.0'
+    ext {
+        kotlinVersion = '1.5.10'
+        kotlinxCoroutineVersion = '1.5.0'
+        appName = 'Net Dungeons'
+        gdxVersion = '1.10.0'
+        ktxVersion = '1.10.0-b1'
+        visuiVersion = '1.5.0'
+    }
 
     repositories {
         mavenLocal()
@@ -7,10 +14,11 @@ buildscript {
         gradlePluginPortal()
         google()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.2.1'
-        classpath 'com.google.gms:google-services:4.3.5'
+        classpath 'com.google.gms:google-services:4.3.8'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
@@ -19,12 +27,6 @@ allprojects {
     apply plugin: 'eclipse'
 
     version = '1.0'
-    ext {
-        appName = 'Net Dungeons'
-        gdxVersion = '1.10.0'
-        ktxVersion = '1.10.0-b1'
-        visuiVersion = '1.5.0'
-    }
 
     repositories {
         mavenLocal()

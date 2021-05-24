@@ -15,10 +15,10 @@ class NavGameElement(
     private val radioButton = RadioButtonGroup(false, buttonNames).apply {
         groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
-                    if (innerLabel.textEquals(buttonNames[index]))
-                        this@NavGameElement.uncheck()
-                    else
-                        innerLabel.setText(buttonNames[index])
+                if (innerLabel.textEquals(buttonNames[index]))
+                    this@NavGameElement.uncheck()
+                else
+                    innerLabel.setText(buttonNames[index])
             })
         }
     }

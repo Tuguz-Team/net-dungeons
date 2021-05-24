@@ -65,7 +65,8 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
         this += gameSize.innerLabel
         this += gameType.innerLabel
     }
-    private val playButton = VisImageTextButton("Play",
+    private val playButton = VisImageTextButton(
+        "Play",
         VisImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {
@@ -115,7 +116,8 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     private val headerSplitPane = SplitPane(
         headerContent, Container(playButton), false, 0.8f
     )
-    val navButton = VisImageTextButton("Game",
+    val navButton = VisImageTextButton(
+        "Game",
         VisImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {

@@ -24,12 +24,12 @@ import ktx.log.error
 import ktx.log.info
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
-//    private val defaultSkin = loader.assetManager[SkinAsset.Default]!!
     private val yesNoDialog =
         YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
 
     inner class NavProfile {
-        val navButton = VisImageTextButton("Profile",
+        val navButton = VisImageTextButton(
+            "Profile",
             VisImageTextButtonStyle(null, null, null, BitmapFont())
         ).apply {
             addListener(ClickListener {
@@ -49,7 +49,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             for (button in radioButton.groupButtons)
                 this += button
         }
-        val navButton = VisImageTextButton("Rating",
+        val navButton = VisImageTextButton(
+            "Rating",
             VisImageTextButtonStyle(null, null, null, BitmapFont())
         ).apply {
             addListener(ClickListener {

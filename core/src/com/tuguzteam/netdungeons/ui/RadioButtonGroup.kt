@@ -16,7 +16,11 @@ class RadioButtonGroup private constructor(private val ifChecked: Boolean) {
         initController()
     }
 
-    constructor(checked: Boolean, clicked: Boolean, buttons: Iterable<VisTextButton>) : this(checked) {
+    constructor(
+        checked: Boolean,
+        clicked: Boolean,
+        buttons: Iterable<VisTextButton>
+    ) : this(checked) {
         buttons.forEach { button ->
             groupButtons += button.apply {
                 isFocusBorderEnabled = false
