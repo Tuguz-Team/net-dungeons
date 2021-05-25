@@ -47,7 +47,7 @@ interface KtxGestureAdapter : GestureDetector.GestureListener {
 
 fun <T : Actor> T.isDoneActing() = actions.isEmpty
 
-fun getWidthPerc(perc: Float) = Gdx.graphics.width * perc
-fun getHeightPerc(perc: Float) = Gdx.graphics.height * perc
+fun widthFraction(fraction: Float) = Gdx.graphics.width * fraction
+fun heightFraction(fraction: Float) = Gdx.graphics.height * fraction
 
 operator fun Boolean.dec() = !this

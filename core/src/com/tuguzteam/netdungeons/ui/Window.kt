@@ -3,7 +3,7 @@ package com.tuguzteam.netdungeons.ui
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisWindow
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.heightFraction
 
 class Window(title: String, isBorder: Boolean, tables: Iterable<Table>) :
     VisWindow(title, isBorder) {
@@ -14,7 +14,7 @@ class Window(title: String, isBorder: Boolean, tables: Iterable<Table>) :
         isMovable = false
         isModal = false
         tables.forEach { table ->
-            add(table).pad(getHeightPerc(1 / 40f))
+            add(table).pad(heightFraction(1 / 40f))
         }
     }
 }

@@ -8,7 +8,7 @@ import com.kotcrab.vis.ui.widget.VisImageTextButton
 import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
@@ -45,7 +45,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
             true, arrayListOf("By level", "By wins", "By kills")
         )
         private val sortButtons = HorizontalGroup().apply {
-            left().space(getHeightPerc(.05f)).padLeft(getHeightPerc(.05f))
+            left().space(heightFraction(.05f)).padLeft(heightFraction(.05f))
             for (button in radioButton.groupButtons)
                 this += button
         }

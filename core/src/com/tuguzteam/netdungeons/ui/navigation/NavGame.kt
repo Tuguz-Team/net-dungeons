@@ -10,7 +10,7 @@ import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.net.GameState
 import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.screens.GameScreen
@@ -27,9 +27,9 @@ import ktx.log.info
 class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader) {
     private val scrollGroup = VerticalGroup().apply {
         pad(
-            getHeightPerc(.1f), getHeightPerc(1 / 8f),
-            getHeightPerc(.1f), getHeightPerc(1 / 8f)
-        ).space(getHeightPerc(1 / 8f))
+            heightFraction(.1f), heightFraction(1 / 8f),
+            heightFraction(.1f), heightFraction(1 / 8f)
+        ).space(heightFraction(1 / 8f))
     }
     private val content = VisScrollPane(scrollGroup).apply {
         setOverscroll(false, false)
@@ -59,7 +59,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     }
 
     private val headerContent = HorizontalGroup().apply {
-        center().space(getHeightPerc(.05f))
+        center().space(heightFraction(.05f))
         this += gameMode.innerLabel
         this += VisLabel("in")
         this += gameSize.innerLabel

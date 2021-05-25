@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.dec
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.KeyTypeListener
 
@@ -50,7 +50,7 @@ class AuthContent(
 
     init {
         authButton.addListener(ClickListener { anyError() })
-        center().padTop(getHeightPerc(.005f))
+        center().padTop(heightFraction(.005f))
         addChildren()
     }
 
@@ -110,6 +110,6 @@ class AuthContent(
     private fun addChildren() {
         textFields.forEach { textField -> textField.addTo(this) }
         passwordTextField.addTo(this, viewPasswordButton)
-        add(authButton).colspan(2).fillX().pad(getHeightPerc(.025f))
+        add(authButton).colspan(2).fillX().pad(heightFraction(.025f))
     }
 }

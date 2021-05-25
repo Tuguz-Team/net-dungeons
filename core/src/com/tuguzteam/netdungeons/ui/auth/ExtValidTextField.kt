@@ -6,7 +6,7 @@ import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.kotcrab.vis.ui.widget.VisValidatableTextField
-import com.tuguzteam.netdungeons.getHeightPerc
+import com.tuguzteam.netdungeons.heightFraction
 
 class ExtValidTextField(
     regex: Regex, infoText: String,
@@ -39,7 +39,7 @@ class ExtValidTextField(
         } else {
             table.add(infoLabel).colspan(2).fillX().row()
             table.add(this)
-            table.add(button).spaceLeft(getHeightPerc(1 / 60f)).row()
+            table.add(button).spaceLeft(heightFraction(1 / 60f)).row()
             table.add(errorLabel).colspan(2).fillX().row()
         }
     }

@@ -113,14 +113,14 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
         buttons = arrayListOf(registerContent.radioButton, signInContent.radioButton)
     )
     private val chooseOptionButtons = FlowGroup(
-        false, getHeightPerc(.05f)
+        false, heightFraction(.05f)
     ).apply {
         radioButton.groupButtons.forEach { button -> this += button }
     }
 
     private val contentGroup = VisTable(true).apply {
         add(chooseOptionButtons).expandX().row()
-        addSeparator().padBottom(getHeightPerc(.025f))
+        addSeparator().padBottom(heightFraction(.025f))
         add(optionContent)
     }
 
