@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.tuguzteam.netdungeons.ImmutableVector3
 
 open class Cube(
-    val dimensions: ImmutableVector3,
+    dimensions: ImmutableVector3,
     color: Color,
     position: ImmutableVector3
-) : GameObject(
+) : ModelObject(
     position, model = ModelBuilder().createBox(
         dimensions.x, dimensions.y, dimensions.z,
         Material(ColorAttribute.createDiffuse(color)),

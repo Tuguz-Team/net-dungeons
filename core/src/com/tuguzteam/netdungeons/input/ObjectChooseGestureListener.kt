@@ -34,7 +34,7 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
             (chosenGameObject as? Focusable)?.unfocus()
             chosenGameObject = gameObject
             (chosenGameObject as? Focusable)?.focus()
-            logger.info { "Chosen object: $chosenGameObject" }
+            logger.info { "Chosen game object: $chosenGameObject" }
         }
 
         return chosenGameObject != null
