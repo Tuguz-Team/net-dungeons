@@ -1,6 +1,6 @@
 package com.tuguzteam.netdungeons.objects
 
 interface Focusable {
-    fun onAcquireFocus()
-    fun onLoseFocus()
+    fun focus()
+    fun unfocus()
 }

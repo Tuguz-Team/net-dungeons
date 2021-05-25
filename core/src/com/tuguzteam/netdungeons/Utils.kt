@@ -4,7 +4,9 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.scenes.scene2d.Actor
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -51,3 +53,9 @@ fun widthFraction(fraction: Float) = Gdx.graphics.width * fraction
 fun heightFraction(fraction: Float) = Gdx.graphics.height * fraction
 
 operator fun Boolean.dec() = !this
+
+operator fun BoundingBox.times(matrix: Matrix4): BoundingBox = BoundingBox(this).mul(matrix)
+
+operator fun BoundingBox.timesAssign(matrix: Matrix4) {
+    mul(matrix)
+}

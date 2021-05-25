@@ -19,11 +19,11 @@ class Cell(position: ImmutableVector3) : Focusable, Cube(
 
     private var initialColor = color
 
-    override fun onAcquireFocus() {
+    override fun focus() {
         color = Color.RED
     }
 
-    override fun onLoseFocus() {
+    override fun unfocus() {
         color = initialColor
     }
 }

@@ -1,10 +1,10 @@
 package com.tuguzteam.netdungeons.input
 
-import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.KtxGestureAdapter
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.objects.intersects
 import com.tuguzteam.netdungeons.toImmutable
 import ktx.log.info
 import ktx.log.logger
@@ -22,7 +22,7 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
 
         var gameObject: GameObject? = null
         GameObject.forEach {
-            if (Intersector.intersectRayBoundsFast(ray, it.boundingBox)) {
+            if (ray intersects it) {
                 val distance2 = gameObject?.position?.dst2(ray.origin.toImmutable())
                 val itDistance2 = it.position.dst2(ray.origin.toImmutable())
                 if (it is Focusable && (distance2 == null || itDistance2 < distance2)) {
@@ -31,9 +31,9 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
             }
         }
         if (gameObject !== chosenGameObject) {
-            (chosenGameObject as? Focusable)?.onLoseFocus()
+            (chosenGameObject as? Focusable)?.unfocus()
             chosenGameObject = gameObject
-            (chosenGameObject as? Focusable)?.onAcquireFocus()
+            (chosenGameObject as? Focusable)?.focus()
             logger.info { "Chosen object: $chosenGameObject" }
         }
 
