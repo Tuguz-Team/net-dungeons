@@ -2,7 +2,10 @@ package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.g3d.Attribute
+import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
@@ -58,4 +61,12 @@ operator fun BoundingBox.times(matrix: Matrix4): BoundingBox = BoundingBox(this)
 
 operator fun BoundingBox.timesAssign(matrix: Matrix4) {
     mul(matrix)
+}
+
+operator fun Environment.plusAssign(light: DirectionalLight) {
+    add(light)
+}
+
+infix fun Environment.with(attribute: Attribute) {
+    set(attribute)
 }
