@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.Attribute
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.decals.Decal
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
+import com.badlogic.gdx.graphics.g3d.environment.BaseLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
@@ -25,11 +23,6 @@ inline fun <T : ModelBatch> T.use(camera: Camera, action: T.() -> Unit) {
     begin(camera)
     action()
     end()
-}
-
-fun <T : DecalBatch> T.use(decals: Iterable<Decal>) {
-    decals.forEach(::add)
-    flush()
 }
 
 interface KtxGestureAdapter : GestureDetector.GestureListener {
@@ -70,7 +63,7 @@ operator fun BoundingBox.timesAssign(matrix: Matrix4) {
     mul(matrix)
 }
 
-operator fun Environment.plusAssign(light: DirectionalLight) {
+operator fun <T : BaseLight<T>> Environment.plusAssign(light: T) {
     add(light)
 }
 

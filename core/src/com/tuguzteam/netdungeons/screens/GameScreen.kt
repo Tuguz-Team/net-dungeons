@@ -5,15 +5,11 @@ import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy
-import com.badlogic.gdx.graphics.g3d.decals.Decal
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.Asset
-import com.tuguzteam.netdungeons.assets.ModelAsset
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
@@ -32,7 +28,7 @@ import ktx.math.vec3
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
-        private val assets = arrayListOf<Asset>(TextureAsset.Wood, ModelAsset.Suzanne)
+        private val assets = arrayListOf<Asset>(TextureAsset.Wood, TextureAsset.Wood1)
     }
 
     private val camera = OrthographicCamera().apply {
@@ -44,17 +40,15 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     }
 
     private val modelBatch = ModelBatch()
-    private val decalBatch = DecalBatch(CameraGroupStrategy(camera))
     private val environment = Environment().apply {
-        this with ColorAttribute.createAmbientLight(color(red = 0.3f, green = 0.3f, blue = 0.3f))
+        this with ColorAttribute.createAmbientLight(color(red = 0.1f, green = 0.1f, blue = 0.1f))
         this += DirectionalLight().set(
-            color(red = 0.6f, green = 0.6f, blue = 0.6f),
+            color(red = 0.3f, green = 0.3f, blue = 0.3f),
             vec3(x = -1f, y = -0.8f, z = -0.2f),
         )
     }
 
     private val renderables = arrayListOf<RenderableProvider>()
-    private val decals = arrayListOf<Decal>()
     private val assetManager = loader.assetManager
 
     private val rotationZoomGestureListener: RotationZoomGestureListener
@@ -78,8 +72,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
             field = Field(side = 9u, assetManager)
-            decals.run {
-                addAll(field.map { it.decal })
+            renderables.run {
+                addAll(field.map { it.renderableProvider })
                 trimToSize()
             }
         }
@@ -92,14 +86,12 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         }
         field.dispose()
         renderables.clear()
-        decals.clear()
     }
 
     override fun render(delta: Float) {
         super.render(delta)
         if (assetManager.loaded(assets)) {
             rotationZoomGestureListener.update()
-            decalBatch.use(decals)
             modelBatch.use(camera) {
                 render(renderables, environment)
             }
@@ -111,6 +103,5 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     override fun dispose() {
         super.dispose()
         modelBatch.dispose()
-        decalBatch.dispose()
     }
 }

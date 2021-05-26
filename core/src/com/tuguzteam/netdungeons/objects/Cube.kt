@@ -10,7 +10,7 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 open class Cube(
     dimensions: ImmutableVector3,
     color: Color,
-    position: ImmutableVector3
+    position: ImmutableVector3 = ImmutableVector3.ZERO
 ) : ModelObject(
     position, model = ModelBuilder().createBox(
         dimensions.x, dimensions.y, dimensions.z,
@@ -20,8 +20,8 @@ open class Cube(
 ) {
     var color = color
         set(value) {
+            materials[0].set(ColorAttribute.createDiffuse(value))
             field = value
-            modelInstance.materials[0].set(ColorAttribute.createDiffuse(field))
         }
 
     override fun dispose() {

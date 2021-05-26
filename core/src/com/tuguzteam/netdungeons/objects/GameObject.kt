@@ -4,10 +4,7 @@ import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableVector3
 
-abstract class GameObject(
-    open var position: ImmutableVector3 = ImmutableVector3.ZERO,
-) : Disposable {
-
+abstract class GameObject(open var position: ImmutableVector3) : Disposable {
     companion object : Iterable<GameObject> {
         private val gameObjects = arrayListOf<GameObject>()
 
@@ -19,7 +16,7 @@ abstract class GameObject(
         gameObjects.add(element = this)
     }
 
-    abstract fun intersectedBy(ray: Ray): Boolean
+    open fun intersectedBy(ray: Ray) = false
 
     override fun dispose() {
         gameObjects.remove(element = this)
