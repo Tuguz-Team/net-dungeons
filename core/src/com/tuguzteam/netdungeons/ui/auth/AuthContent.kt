@@ -19,7 +19,7 @@ class AuthContent(
     private val authButton = VisTextButton(context).apply {
         isFocusBorderEnabled = false
         addListener(ClickListener {
-            textFields.forEach { textField -> textField.setEmptyError() }
+            textFields.forEach(ExtValidTextField::setEmptyError)
             passwordTextField.setEmptyError()
         })
         addListener(clickListener)
