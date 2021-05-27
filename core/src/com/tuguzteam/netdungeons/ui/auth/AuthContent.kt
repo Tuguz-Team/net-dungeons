@@ -9,9 +9,7 @@ import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.KeyTypeListener
 
 class AuthContent(
-    context: String,
-    clickListener: ClickListener,
-    parent: VisTable,
+    context: String, clickListener: ClickListener, parent: VisTable,
     private val passwordTextField: ExtValidTextField,
     private val textFields: Iterable<ExtValidTextField>
 ) : VisTable(true) {
@@ -50,8 +48,8 @@ class AuthContent(
 
     init {
         authButton.addListener(ClickListener { anyError() })
-        center().padTop(heightFraction(.005f))
         addChildren()
+        center()
     }
 
     private fun updateState() {

@@ -119,6 +119,8 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }
 
     private val contentGroup = VisTable(true).apply {
+        width = widthFraction(.1875f)
+
         add(chooseOptionButtons).expandX().row()
         addSeparator().padBottom(heightFraction(.025f))
         add(optionContent)
