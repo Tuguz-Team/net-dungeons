@@ -4,9 +4,10 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.KtxGestureAdapter
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.objects.Intersectable
 import com.tuguzteam.netdungeons.objects.intersects
 import com.tuguzteam.netdungeons.toImmutable
-import ktx.log.info
+import ktx.log.debug
 import ktx.log.logger
 
 class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAdapter {
@@ -21,20 +22,20 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
         val ray = viewport.getPickRay(x, y)
 
         var gameObject: GameObject? = null
-        GameObject.forEach {
-            if (ray intersects it) {
-                val distance2 = gameObject?.position?.dst2(ray.origin.toImmutable())
-                val itDistance2 = it.position.dst2(ray.origin.toImmutable())
-                if (it is Focusable && (distance2 == null || itDistance2 < distance2)) {
-                    gameObject = it
-                }
+        GameObject.asSequence().filter {
+            it.visible && it is Intersectable && it is Focusable && ray intersects it
+        }.forEach {
+            val distance2 = gameObject?.position?.dst2(ray.origin.toImmutable())
+            val itDistance2 = it.position.dst2(ray.origin.toImmutable())
+            if (it is Focusable && (distance2 == null || itDistance2 < distance2)) {
+                gameObject = it
             }
         }
         if (gameObject !== chosenGameObject) {
             (chosenGameObject as? Focusable)?.unfocus()
             chosenGameObject = gameObject
             (chosenGameObject as? Focusable)?.focus()
-            logger.info { "Chosen game object: $chosenGameObject" }
+            logger.debug { "Chosen game object: $chosenGameObject" }
         }
 
         return chosenGameObject != null

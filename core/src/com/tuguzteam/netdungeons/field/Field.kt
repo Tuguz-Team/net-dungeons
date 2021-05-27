@@ -5,18 +5,16 @@ import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.immutableVec3
-import com.tuguzteam.netdungeons.objects.ModelObject
+import com.tuguzteam.netdungeons.objects.GameObject
 import kotlin.random.asKotlinRandom
 
-class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<ModelObject> {
-    private val random = MathUtils.random.asKotlinRandom()
-    private val cellModels = arrayListOf(
-        assetManager[TextureAsset.Wood]!!,
-        assetManager[TextureAsset.Wood1]!!,
-    )
-    private val wallModels = arrayListOf(
-        assetManager[TextureAsset.Wood]!!,
-    )
+class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<GameObject> {
+    companion object {
+        val random = MathUtils.random.asKotlinRandom()
+
+        val cells = arrayOf(TextureAsset.Wood, TextureAsset.Wood1)
+        val walls = arrayOf(TextureAsset.Wood)
+    }
 
     init {
         if (side % 2u == 0u) {
@@ -24,18 +22,20 @@ class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<M
         }
     }
 
-    private val cells = Array((side * side).toInt()) { i ->
-        val wood = cellModels.random(random)
+    val cells = Array((side * side).toInt()) { i ->
+        val asset = Companion.cells.random(random)
+        val cell = assetManager[asset]!!
         Cell(
             position = immutableVec3(
-                x = ((i / side.toInt() - side.toInt() / 2) * wood.width).toFloat(),
-                z = ((i % side.toInt() - side.toInt() / 2) * wood.height).toFloat(),
+                x = (i / side.toInt() - side.toInt() / 2) * cell.width.toFloat(),
+                z = (i % side.toInt() - side.toInt() / 2) * cell.height.toFloat(),
             ),
-            texture = wood,
+            texture = cell,
         )
     }
-    private val walls = Array(4) {
-        val wall = wallModels.random(random)
+    val walls = Array(1) {
+        val asset = Companion.walls.random(random)
+        val wall = assetManager[asset]!!
         Wall(
             position = immutableVec3(y = wall.height / 2f),
             direction = Direction.Left,
@@ -43,11 +43,9 @@ class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<M
         )
     }
 
-    operator fun get(i: UInt, j: UInt) = cells[(i * side + j).toInt()]
-
     override fun iterator() = (cells.asSequence() + walls.asSequence()).iterator()
 
     override fun dispose() {
-        forEach(ModelObject::dispose)
+        forEach(GameObject::dispose)
     }
 }

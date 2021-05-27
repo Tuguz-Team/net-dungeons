@@ -10,7 +10,7 @@ import com.tuguzteam.netdungeons.objects.TextureObject
 class Cell(
     position: ImmutableVector3 = ImmutableVector3.ZERO,
     texture: Texture,
-) : Focusable, TextureObject(position, texture) {
+) : TextureObject(position, texture), Focusable {
     init {
         transform.rotate(Vector3.X, -90f)
     }

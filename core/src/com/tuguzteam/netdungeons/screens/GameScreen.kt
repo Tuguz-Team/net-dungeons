@@ -3,7 +3,6 @@ package com.tuguzteam.netdungeons.screens
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.graphics.g3d.RenderableProvider
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
@@ -12,9 +11,11 @@ import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.Asset
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.Field
+import com.tuguzteam.netdungeons.field.rooms.Corridor
+import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
-import com.tuguzteam.netdungeons.objects.ModelObject
+import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.plusAssign
 import com.tuguzteam.netdungeons.use
 import com.tuguzteam.netdungeons.with
@@ -49,13 +50,13 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         )
     }
 
-    private val renderables = arrayListOf<RenderableProvider>()
     private val assetManager = loader.assetManager
 
     private val rotationZoomGestureListener: RotationZoomGestureListener
     private val objectChooseGestureListener: ObjectChooseGestureListener
 
-    private lateinit var field: Field
+    private var field: Field? = null
+    private var room: Room? = null
 
     init {
         viewport = ExtendViewport(120f, 120f, camera)
@@ -72,11 +73,13 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         KtxAsync.launch {
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
-            field = Field(side = 9u, assetManager)
-            renderables.run {
-                addAll(field.map(ModelObject::renderableProvider))
-                trimToSize()
+            field = Field(side = 9u, assetManager).onEach {
+                it.visible = false
             }
+            room = Corridor(
+                assetManager = assetManager,
+                width = 3u, length = 7u,
+            )
         }
     }
 
@@ -85,16 +88,23 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         runBlocking {
             assetManager.unload(assets)
         }
-        field.dispose()
-        renderables.clear()
+        field?.dispose()
+        room?.dispose()
     }
 
     override fun render(delta: Float) {
         super.render(delta)
         if (assetManager.loaded(assets)) {
             rotationZoomGestureListener.update()
+
             modelBatch.use(camera) {
-                render(renderables, environment)
+                room?.let {
+                    val iterable = it.asSequence()
+                        .filter { gameObject -> gameObject.visible && gameObject is Renderable }
+                        .map { gameObject -> (gameObject as Renderable).renderableProvider }
+                        .asIterable()
+                    render(iterable, environment)
+                }
             }
         } else {
             logger.info { "Asset loading progress: ${assetManager.progress.percent * 100}%" }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.VertexAttributes.Usage
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.tuguzteam.netdungeons.ImmutableVector3
 
 open class Cube(
@@ -12,7 +11,7 @@ open class Cube(
     color: Color,
     position: ImmutableVector3 = ImmutableVector3.ZERO
 ) : ModelObject(
-    position, model = ModelBuilder().createBox(
+    position, model = modelBuilder.createBox(
         dimensions.x, dimensions.y, dimensions.z,
         Material(ColorAttribute.createDiffuse(color)),
         (Usage.Position or Usage.Normal).toLong()

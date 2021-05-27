@@ -1,6 +1,5 @@
 package com.tuguzteam.netdungeons.objects
 
-import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableVector3
 
@@ -11,16 +10,14 @@ abstract class GameObject(open var position: ImmutableVector3) : Disposable {
         override fun iterator() = gameObjects.iterator()
     }
 
+    var visible = true
+
     init {
         @Suppress("LeakingThis")
         gameObjects.add(element = this)
     }
 
-    open fun intersectedBy(ray: Ray) = false
-
     override fun dispose() {
         gameObjects.remove(element = this)
     }
 }
-
-infix fun Ray.intersects(gameObject: GameObject) = gameObject.intersectedBy(ray = this)
