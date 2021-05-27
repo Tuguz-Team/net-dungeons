@@ -14,6 +14,7 @@ import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
+import com.tuguzteam.netdungeons.objects.ModelObject
 import com.tuguzteam.netdungeons.plusAssign
 import com.tuguzteam.netdungeons.use
 import com.tuguzteam.netdungeons.with
@@ -41,9 +42,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     private val modelBatch = ModelBatch()
     private val environment = Environment().apply {
-        this with ColorAttribute.createAmbientLight(color(red = 0.1f, green = 0.1f, blue = 0.1f))
+        this with ColorAttribute.createAmbientLight(color(red = 0.5f, green = 0.5f, blue = 0.5f))
         this += DirectionalLight().set(
-            color(red = 0.3f, green = 0.3f, blue = 0.3f),
+            color(red = 0.8f, green = 0.8f, blue = 0.8f),
             vec3(x = -1f, y = -0.8f, z = -0.2f),
         )
     }
@@ -73,7 +74,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             logger.info { "Asset loading finished" }
             field = Field(side = 9u, assetManager)
             renderables.run {
-                addAll(field.map { it.renderableProvider })
+                addAll(field.map(ModelObject::renderableProvider))
                 trimToSize()
             }
         }

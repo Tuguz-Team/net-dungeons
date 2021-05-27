@@ -1,6 +1,7 @@
 package com.tuguzteam.netdungeons.objects
 
 import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes.Usage
 import com.badlogic.gdx.graphics.g3d.Material
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.tuguzteam.netdungeons.ImmutableVector3
+import ktx.math.vec3
 
 abstract class TextureObject(
     position: ImmutableVector3,
@@ -31,12 +33,22 @@ abstract class TextureObject(
     }
 }
 
-private fun createRect(texture: Texture): Model = ModelBuilder().createRect(
-    -texture.width * 0.5f, -texture.height * 0.5f, 0f,
-    texture.width * 0.5f, -texture.height * 0.5f, 0f,
-    texture.width * 0.5f, texture.height * 0.5f, 0f,
-    -texture.width * 0.5f, texture.height * 0.5f, 0f,
-    0f, 0f, 1f,
-    Material(TextureAttribute.createDiffuse(texture)),
-    (Usage.Position or Usage.Normal or Usage.TextureCoordinates).toLong(),
-)
+private val modelBuilder = ModelBuilder()
+
+private fun createRect(texture: Texture): Model = modelBuilder.run {
+    begin()
+    val attributes = (Usage.Position or Usage.Normal or Usage.TextureCoordinates).toLong()
+    val material = Material(TextureAttribute.createDiffuse(texture))
+
+    val x = texture.width * 0.5f
+    val y = texture.height * 0.5f
+    val corner00 = vec3(-x, -y)
+    val corner10 = vec3(x, -y)
+    val corner11 = vec3(x, y)
+    val corner01 = vec3(-x, y)
+    val normal = vec3(z = 1f)
+
+    val meshPartBuilder = part("rect", GL20.GL_TRIANGLES, attributes, material)
+    meshPartBuilder.rect(corner00, corner10, corner11, corner01, normal)
+    end()
+}

@@ -2,15 +2,20 @@ package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
-import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.immutableVec3
+import com.tuguzteam.netdungeons.objects.ModelObject
 import kotlin.random.asKotlinRandom
 
-class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<Cell> {
-    private val woods = arrayListOf(
+class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<ModelObject> {
+    private val random = MathUtils.random.asKotlinRandom()
+    private val cellModels = arrayListOf(
         assetManager[TextureAsset.Wood]!!,
         assetManager[TextureAsset.Wood1]!!,
+    )
+    private val wallModels = arrayListOf(
+        assetManager[TextureAsset.Wood]!!,
     )
 
     init {
@@ -20,21 +25,29 @@ class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<C
     }
 
     private val cells = Array((side * side).toInt()) { i ->
-        val wood = woods.random(MathUtils.random.asKotlinRandom())
+        val wood = cellModels.random(random)
         Cell(
-            position = ImmutableVector3(
+            position = immutableVec3(
                 x = ((i / side.toInt() - side.toInt() / 2) * wood.width).toFloat(),
-                y = 0f,
                 z = ((i % side.toInt() - side.toInt() / 2) * wood.height).toFloat(),
-            ), texture = wood,
+            ),
+            texture = wood,
+        )
+    }
+    private val walls = Array(4) {
+        val wall = wallModels.random(random)
+        Wall(
+            position = immutableVec3(y = wall.height / 2f),
+            direction = Direction.Left,
+            texture = wall,
         )
     }
 
     operator fun get(i: UInt, j: UInt) = cells[(i * side + j).toInt()]
 
-    override fun iterator() = cells.iterator()
+    override fun iterator() = (cells.asSequence() + walls.asSequence()).iterator()
 
     override fun dispose() {
-        forEach { cell -> cell.dispose() }
+        forEach(ModelObject::dispose)
     }
 }

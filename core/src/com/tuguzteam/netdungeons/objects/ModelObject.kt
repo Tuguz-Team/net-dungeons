@@ -20,8 +20,8 @@ abstract class ModelObject(
 
     override var position = position
         set(value) {
-            modelInstance.transform.setTranslation(value.toMutable())
-            boundingBox *= modelInstance.transform
+            transform.setTranslation(value.toMutable())
+            boundingBox *= transform
             field = value
         }
 
@@ -34,7 +34,7 @@ abstract class ModelObject(
         get() = modelInstance.materials
 
     private var boundingBox =
-        modelInstance.calculateBoundingBox(BoundingBox()) * modelInstance.transform
+        modelInstance.calculateBoundingBox(BoundingBox()) * transform
 
     override fun intersectedBy(ray: Ray) = Intersector.intersectRayBoundsFast(ray, boundingBox)
 }

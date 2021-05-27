@@ -5,20 +5,22 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import ktx.math.ImmutableVector
+import ktx.math.ImmutableVector2
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.sqrt
 
 data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
     ImmutableVector<ImmutableVector3> {
+
     companion object {
-        val ZERO = ImmutableVector3(x = 0f, y = 0f, z = 0f)
+        val ZERO = immutableVec3()
 
-        val X = ImmutableVector3(x = 1f, y = 0f, z = 0f)
+        val X = immutableVec3(x = 1f)
 
-        val Y = ImmutableVector3(x = 0f, y = 1f, z = 0f)
+        val Y = immutableVec3(y = 1f)
 
-        val Z = ImmutableVector3(x = 0f, y = 0f, z = 1f)
+        val Z = immutableVec3(z = 1f)
 
         fun fromString(string: String) = Vector3().fromString(string).toImmutable()
     }
@@ -31,9 +33,9 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
 
     override fun toString() = "($x, $y, $z)"
 
-    override operator fun inc() = ImmutableVector3(x + 1, y + 1, z + 1)
+    override operator fun inc() = immutableVec3(x + 1, y + 1, z + 1)
 
-    override operator fun dec() = ImmutableVector3(x - 1, y - 1, z - 1)
+    override operator fun dec() = immutableVec3(x - 1, y - 1, z - 1)
 
     override fun dot(vector: ImmutableVector3) = dot(vector.x, vector.y, vector.z)
 
@@ -58,19 +60,19 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
     fun isNotZero(margin: Float) = !isZero(margin)
 
     override operator fun minus(other: ImmutableVector3) =
-        ImmutableVector3(x - other.x, y - other.y, z - other.z)
+        immutableVec3(x - other.x, y - other.y, z - other.z)
 
     override operator fun plus(other: ImmutableVector3) =
-        ImmutableVector3(x + other.x, y + other.y, z + other.z)
+        immutableVec3(x + other.x, y + other.y, z + other.z)
 
     override operator fun times(vector: ImmutableVector3) = times(vector.x, vector.y, vector.z)
 
     override operator fun times(scalar: Float) = times(scalar, scalar, scalar)
 
     fun times(x: Float, y: Float, z: Float) =
-        ImmutableVector3(this.x * x, this.y * y, this.z * z)
+        immutableVec3(this.x * x, this.y * y, this.z * z)
 
-    override operator fun unaryMinus(): ImmutableVector3 = ImmutableVector3(-x, -y, -z)
+    override operator fun unaryMinus() = immutableVec3(-x, -y, -z)
 
     override fun withClamp2(min2: Float, max2: Float): ImmutableVector3 {
         val l2 = len2
@@ -91,7 +93,7 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
     override fun withLerp(target: ImmutableVector3, alpha: Float): ImmutableVector3 {
         val invAlpha = 1.0f - alpha
 
-        return ImmutableVector3(
+        return immutableVec3(
             x = x * invAlpha + target.x * alpha,
             y = y * invAlpha + target.y * alpha,
             z = z * invAlpha + target.z * alpha
@@ -118,8 +120,12 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
 
 fun ImmutableVector3.toMutable() = Vector3(x, y, z)
 
-fun Vector3.toImmutable() = ImmutableVector3(x, y, z)
+fun Vector3.toImmutable() = immutableVec3(x, y, z)
 
 infix fun ImmutableVector3.x(other: ImmutableVector3) = crs(other.x, other.y, other.z)
 
 infix fun ImmutableVector3.crs(other: ImmutableVector3) = crs(other.x, other.y, other.z)
+
+fun immutableVec3(x: Float = 0f, y: Float = 0f, z: Float = 0f) = ImmutableVector3(x, y, z)
+
+fun immutableVec2(x: Float = 0f, y: Float = 0f) = ImmutableVector2(x, y)
