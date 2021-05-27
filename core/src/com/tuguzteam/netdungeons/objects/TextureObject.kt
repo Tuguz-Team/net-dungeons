@@ -13,7 +13,7 @@ import ktx.math.vec3
 
 abstract class TextureObject(
     position: ImmutableVector3,
-    private val texture: Texture,
+    texture: Texture,
 ) : ModelObject(position, createRect(texture)) {
     var color: Color = Color.WHITE
         set(value) {
@@ -21,15 +21,8 @@ abstract class TextureObject(
             field = value
         }
 
-    val width: Int
-        get() = texture.width
-    val height: Int
-        get() = texture.height
-
-    override fun dispose() {
-        super.dispose()
-        model.dispose()
-    }
+    val width = texture.width
+    val height = texture.height
 }
 
 private fun createRect(texture: Texture): Model = ModelObject.modelBuilder.run {

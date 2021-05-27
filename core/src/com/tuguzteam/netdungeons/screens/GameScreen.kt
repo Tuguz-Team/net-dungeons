@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.Asset
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.Field
@@ -16,9 +16,6 @@ import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.objects.Renderable
-import com.tuguzteam.netdungeons.plusAssign
-import com.tuguzteam.netdungeons.use
-import com.tuguzteam.netdungeons.with
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ktx.async.KtxAsync
@@ -79,6 +76,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             room = Corridor(
                 assetManager = assetManager,
                 width = 3u, length = 7u,
+                position = immutableVec3(),
             )
         }
     }

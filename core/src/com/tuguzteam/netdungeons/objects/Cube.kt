@@ -9,7 +9,7 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 open class Cube(
     dimensions: ImmutableVector3,
     color: Color,
-    position: ImmutableVector3 = ImmutableVector3.ZERO
+    position: ImmutableVector3,
 ) : ModelObject(
     position, model = modelBuilder.createBox(
         dimensions.x, dimensions.y, dimensions.z,

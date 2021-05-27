@@ -8,7 +8,7 @@ import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.TextureObject
 
 class Cell(
-    position: ImmutableVector3 = ImmutableVector3.ZERO,
+    position: ImmutableVector3,
     texture: Texture,
 ) : TextureObject(position, texture), Focusable {
     init {

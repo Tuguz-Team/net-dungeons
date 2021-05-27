@@ -3,6 +3,7 @@ package com.tuguzteam.netdungeons
 import com.badlogic.gdx.Application
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
+import com.badlogic.gdx.math.MathUtils
 import com.kotcrab.vis.ui.VisUI
 import com.tuguzteam.netdungeons.assets.*
 import com.tuguzteam.netdungeons.net.AuthManager
@@ -14,9 +15,11 @@ import ktx.app.KtxGame
 import ktx.async.KtxAsync
 import ktx.log.debug
 import ktx.log.logger
+import kotlin.random.asKotlinRandom
 
 class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGame<StageScreen>() {
     companion object {
+        val random = MathUtils.random.asKotlinRandom()
         val logger = logger<Loader>()
         val requiredAssets: List<Asset> = arrayListOf(SkinAsset.Default, I18NBundleAsset.Default)
     }
@@ -42,5 +45,6 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
     override fun dispose() {
         super.dispose()
         assetManager.dispose()
+        VisUI.dispose()
     }
 }

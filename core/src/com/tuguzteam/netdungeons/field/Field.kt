@@ -1,17 +1,14 @@
 package com.tuguzteam.netdungeons.field
 
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.Disposable
+import com.tuguzteam.netdungeons.Loader.Companion.random
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
-import kotlin.random.asKotlinRandom
 
 class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<GameObject> {
     companion object {
-        val random = MathUtils.random.asKotlinRandom()
-
         val cells = arrayOf(TextureAsset.Wood, TextureAsset.Wood1)
         val walls = arrayOf(TextureAsset.Wood)
     }
