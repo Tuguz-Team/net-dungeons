@@ -108,6 +108,7 @@ class AuthContent(
     private fun addChildren() {
         textFields.forEach { textField -> textField.addTo(this) }
         passwordTextField.addTo(this, viewPasswordButton)
-        add(authButton).colspan(2).fillX().pad(heightFraction(.025f))
+        add(authButton).colspan(2)
+            .fillX().pad(heightFraction(.025f))
     }
 }

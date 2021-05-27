@@ -84,6 +84,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
 
     fun uncheck() {
         gameMode.uncheck()
+        gameMode.click()
         gameSize.uncheck()
         gameType.uncheck()
     }

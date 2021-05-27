@@ -9,10 +9,8 @@ import com.kotcrab.vis.ui.widget.VisValidatableTextField
 import com.tuguzteam.netdungeons.heightFraction
 
 class ExtValidTextField(
-    regex: Regex, infoText: String,
-    private val inputError: String,
-    private val emptyError: String? = null,
-    align: Int = Align.center
+    regex: Regex, infoText: String, private val inputError: String,
+    private val emptyError: String? = null, align: Int = Align.center
 ) : VisValidatableTextField() {
     private var infoLabel = VisLabel(infoText, align)
     private var errorLabel = VisLabel(null, align).apply {

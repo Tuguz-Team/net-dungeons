@@ -1,21 +1,15 @@
 package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
-import com.kotcrab.vis.ui.layout.FlowGroup
-import com.kotcrab.vis.ui.widget.VisImageTextButton
-import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.net.Result
-import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.SplitPane
 import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
 import com.tuguzteam.netdungeons.ui.navigation.NavGame
+import com.tuguzteam.netdungeons.ui.navigation.NavProfile
+import com.tuguzteam.netdungeons.ui.navigation.NavRating
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync
@@ -27,48 +21,17 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     private val yesNoDialog =
         YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
 
-    inner class NavProfile {
-        val navButton = VisImageTextButton(
-            "Profile",
-            VisImageTextButtonStyle(null, null, null, BitmapFont())
-        ).apply {
-            addListener(ClickListener {
-                contentSplitPane.setSecondWidget(null)
-                header.setFirstWidget(FlowGroup(false))
-                navGame.uncheck()
-            })
-        }
-    }
-
-    inner class NavRating {
-        private val radioButton = RadioButtonGroup(
-            true, arrayListOf("By level", "By wins", "By kills")
-        )
-        private val sortButtons = HorizontalGroup().apply {
-            left().space(heightFraction(.05f)).padLeft(heightFraction(.05f))
-            for (button in radioButton.groupButtons)
-                this += button
-        }
-        val navButton = VisImageTextButton(
-            "Rating",
-            VisImageTextButtonStyle(null, null, null, BitmapFont())
-        ).apply {
-            addListener(ClickListener {
-                contentSplitPane.setSecondWidget(null)
-                header.setFirstWidget(sortButtons)
-                navGame.uncheck()
-            })
-        }
-    }
-
     private val header = ContentHeader(this, null, 0.9f)
     private val contentSplitPane = SplitPane(header, null, true, 0.2f)
+
     private val navGame = NavGame(loader, contentSplitPane, header)
+    private val navProfile = NavProfile(contentSplitPane, header, navGame)
+    private val navRating = NavRating(contentSplitPane, header, navGame)
 
     private val navigation = VisTable().apply {
         center().add(navGame.navButton).expand().row()
-        add(NavProfile().navButton).expand().row()
-        add(NavRating().navButton).expand()
+        add(navProfile.navButton).expand().row()
+        add(navRating.navButton).expand()
     }
     private val mainSplitPane = SplitPane(
         navigation, contentSplitPane, false, 0.15f
