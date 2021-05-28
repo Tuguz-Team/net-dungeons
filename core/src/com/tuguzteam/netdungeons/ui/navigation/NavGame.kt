@@ -24,9 +24,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     }
     private val content = VisScrollPane(scrollGroup).apply {
         setOverscroll(false, false)
-        setScrollbarsVisible(true)
         fadeScrollBars = false
-        setFlingTime(0f)
     }
     private val gameMode = NavGameElement(
         content, 0f, "Mode",
@@ -79,10 +77,11 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
         addListener(ClickListener {
             contentSplitPane.setSecondWidget(content)
             header.setFirstWidget(headerSplitPane)
+            uncheck()
         })
     }
 
-    fun uncheck() {
+    private fun uncheck() {
         gameMode.uncheck()
         gameMode.click()
         gameSize.uncheck()
