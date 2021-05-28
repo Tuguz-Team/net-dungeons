@@ -10,8 +10,10 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.field.Direction
 import com.tuguzteam.netdungeons.field.Field
-import com.tuguzteam.netdungeons.field.rooms.Corridor
+import com.tuguzteam.netdungeons.field.Type
+import com.tuguzteam.netdungeons.field.rooms.Box
 import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -57,8 +59,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         camera = OrthographicCamera().apply {
             position.set(vec3(x = 60f, y = 60f, z = 60f))
             lookAt(vec3())
-            near = 15f
-            far = 185f
+            near = 10f
+            far = 200f
             update(true)
         }
         viewport.apply {
@@ -79,10 +81,12 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             field = Field(side = 9u, assetManager).onEach {
                 it.visible = false
             }
-            room = Corridor(
-                position = immutableVec3(), assetManager,
-                width = 3u, length = 7u,
+            room = Box(
+                position = immutableVec3(), type = Type.Slum,
+                walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
+                assetManager, width = 4u, length = 7u,
             )
+            logger.info { "Field generation finished" }
         }
     }
 

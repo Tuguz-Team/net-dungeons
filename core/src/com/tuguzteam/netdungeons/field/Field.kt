@@ -14,29 +14,26 @@ class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<G
     }
 
     init {
-        if (side % 2u == 0u) {
-            throw IllegalArgumentException("Side of field must be positive and odd: $side given")
-        }
+        require(side % 2u == 1u) { "side of field must be positive and odd: $side given" }
     }
 
     val cells = Array((side * side).toInt()) { i ->
         val asset = Companion.cells.random(random)
-        val cell = assetManager[asset]!!
+        val texture = assetManager[asset]!!
         Cell(
             position = immutableVec3(
-                x = (i / side.toInt() - side.toInt() / 2) * cell.width.toFloat(),
-                z = (i % side.toInt() - side.toInt() / 2) * cell.height.toFloat(),
+                x = (i / side.toInt() - side.toInt() / 2) * texture.width.toFloat(),
+                z = (i % side.toInt() - side.toInt() / 2) * texture.height.toFloat(),
             ),
-            texture = cell,
+            texture,
         )
     }
     val walls = Array(1) {
         val asset = Companion.walls.random(random)
-        val wall = assetManager[asset]!!
+        val texture = assetManager[asset]!!
         Wall(
-            position = immutableVec3(y = wall.height / 2f),
-            direction = Direction.Left,
-            texture = wall,
+            position = immutableVec3(y = texture.height / 2f),
+            texture, direction = Direction.Left,
         )
     }
 
