@@ -24,6 +24,10 @@ open class StageScreen(val loader: Loader) : Stage(), KtxScreen {
         viewport.update(width, height)
     }
 
+    override fun hide() {
+        inputMultiplexer.clear()
+    }
+
     override fun dispose() {
         super<Stage>.dispose()
     }
