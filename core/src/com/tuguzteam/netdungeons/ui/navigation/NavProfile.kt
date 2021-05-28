@@ -6,7 +6,7 @@ import com.kotcrab.vis.ui.widget.VisImageTextButton
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 
-class NavProfile(contentSplitPane: SplitPane, header: ContentHeader, navGame: NavGame) {
+class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
     val navButton = VisImageTextButton(
         "Profile",
         VisImageTextButton.VisImageTextButtonStyle(null, null, null, BitmapFont())
@@ -14,7 +14,6 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader, navGame: Na
         addListener(ClickListener {
             contentSplitPane.setSecondWidget(null)
             header.setFirstWidget(FlowGroup(false))
-            navGame.uncheck()
         })
     }
 }

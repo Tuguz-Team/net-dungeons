@@ -25,8 +25,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     private val contentSplitPane = SplitPane(header, null, true, 0.2f)
 
     private val navGame = NavGame(loader, contentSplitPane, header)
-    private val navProfile = NavProfile(contentSplitPane, header, navGame)
-    private val navRating = NavRating(contentSplitPane, header, navGame)
+    private val navProfile = NavProfile(contentSplitPane, header)
+    private val navRating = NavRating(contentSplitPane, header)
 
     private val navigation = VisTable().apply {
         center().add(navGame.navButton).expand().row()
