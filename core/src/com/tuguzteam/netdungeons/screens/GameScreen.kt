@@ -84,7 +84,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             room = Box(
                 position = immutableVec3(), type = Type.Slum,
                 walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
-                assetManager, width = 4u, length = 7u,
+                assetManager, width = 4u, length = 7u, height = 2u,
             )
             logger.info { "Field generation finished" }
         }
