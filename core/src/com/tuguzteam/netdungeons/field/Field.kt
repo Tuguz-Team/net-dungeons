@@ -4,8 +4,11 @@ import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.rooms.Box
+import com.tuguzteam.netdungeons.field.rooms.MultiRoom
+import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
+import ktx.assets.dispose
 
 class Field(
     val side: UInt,
@@ -29,11 +32,14 @@ class Field(
         ),
     )
 
-    override fun iterator() =
-        rooms.fold(sequenceOf()) { sequence: Sequence<GameObject>, box -> sequence + box }
-            .iterator()
+    override fun iterator() = rooms.asSequence().map(::roomObjects).flatten().iterator()
+
+    private fun roomObjects(room: Room) = when (room) {
+        is Box -> room.asSequence()
+        is MultiRoom -> room.asSequence().map { (it as Room).asSequence() }.flatten()
+    }
 
     override fun dispose() {
-        forEach(GameObject::dispose)
+        rooms.dispose()
     }
 }
