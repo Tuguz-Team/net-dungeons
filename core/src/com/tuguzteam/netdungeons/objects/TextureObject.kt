@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.tuguzteam.netdungeons.ImmutableVector3
+import com.tuguzteam.netdungeons.create
 import com.tuguzteam.netdungeons.with
 import ktx.math.vec3
 
@@ -37,10 +38,8 @@ private fun createRect(texture: Texture, width: UInt, height: UInt): Model {
     val corner01 = vec3(-x, y)
     val normal = vec3(z = -1f)
 
-    return ModelObject.modelBuilder.run {
-        begin()
+    return ModelObject.modelBuilder.create {
         val meshPartBuilder = part("rect", GL20.GL_TRIANGLES, attributes, material)
         meshPartBuilder.rect(corner00, corner10, corner11, corner01, normal)
-        end()
     }
 }
