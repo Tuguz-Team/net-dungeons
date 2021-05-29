@@ -36,7 +36,7 @@ private fun createRect(texture: Texture): Model = ModelObject.modelBuilder.run {
     val corner10 = vec3(x, -y)
     val corner11 = vec3(x, y)
     val corner01 = vec3(-x, y)
-    val normal = vec3(z = 1f)
+    val normal = vec3(z = -1f)
 
     val meshPartBuilder = part("rect", GL20.GL_TRIANGLES, attributes, material)
     meshPartBuilder.rect(corner00, corner10, corner11, corner01, normal)

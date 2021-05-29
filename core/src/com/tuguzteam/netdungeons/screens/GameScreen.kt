@@ -10,11 +10,7 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
-import com.tuguzteam.netdungeons.field.Direction
 import com.tuguzteam.netdungeons.field.Field
-import com.tuguzteam.netdungeons.field.Type
-import com.tuguzteam.netdungeons.field.rooms.Box
-import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.objects.Renderable
@@ -35,20 +31,22 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     private lateinit var camera: OrthographicCamera
     private val modelBatch = ModelBatch()
     private val environment = Environment().apply {
-        this with ColorAttribute.createAmbientLight(color(red = 0.5f, green = 0.5f, blue = 0.5f))
+        val ambient = 0.4f
+        val directional = 0.425f
+        this with ColorAttribute.createAmbientLight(
+            color(red = ambient, green = ambient, blue = ambient)
+        )
         this += DirectionalLight().set(
-            color(red = 0.8f, green = 0.8f, blue = 0.8f),
-            vec3(x = -1f, y = -0.8f, z = -0.2f),
+            color(red = directional, green = directional, blue = directional),
+            vec3(x = 0.6f, y = 0.4f, z = 0.2f),
         )
     }
 
     private val assetManager = loader.assetManager
+    private var field: Field? = null
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
     private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
-
-    private var field: Field? = null
-    private var room: Room? = null
 
     init {
         viewport = ExtendViewport(120f, 120f)
@@ -78,14 +76,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         KtxAsync.launch {
             assetManager.load(assets.asIterable())
             logger.info { "Asset loading finished" }
-            field = Field(side = 9u, assetManager).onEach {
-                it.visible = false
-            }
-            room = Box(
-                position = immutableVec3(), type = Type.Slum,
-                walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
-                assetManager, width = 4u, length = 7u, height = 2u,
-            )
+            field = Field(side = 9u, assetManager)
             logger.info { "Field generation finished" }
         }
     }
@@ -96,18 +87,17 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             assetManager.unload(assets.asIterable())
         }
         field?.dispose()
-        room?.dispose()
+        field = null
     }
 
     override fun render(delta: Float) {
         super.render(delta)
-        val room = room
         val field = field
-        if (room != null && field != null && assetManager.loaded(assets.asIterable())) {
+        if (field != null && assetManager.loaded(assets.asIterable())) {
             rotationZoomGestureListener.update()
 
             modelBatch.use(camera) {
-                val renderableProviders = room.asSequence()
+                val renderableProviders = field.asSequence()
                     .filter { gameObject -> gameObject.visible && gameObject is Renderable }
                     .map { gameObject -> (gameObject as Renderable).renderableProvider }
                     .asIterable()
