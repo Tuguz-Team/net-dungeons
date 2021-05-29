@@ -12,13 +12,14 @@ sealed class Room(
     position: ImmutableVector3,
     val type: Type,
 ) : GameObject(position), Iterable<GameObject>, Intersectable {
+
     companion object : Iterable<Room> {
         private val rooms = arrayListOf<Room>()
 
         override fun iterator() = rooms.iterator()
     }
 
-    protected abstract val boundingBox: BoundingBox
+    internal abstract val boundingBox: BoundingBox
 
     init {
         @Suppress("LeakingThis")
