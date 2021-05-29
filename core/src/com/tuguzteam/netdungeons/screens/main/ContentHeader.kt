@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui.navigation
+package com.tuguzteam.netdungeons.screens.main
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Stage

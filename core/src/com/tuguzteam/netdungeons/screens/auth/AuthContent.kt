@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui.auth
+package com.tuguzteam.netdungeons.screens.auth
 
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.kotcrab.vis.ui.widget.VisTable

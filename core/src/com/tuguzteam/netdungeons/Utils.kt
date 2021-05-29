@@ -11,6 +11,9 @@ import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisTable
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -69,4 +72,23 @@ operator fun <T : BaseLight<T>> Environment.plusAssign(light: T) {
 
 infix fun Environment.with(attribute: Attribute) {
     set(attribute)
+}
+
+fun addRow(table: VisTable, triple: Triple<String, String, String>) {
+    addLabel(table, VisLabel(triple.first, Align.center), pad = true)
+    addLabel(table, VisLabel(triple.second, Align.center), expand = true, multiply = 5f)
+    addLabel(table, VisLabel(triple.third, Align.center), pad = true)
+    table.row()
+}
+
+fun addLabel(
+    table: VisTable, label: VisLabel, pad: Boolean = false,
+    expand: Boolean = false, multiply: Float = 1f
+) {
+    val cellWidth = widthFraction(.025f)
+    val cellHeight = heightFraction(.0375f)
+    val cell = table.add(label).width(cellWidth * 3f * multiply)
+
+    if (expand) cell.expandX()
+    if (pad) cell.pad(cellHeight, cellWidth, cellHeight, cellWidth)
 }

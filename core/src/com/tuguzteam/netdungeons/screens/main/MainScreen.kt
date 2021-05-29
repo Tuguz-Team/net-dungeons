@@ -1,15 +1,17 @@
-package com.tuguzteam.netdungeons.screens
+package com.tuguzteam.netdungeons.screens.main
 
 import com.badlogic.gdx.Gdx
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.net.Result
+import com.tuguzteam.netdungeons.screens.GameScreen
+import com.tuguzteam.netdungeons.screens.StageScreen
+import com.tuguzteam.netdungeons.screens.auth.AuthScreen
 import com.tuguzteam.netdungeons.ui.SplitPane
 import com.tuguzteam.netdungeons.ui.YesNoDialog
-import com.tuguzteam.netdungeons.ui.navigation.ContentHeader
-import com.tuguzteam.netdungeons.ui.navigation.NavGame
-import com.tuguzteam.netdungeons.ui.navigation.NavProfile
-import com.tuguzteam.netdungeons.ui.navigation.NavRating
+import com.tuguzteam.netdungeons.screens.main.game.NavGame
+import com.tuguzteam.netdungeons.screens.main.profile.NavProfile
+import com.tuguzteam.netdungeons.screens.main.rating.NavRating
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync

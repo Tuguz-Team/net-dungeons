@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.screens
+package com.tuguzteam.netdungeons.screens.auth
 
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.kotcrab.vis.ui.layout.FlowGroup
@@ -8,9 +8,9 @@ import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
+import com.tuguzteam.netdungeons.screens.main.MainScreen
+import com.tuguzteam.netdungeons.screens.StageScreen
 import com.tuguzteam.netdungeons.ui.*
-import com.tuguzteam.netdungeons.ui.auth.AuthContent
-import com.tuguzteam.netdungeons.ui.auth.ExtValidTextField
 import kotlinx.coroutines.launch
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign

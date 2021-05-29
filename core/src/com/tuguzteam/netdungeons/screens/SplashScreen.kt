@@ -6,6 +6,7 @@ import com.kotcrab.vis.ui.widget.VisImage
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.isDoneActing
+import com.tuguzteam.netdungeons.screens.main.MainScreen
 import kotlinx.coroutines.runBlocking
 import ktx.actors.centerPosition
 import ktx.actors.plusAssign

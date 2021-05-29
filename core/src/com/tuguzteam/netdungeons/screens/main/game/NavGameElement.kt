@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui.navigation
+package com.tuguzteam.netdungeons.screens.main.game
 
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane

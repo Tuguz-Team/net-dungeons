@@ -1,4 +1,4 @@
-package com.tuguzteam.netdungeons.ui.navigation
+package com.tuguzteam.netdungeons.screens.main.game
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Container
@@ -11,36 +11,37 @@ import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.GameScreen
+import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader) {
-    private val scrollGroup = VerticalGroup().apply {
+    private val content = VerticalGroup().apply {
         pad(
             heightFraction(.1f), heightFraction(1 / 8f),
             heightFraction(.1f), heightFraction(1 / 8f)
         ).space(heightFraction(1 / 8f))
     }
-    private val content = VisScrollPane(scrollGroup).apply {
+    private val contentScroll = VisScrollPane(content).apply {
         setOverscroll(false, false)
         fadeScrollBars = false
     }
     private val gameMode = NavGameElement(
-        content, 0f, "Mode",
+        contentScroll, 0f, "Mode",
         "Choose game mode", listOf("Team Fight", "Slaughter")
     )
     private val gameSize = NavGameElement(
-        content, .5f, "Size",
+        contentScroll, .5f, "Size",
         "Choose map size", listOf("Medium", "Large", "Very Large")
     )
     private val gameType = NavGameElement(
-        content, 1f, "Type",
+        contentScroll, 1f, "Type",
         "Choose amounts of treasure", listOf("Mansion", "Castle", "Slum")
     )
 
     init {
-        scrollGroup.apply {
+        content.apply {
             this += gameMode.window
             this += gameSize.window
             this += gameType.window
@@ -75,7 +76,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
         VisImageTextButtonStyle(null, null, null, BitmapFont())
     ).apply {
         addListener(ClickListener {
-            contentSplitPane.setSecondWidget(content)
+            contentSplitPane.setSecondWidget(contentScroll)
             header.setFirstWidget(headerSplitPane)
             uncheck()
         })

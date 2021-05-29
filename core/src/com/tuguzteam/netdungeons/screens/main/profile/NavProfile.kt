@@ -1,8 +1,9 @@
-package com.tuguzteam.netdungeons.ui.navigation
+package com.tuguzteam.netdungeons.screens.main.profile
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.kotcrab.vis.ui.layout.FlowGroup
 import com.kotcrab.vis.ui.widget.VisImageTextButton
+import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 
