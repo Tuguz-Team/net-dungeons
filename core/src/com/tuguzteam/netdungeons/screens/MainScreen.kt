@@ -18,8 +18,7 @@ import ktx.log.error
 import ktx.log.info
 
 class MainScreen(loader: Loader) : StageScreen(loader) {
-    private val yesNoDialog =
-        YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
+    private val yesNoDialog = YesNoDialog("Are you sure you want to exit?", Gdx.app::exit)
 
     private val header = ContentHeader(this, null, 0.9f)
     private val contentSplitPane = SplitPane(header, null, true, 0.2f)

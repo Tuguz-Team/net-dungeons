@@ -10,7 +10,13 @@ import com.tuguzteam.netdungeons.objects.TextureObject
 class Cell(
     position: ImmutableVector3,
     texture: Texture,
-) : TextureObject(position, texture), Focusable {
+) : TextureObject(position, texture, width, length), Focusable {
+
+    companion object {
+        const val width = 15u
+        const val length = width
+    }
+
     init {
         transform.rotate(Vector3.X, -90f)
     }

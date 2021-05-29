@@ -1,34 +1,34 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
-import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.rooms.Box
 import com.tuguzteam.netdungeons.field.rooms.MultiRoom
 import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.assets.dispose
 
 class Field(
     val side: UInt,
-    assetManager: AssetManager,
+    gameScreen: GameScreen,
 ) : Disposable, Iterable<GameObject> {
 
     companion object {
-        val cells = arrayOf(TextureAsset.Wood, TextureAsset.Wood1)
-        val walls = arrayOf(TextureAsset.Wood)
+        val cells = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+        val walls = listOf(TextureAsset.Wood)
     }
 
     init {
         require(side % 2u == 1u) { "side of field must be positive and odd: $side given" }
     }
 
-    private val rooms = arrayOf(
+    private val rooms = listOf(
         Box(
             position = immutableVec3(), type = Type.Slum,
             walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
-            assetManager, width = 4u, length = 7u, height = 2u,
+            gameScreen.assetManager, width = 3u, length = 7u, height = 2u,
         ),
     )
 

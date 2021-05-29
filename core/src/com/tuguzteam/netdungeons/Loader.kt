@@ -21,7 +21,7 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
     companion object {
         val random = MathUtils.random.asKotlinRandom()
         val logger = logger<Loader>()
-        val requiredAssets: List<Asset> = arrayListOf(SkinAsset.Default, I18NBundleAsset.Default)
+        val requiredAssets = listOf<Asset>(SkinAsset.Default, I18NBundleAsset.Default)
     }
 
     val assetManager by lazy { AssetManager() }

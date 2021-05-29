@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.Field
+import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.objects.Renderable
@@ -20,33 +21,46 @@ import ktx.async.KtxAsync
 import ktx.graphics.color
 import ktx.log.info
 import ktx.log.logger
+import ktx.math.plusAssign
 import ktx.math.vec3
 
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
-        private val assets = arrayOf(TextureAsset.Wood, TextureAsset.Wood1)
+        private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
     }
 
-    private lateinit var camera: OrthographicCamera
+    val assetManager = loader.assetManager
+    var playerPosition = immutableVec2()
+        set(value) {
+            camera?.apply {
+                position += vec3(
+                    x = value.x - field.x,
+                    z = value.y - field.y,
+                )
+                update(true)
+            }
+            field = value
+        }
+
+    private var camera: OrthographicCamera? = null
     private val modelBatch = ModelBatch()
     private val environment = Environment().apply {
         val ambient = 0.4f
         val directional = 0.425f
         this with ColorAttribute.createAmbientLight(
-            color(red = ambient, green = ambient, blue = ambient)
+            color(red = ambient, green = ambient, blue = ambient),
         )
         this += DirectionalLight().set(
             color(red = directional, green = directional, blue = directional),
             vec3(x = 0.6f, y = 0.4f, z = 0.2f),
         )
     }
-
-    private val assetManager = loader.assetManager
     private var field: Field? = null
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
     private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
+    private lateinit var movementGestureListener: MovementGestureListener
 
     init {
         viewport = ExtendViewport(120f, 120f)
@@ -54,6 +68,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun show() {
         super.show()
+        playerPosition = immutableVec2()
         camera = OrthographicCamera().apply {
             position.set(vec3(x = 60f, y = 60f, z = 60f))
             lookAt(vec3())
@@ -66,25 +81,27 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             update(Gdx.graphics.width, Gdx.graphics.height)
         }
 
-        rotationZoomGestureListener = RotationZoomGestureListener(camera)
-        objectChooseGestureListener = ObjectChooseGestureListener(viewport)
+        rotationZoomGestureListener = RotationZoomGestureListener(gameScreen = this)
+        objectChooseGestureListener = ObjectChooseGestureListener(gameScreen = this)
+        movementGestureListener = MovementGestureListener(gameScreen = this)
         inputMultiplexer.apply {
             addProcessor(GestureDetector(rotationZoomGestureListener))
             addProcessor(GestureDetector(objectChooseGestureListener))
+            addProcessor(GestureDetector(movementGestureListener))
         }
 
         KtxAsync.launch {
-            assetManager.load(assets.asIterable())
+            assetManager.load(assets)
             logger.info { "Asset loading finished" }
-            field = Field(side = 9u, assetManager)
-            logger.info { "Field generation finished" }
+            field = Field(side = 9u, gameScreen = this@GameScreen)
+            logger.info { "Map generation finished" }
         }
     }
 
     override fun hide() {
         super.hide()
         runBlocking {
-            assetManager.unload(assets.asIterable())
+            assetManager.unload(assets)
         }
         field?.dispose()
         field = null
@@ -92,8 +109,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun render(delta: Float) {
         super.render(delta)
+        val camera = camera
         val field = field
-        if (field != null && assetManager.loaded(assets.asIterable())) {
+        if (camera != null && field != null && assetManager.loaded(assets)) {
             rotationZoomGestureListener.update()
 
             modelBatch.use(camera) {

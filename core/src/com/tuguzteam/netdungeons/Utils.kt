@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.g3d.Attribute
 import com.badlogic.gdx.graphics.g3d.Environment
+import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight
 import com.badlogic.gdx.input.GestureDetector
@@ -68,5 +69,9 @@ operator fun <T : BaseLight<T>> Environment.plusAssign(light: T) {
 }
 
 infix fun Environment.with(attribute: Attribute) {
+    set(attribute)
+}
+
+infix fun Material.with(attribute: Attribute) {
     set(attribute)
 }

@@ -1,17 +1,17 @@
 package com.tuguzteam.netdungeons.input
 
 import com.badlogic.gdx.math.collision.Ray
-import com.badlogic.gdx.utils.viewport.Viewport
 import com.tuguzteam.netdungeons.KtxGestureAdapter
 import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.objects.Intersectable
 import com.tuguzteam.netdungeons.objects.intersects
+import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.log.debug
 import ktx.log.logger
 
-class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAdapter {
+class ObjectChooseGestureListener(private val gameScreen: GameScreen) : KtxGestureAdapter {
     private companion object {
         private val logger = logger<ObjectChooseGestureListener>()
     }
@@ -20,7 +20,7 @@ class ObjectChooseGestureListener(private val viewport: Viewport) : KtxGestureAd
         private set
 
     override fun tap(x: Float, y: Float, count: Int, button: Int): Boolean {
-        val ray = viewport.getPickRay(x, y)
+        val ray = gameScreen.viewport.getPickRay(x, y)
 
         val room = intersectedRoom(ray)
         val gameObject = room?.let { intersectedGameObject(ray, it) }
