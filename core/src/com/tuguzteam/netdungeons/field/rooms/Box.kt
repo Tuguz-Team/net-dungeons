@@ -1,10 +1,12 @@
 package com.tuguzteam.netdungeons.field.rooms
 
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.Loader.Companion.random
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.immutableVec3
+import ktx.math.vec3
 
 class Box(
     position: ImmutableVector3,
@@ -74,6 +76,17 @@ class Box(
         }
         this.walls = mutWalls.toTypedArray()
     }
+
+    override val boundingBox = BoundingBox(
+        vec3(
+            x = -cells[0].width * width.toInt() / 2f,
+            z = -cells[0].height * length.toInt() / 2f,
+        ),
+        vec3(
+            x = cells[0].width * width.toInt() / 2f,
+            z = cells[0].height * length.toInt() / 2f,
+        ),
+    )
 
     override fun iterator() = (cells.asSequence() + walls.asSequence()).iterator()
 }

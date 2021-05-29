@@ -38,8 +38,9 @@ abstract class ModelObject(
     val materials: Array<Material>
         get() = modelInstance.materials
 
-    private var boundingBox =
-        modelInstance.calculateBoundingBox(BoundingBox()) * transform
+    private var boundingBox = modelInstance.calculateBoundingBox() * transform
 
     override fun intersectedBy(ray: Ray) = Intersector.intersectRayBoundsFast(ray, boundingBox)
 }
+
+fun ModelInstance.calculateBoundingBox(): BoundingBox = this.calculateBoundingBox(BoundingBox())
