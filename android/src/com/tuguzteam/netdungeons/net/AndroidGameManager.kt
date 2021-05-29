@@ -1,10 +1,7 @@
 package com.tuguzteam.netdungeons.net
 
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.*
 import com.tuguzteam.netdungeons.MainActivity.Companion.auth
 import com.tuguzteam.netdungeons.MainActivity.Companion.firestore
 import com.tuguzteam.netdungeons.net.AndroidAuthManager.usersRef
@@ -30,15 +27,16 @@ object AndroidGameManager : GameManager() {
             val user = AndroidAuthManager.user
             val currentGameRef = currentGameRef
             val game = game
-            if (currentGameRef != null && game != null && firebaseUser != null && user != null) {
+            if (
+                function != null && currentGameRef != null && game != null &&
+                firebaseUser != null && user != null
+            ) {
                 publicSnapshotListener?.remove()
                 publicSnapshotListener = currentGameRef.addSnapshotListener { snapshot, error ->
-                    if (error != null) {
+                    error?.let {
                         publicSnapshotListener = null
                         field = null
-                        function?.let {
-                            it(GameState.Failure(cause = error))
-                        }
+                        function(GameState.Failure(cause = it))
                         return@addSnapshotListener
                     }
                     when {
@@ -53,9 +51,7 @@ object AndroidGameManager : GameManager() {
                             publicSnapshotListener?.remove()
                             publicSnapshotListener = null
                             field = null
-                            function?.let {
-                                it(GameState.Destroyed(game))
-                            }
+                            function(GameState.Destroyed(game))
                         }
                         // Data exists - handle changes
                         else -> try {
@@ -72,55 +68,41 @@ object AndroidGameManager : GameManager() {
                                 if (serverGame.seed != null && game.seed == null) {
                                     this@AndroidGameManager.game =
                                         Game(game.userIDs, serverGame.seed)
-                                    function?.let {
-                                        it(GameState.Started(game))
-                                    }
+                                    function(GameState.Started(game))
                                 }
 
-                                val addedUserIDs = serverGame.userIDs.toMutableList().apply {
-                                    removeAll(game.userIDs)
-                                }
-                                val removedUserIDs = game.userIDs.toMutableList().apply {
-                                    removeAll(serverGame.userIDs)
-                                }
                                 this@AndroidGameManager.game = serverGame
 
-                                // Handle added players' data
-                                function?.let {
-                                    val awaitList = mutableListOf<Deferred<User?>>()
-                                    for (userID in addedUserIDs) awaitList += async {
-                                        val newUserRef = usersRef.document(userID).get().await()
-                                        newUserRef.toObject(User::class.java)
+                                // Get added players' data
+                                val addedUserIDs = serverGame.userIDs - game.userIDs
+                                val addedUsers = addedUserIDs.map { userID ->
+                                    async {
+                                        val addedUserRef = usersRef.document(userID).get().await()
+                                        addedUserRef.toObject(User::class.java)
                                     }
-                                    val newUsers = awaitList.awaitAll()
-                                    for (newUser in newUsers) {
-                                        newUser?.let {
-                                            val player = Player(it.name, it.level)
-                                            it(GameState.PlayerAdded(player))
-                                        }
-                                    }
+                                }.awaitAll()
+                                // Send information about added players
+                                addedUsers.asSequence().filterNotNull().forEach {
+                                    val player = Player(it.name, it.level)
+                                    function(GameState.PlayerAdded(player))
                                 }
 
-                                // Handle removed players' data
-                                function?.let {
-                                    val awaitList = mutableListOf<Deferred<User?>>()
-                                    for (userID in removedUserIDs) awaitList += async {
+                                // Get removed players' data
+                                val removedUserIDs = game.userIDs - serverGame.userIDs
+                                val removedUsers = removedUserIDs.map { userID ->
+                                    async {
                                         val removedUserRef = usersRef.document(userID).get().await()
                                         removedUserRef.toObject(User::class.java)
                                     }
-                                    val removedUsers = awaitList.awaitAll()
-                                    for (newUser in removedUsers) {
-                                        newUser?.let {
-                                            val player = Player(it.name, it.level)
-                                            it(GameState.PlayerRemoved(player))
-                                        }
-                                    }
+                                }.awaitAll()
+                                // Send information about removed players
+                                removedUsers.asSequence().filterNotNull().forEach {
+                                    val player = Player(it.name, it.level)
+                                    function(GameState.PlayerRemoved(player))
                                 }
                             }
                         } catch (exception: Exception) {
-                            function?.let {
-                                it(GameState.Failure(cause = exception))
-                            }
+                            function(GameState.Failure(cause = exception))
                         }
                     }
                 }
@@ -128,12 +110,10 @@ object AndroidGameManager : GameManager() {
                     .whereNotEqualTo("game-state-temporary", null)
                 privateSnapshotListener?.remove()
                 privateSnapshotListener = privateCollection.addSnapshotListener { snapshot, error ->
-                    if (error != null) {
+                    error?.let {
                         privateSnapshotListener = null
                         field = null
-                        function?.let {
-                            it(GameState.Failure(cause = error))
-                        }
+                        function(GameState.Failure(cause = it))
                         return@addSnapshotListener
                     }
                     when {
@@ -188,14 +168,13 @@ object AndroidGameManager : GameManager() {
         check(currentUser != null && firebaseUser != null) { "User is not signed in" }
         check(currentGameRef == null && game == null) { "Already in queue" }
 
-        val allGames = gamesRef.get().await().documents
-        val mutableList = mutableListOf<Deferred<Boolean>>()
+        val allGames: List<DocumentSnapshot> = gamesRef.get().await().documents
         val scope = CoroutineScope(coroutineContext)
-        allGames.forEach { game ->
-            val gameAdminReference = gameAdminReference(gamesRef.document(game.id))
-            val seed = gameAdminReference.get().await().getLong(Game.SEED)
-            if (seed != null) return@forEach
-            mutableList += scope.async {
+        val allGamesIsSuitable = allGames.map { game ->
+            scope.async {
+                val gameAdminReference = gameAdminReference(gamesRef.document(game.id))
+                val seed = gameAdminReference.get().await().getLong(Game.SEED)
+                seed?.let { return@async false }
                 val document = usersRef.document(game.id).get().await()
                 val user = document.toObject(User::class.java)
                 val threshold = 2
@@ -203,9 +182,9 @@ object AndroidGameManager : GameManager() {
                     it.level in (currentUser.level - threshold)..(currentUser.level + threshold)
                 } == true
             }
-        }
+        }.awaitAll()
 
-        val index = mutableList.awaitAll().indexOf(true)
+        val index = allGamesIsSuitable.indexOf(true)
         val suitableGame = allGames[index]
         val userID = firebaseUser.uid
         val currentGameRef = suitableGame.reference
