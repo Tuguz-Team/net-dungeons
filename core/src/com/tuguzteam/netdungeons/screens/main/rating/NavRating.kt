@@ -1,6 +1,8 @@
 package com.tuguzteam.netdungeons.screens.main.rating
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.kotcrab.vis.ui.widget.VisImageTextButton
 import com.kotcrab.vis.ui.widget.VisTable
@@ -12,36 +14,33 @@ import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
 
 class NavRating(contentSplitPane: SplitPane, header: ContentHeader) {
-    private val ratingTableHeader = TableBlock(
+    private val tableHeader = TableBlock(
         "Position", "Adventurer", "Score points")
-    private val ratingTableFooter = TableBlock(
+    private val tableFooter = TableBlock(
         nickname = "фанат секса"
     )
+    private val tableContent = Container<Actor>().fill()
 
-    private val ratingTableScroll = TableScroll()
-    private val levelButton = TableContent(
-        "Level", ratingTableFooter, ratingTableScroll)
-    private val winButton = TableContent(
-        "Win count", ratingTableFooter, ratingTableScroll)
-    private val fragButton = TableContent(
-        "Frag count", ratingTableFooter, ratingTableScroll)
+    private val levelButton = TableDataButton(
+        "Level", tableFooter, tableContent)
+    private val winButton = TableDataButton(
+        "Win count", tableFooter, tableContent)
+    private val fragButton = TableDataButton(
+        "Frag count", tableFooter, tableContent)
 
     private val ratingTable = VisTable(false).apply {
-        ratingTableHeader.addTo(this)
-        add(ratingTableScroll).colspan(3).grow().row()
-        ratingTableFooter.addTo(this)
+        tableHeader.addTo(this)
+        add(tableContent).colspan(3).grow().row()
+        tableFooter.addTo(this)
     }
 
-    private val content = VisTable().apply {
-        add(ratingTable).pad(
-            heightFraction(.1f), heightFraction(1 / 8f),
-            heightFraction(.1f), heightFraction(1 / 8f)
-        ).grow()
-    }
+    private val content = Container(ratingTable).fill().pad(
+        heightFraction(.1f), heightFraction(1 / 8f),
+        heightFraction(.1f), heightFraction(1 / 8f)
+    )
 
-    private val radioButton = RadioButtonGroup(
-        checked = true, clicked = true,
-        buttons = arrayListOf(levelButton, winButton, fragButton)
+    private val radioButton = RadioButtonGroup(true,
+        arrayListOf(levelButton, winButton, fragButton)
     )
 
     private val sortButtons = HorizontalGroup().apply {

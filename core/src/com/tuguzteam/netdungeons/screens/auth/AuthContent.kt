@@ -31,16 +31,14 @@ class AuthContent(
         })
     }
 
-    private var wasChecked = false
     val radioButton = VisTextButton(context, "toggle").apply {
         addListener(ClickListener {
-            if (!wasChecked) {
-                this@AuthContent.clearChildren()
-                this@AuthContent.addChildren()
-                wasChecked--
-                parent.clearChildren()
-                parent.add(this@AuthContent)
-            }
+            this@AuthContent.clearChildren()
+            this@AuthContent.addChildren()
+
+            parent.clearChildren()
+            parent.add(this@AuthContent)
+
             updateState()
             anyError()
         })
@@ -54,7 +52,6 @@ class AuthContent(
 
     private fun updateState() {
         passwordTextField.isPasswordMode = !viewPasswordButton.isChecked
-        wasChecked = false
 
         textFields.forEach { textField ->
             textField.setTextFieldListener(KeyTypeListener {

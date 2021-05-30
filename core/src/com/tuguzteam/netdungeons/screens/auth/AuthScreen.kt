@@ -109,8 +109,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }, optionContent, passwordTextField, listOf(emailTextField))
 
     private val radioButton = RadioButtonGroup(
-        checked = true, clicked = true,
-        buttons = arrayListOf(registerContent.radioButton, signInContent.radioButton)
+        true, arrayListOf(registerContent.radioButton, signInContent.radioButton)
     )
     private val chooseOptionButtons = FlowGroup(
         false, heightFraction(.05f)

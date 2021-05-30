@@ -7,32 +7,25 @@ class RadioButtonGroup private constructor(private val ifChecked: Boolean) {
     private lateinit var controller: ButtonGroup<VisTextButton>
     val groupButtons = mutableListOf<VisTextButton>()
 
-    constructor(checked: Boolean, buttonNames: Iterable<String>) : this(checked) {
-        buttonNames.forEach { name ->
-            groupButtons += VisTextButton(name, "toggle").apply {
-                isFocusBorderEnabled = false
+    constructor(checked: Boolean, buttonInstances: Iterable<Any>) : this(checked) {
+        groupButtons += buttonInstances.map { instance ->
+            when (instance) {
+                is String -> VisTextButton(instance, "toggle").apply {
+                    isFocusBorderEnabled = false
+                }
+                is VisTextButton -> instance.apply {
+                    isFocusBorderEnabled = false
+                }
+                else -> TODO("Other variants are unnecessary")
             }
         }
         initController()
-    }
-
-    constructor(
-        checked: Boolean,
-        clicked: Boolean,
-        buttons: Iterable<VisTextButton>
-    ) : this(checked) {
-        buttons.forEach { button ->
-            groupButtons += button.apply {
-                isFocusBorderEnabled = false
-            }
-        }
-        initController()
-        if (clicked) doClick(groupButtons[0])
     }
 
     private fun initController() {
         controller = ButtonGroup(*groupButtons.toTypedArray()).apply {
-            if (ifChecked && groupButtons.isNotEmpty()) groupButtons[0].isChecked = true
+            if (ifChecked && groupButtons.isNotEmpty())
+                doClick(groupButtons[0])
         }
     }
 

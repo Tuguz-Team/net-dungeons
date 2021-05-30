@@ -1,30 +1,27 @@
 package com.tuguzteam.netdungeons.screens.main.rating
 
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.ui.ClickListener
 
-class TableContent(
-    sortByText: String, block: TableBlock, scroll: TableScroll
+class TableDataButton(
+    sortByText: String, block: TableBlock, scrollContainer: Container<Actor>
 ) : VisTextButton(sortByText, "toggle") {
 
+    private val scroll = TableScroll()
     private val data = mutableMapOf<Int, Pair<String, Int>>()
-    var percentage: Float = 0.5f
 
     init {
-        if (sortByText == "Level") {
-            repeat(30) { index ->
-                data[index + 1] = sortByText to 0
-            }
-        } else {
-            repeat(20) { index ->
-                data[index + 1] = sortByText to 0
-            }
+        repeat(20) { index ->
+            data[index + 1] = sortByText to 0
         }
 
         addListener(ClickListener {
             block.setPosition(sortByText)
             block.setPoints(sortByText)
 
+            scrollContainer.actor = scroll
             scroll.setContentFrom(data)
         })
     }
