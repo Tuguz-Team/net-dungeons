@@ -63,17 +63,17 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     private lateinit var movementGestureListener: MovementGestureListener
 
     init {
-        viewport = ExtendViewport(120f, 120f)
+        viewport = ExtendViewport(10f, 10f)
     }
 
     override fun show() {
         super.show()
         playerPosition = immutableVec2()
         camera = OrthographicCamera().apply {
-            position.set(vec3(x = 60f, y = 60f, z = 60f))
+            position.set(vec3(x = 10f, y = 10f, z = 10f))
             lookAt(vec3())
-            near = 10f
-            far = 200f
+            near = 1f
+            far = 50f
             update(true)
         }
         viewport.apply {

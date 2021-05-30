@@ -13,7 +13,7 @@ class Cell(
 ) : TextureObject(position, texture, width, length), Focusable {
 
     companion object {
-        const val width = 15u
+        const val width = 1u
         const val length = width
     }
 

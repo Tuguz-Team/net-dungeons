@@ -12,7 +12,7 @@ class Wall(
 ) : TextureObject(position, texture, width, height) {
 
     companion object {
-        const val width = 15u
+        const val width = 1u
         const val height = width
     }
 
