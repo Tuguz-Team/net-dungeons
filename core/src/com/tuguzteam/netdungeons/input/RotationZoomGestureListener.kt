@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.math.Vector3
 import com.tuguzteam.netdungeons.KtxGestureAdapter
 import com.tuguzteam.netdungeons.screens.GameScreen
-import ktx.math.toMutable
 import ktx.math.vec3
 import kotlin.math.absoluteValue
 import kotlin.math.sign

@@ -14,6 +14,7 @@ import com.tuguzteam.netdungeons.field.Field
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
+import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.objects.Renderable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -47,10 +48,10 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     private val modelBatch = ModelBatch()
     private val environment = Environment().apply {
         val ambient = 0.4f
-        val directional = 0.425f
         this with ColorAttribute.createAmbientLight(
             color(red = ambient, green = ambient, blue = ambient),
         )
+        val directional = 0.425f
         this += DirectionalLight().set(
             color(red = directional, green = directional, blue = directional),
             vec3(x = 0.6f, y = 0.4f, z = 0.2f),
@@ -116,8 +117,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
             modelBatch.use(camera) {
                 val renderableProviders = field.asSequence()
-                    .filter { gameObject -> gameObject.visible && gameObject is Renderable }
-                    .map { gameObject -> (gameObject as Renderable).renderableProvider }
+                    .filter(GameObject::visible)
+                    .filterIsInstance<Renderable>()
+                    .map(Renderable::renderableProvider)
                     .asIterable()
                 render(renderableProviders, environment)
             }
