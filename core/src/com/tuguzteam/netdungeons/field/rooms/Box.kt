@@ -8,6 +8,7 @@ import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.immutableVec3
 import ktx.math.vec3
 
+@Suppress("unused")
 class Box(
     position: ImmutableVector3,
     type: Type,
@@ -19,9 +20,9 @@ class Box(
 ) : Room(position, type) {
 
     init {
-        require(width > 0u) { "width must be positive: $width given" }
-        require(length > 0u) { "length must be positive: $length given" }
-        require(height > 0u) { "height must be positive: $height given" }
+        require(width > 0u) { "width must be positive" }
+        require(length > 0u) { "length must be positive" }
+        require(height > 0u) { "height must be positive" }
     }
 
     val cells = Array((width * length).toInt()) { index ->
@@ -51,30 +52,43 @@ class Box(
                 val texture = assetManager[asset]!!
                 val wallPosition = when (direction) {
                     Direction.Forward -> immutableVec3(
-                        x = -(index / height.toInt() + 1 - (width.toInt() + 1) / 2f) * Cell.width.toInt(),
+                        x = -Cell.width.toInt() * (index / height.toInt() + 1 - (width.toInt() + 1) / 2f),
                         y = Wall.height.toInt() * (index % height.toInt() + 0.5f),
                         z = (length * Cell.length).toInt() / 2f,
                     )
                     Direction.Back -> immutableVec3(
-                        x = (index / height.toInt() + 1 - (width.toInt() + 1) / 2f) * Cell.width.toInt(),
+                        x = Cell.width.toInt() * (index / height.toInt() + 1 - (width.toInt() + 1) / 2f),
                         y = Wall.height.toInt() * (index % height.toInt() + 0.5f),
                         z = -(length * Cell.length).toInt() / 2f,
                     )
                     Direction.Left -> immutableVec3(
                         x = (width * Cell.width).toInt() / 2f,
                         y = Wall.height.toInt() * (index % height.toInt() + 0.5f),
-                        z = -(index / height.toInt() + 1 - (length.toInt() + 1) / 2f) * Cell.length.toInt(),
+                        z = -Cell.length.toInt() * (index / height.toInt() + 1 - (length.toInt() + 1) / 2f),
                     )
                     Direction.Right -> immutableVec3(
                         x = -(width * Cell.width).toInt() / 2f,
                         y = Wall.height.toInt() * (index % height.toInt() + 0.5f),
-                        z = (index / height.toInt() + 1 - (length.toInt() + 1) / 2f) * Cell.length.toInt(),
+                        z = Cell.length.toInt() * (index / height.toInt() + 1 - (length.toInt() + 1) / 2f),
                     )
                 }
                 mutWalls += Wall(wallPosition, texture, direction.inverse())
             }
         }
         this.walls = mutWalls.toTypedArray()
+    }
+
+    val forwardWall = this.walls.filterTo(ArrayList((width * height).toInt())) { wall ->
+        wall.direction == Direction.Back
+    }
+    val backWall = this.walls.filterTo(ArrayList((width * height).toInt())) { wall ->
+        wall.direction == Direction.Forward
+    }
+    val leftWall = this.walls.filterTo(ArrayList((length * height).toInt())) { wall ->
+        wall.direction == Direction.Right
+    }
+    val rightWall = this.walls.filterTo(ArrayList((length * height).toInt())) { wall ->
+        wall.direction == Direction.Left
     }
 
     override val boundingBox = BoundingBox(

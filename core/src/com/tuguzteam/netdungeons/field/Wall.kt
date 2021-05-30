@@ -8,7 +8,7 @@ import com.tuguzteam.netdungeons.objects.TextureObject
 class Wall(
     position: ImmutableVector3,
     texture: Texture,
-    direction: Direction,
+    val direction: Direction,
 ) : TextureObject(position, texture, width, height) {
 
     companion object {
