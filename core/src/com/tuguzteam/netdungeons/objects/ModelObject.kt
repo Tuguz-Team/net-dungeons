@@ -12,7 +12,9 @@ import com.badlogic.gdx.math.collision.Ray
 import com.badlogic.gdx.utils.Array
 import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.times
+import com.tuguzteam.netdungeons.toImmutable
 import com.tuguzteam.netdungeons.toMutable
+import ktx.math.vec3
 
 abstract class ModelObject(
     position: ImmutableVector3,
@@ -41,6 +43,10 @@ abstract class ModelObject(
     private var boundingBox = modelInstance.calculateBoundingBox() * transform
 
     override fun intersectedBy(ray: Ray) = Intersector.intersectRayBoundsFast(ray, boundingBox)
+
+    override fun intersectionPoint(ray: Ray) = vec3()
+        .takeIf { Intersector.intersectRayBounds(ray, boundingBox, it) }
+        ?.toImmutable()
 }
 
 fun ModelInstance.calculateBoundingBox(): BoundingBox = this.calculateBoundingBox(BoundingBox())

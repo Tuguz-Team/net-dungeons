@@ -10,8 +10,6 @@ abstract class GameObject(open var position: ImmutableVector3) : Disposable {
         override fun iterator() = gameObjects.iterator()
     }
 
-    var visible = true
-
     init {
         @Suppress("LeakingThis")
         gameObjects.add(element = this)

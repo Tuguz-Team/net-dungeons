@@ -10,7 +10,9 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.field.Cell
 import com.tuguzteam.netdungeons.field.Field
+import com.tuguzteam.netdungeons.field.Wall
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -24,11 +26,14 @@ import ktx.log.info
 import ktx.log.logger
 import ktx.math.plusAssign
 import ktx.math.vec3
+import kotlin.math.absoluteValue
 
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
         private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+
+        private const val fieldOfView = 1u
     }
 
     val assetManager = loader.assetManager
@@ -43,10 +48,12 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             }
             field = value
         }
+    var visibleObjects = mutableListOf<GameObject>()
+        private set
 
     private var camera: OrthographicCamera? = null
     private val modelBatch = ModelBatch()
-    private val environment = Environment().apply {
+    private val environmentVisible = Environment().apply {
         val ambient = 0.4f
         this with ColorAttribute.createAmbientLight(
             color(red = ambient, green = ambient, blue = ambient),
@@ -57,6 +64,13 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             vec3(x = 0.6f, y = 0.4f, z = 0.2f),
         )
     }
+    private val environmentVisited = Environment().apply {
+        val ambient = 0.3f
+        this with ColorAttribute.createAmbientLight(
+            color(red = ambient, green = ambient, blue = ambient),
+        )
+    }
+    private var visitedObjects = mutableSetOf<GameObject>()
     private var field: Field? = null
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
@@ -104,6 +118,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         runBlocking {
             assetManager.unload(assets)
         }
+        visibleObjects.clear()
+        visitedObjects.clear()
         field?.dispose()
         field = null
     }
@@ -116,12 +132,39 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             rotationZoomGestureListener.update()
 
             modelBatch.use(camera) {
-                val renderableProviders = field.asSequence()
-                    .filter(GameObject::visible)
-                    .filterIsInstance<Renderable>()
-                    .map(Renderable::renderableProvider)
-                    .asIterable()
-                render(renderableProviders, environment)
+                // Render already visited objects
+                render(
+                    visitedObjects.asSequence()
+                        .filterIsInstance<Renderable>()
+                        .map(Renderable::renderableProvider)
+                        .asIterable(),
+                    environmentVisited,
+                )
+
+                // Filter visible objects
+                visibleObjects.clear()
+                visibleObjects += field.asSequence().filter { gameObject ->
+                    var distanceX = (playerPosition.x - gameObject.position.x).absoluteValue
+                    var distanceY = (playerPosition.y - gameObject.position.z).absoluteValue
+                    if (gameObject is Wall) {
+                        // TODO: check direction of wall
+                        distanceX -= Cell.width.toFloat() / 2
+                        distanceY -= Cell.length.toFloat() / 2
+                    }
+                    distanceX <= fieldOfView.toFloat() && distanceY <= fieldOfView.toFloat()
+                    // TODO: check if an object is REALLY visible
+                    //  (there are no others between this object and the player)
+                }
+                visitedObjects += visibleObjects
+
+                // Render visible objects
+                render(
+                    visibleObjects.asSequence()
+                        .filterIsInstance<Renderable>()
+                        .map(Renderable::renderableProvider)
+                        .asIterable(),
+                    environmentVisible,
+                )
             }
         } else {
             logger.info { "Asset loading progress: ${assetManager.progress.percent * 100}%" }

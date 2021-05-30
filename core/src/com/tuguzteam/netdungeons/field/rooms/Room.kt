@@ -7,6 +7,8 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.field.Type
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.objects.Intersectable
+import com.tuguzteam.netdungeons.toImmutable
+import ktx.math.vec3
 
 sealed class Room(
     position: ImmutableVector3,
@@ -27,6 +29,10 @@ sealed class Room(
     }
 
     override fun intersectedBy(ray: Ray) = Intersector.intersectRayBoundsFast(ray, boundingBox)
+
+    override fun intersectionPoint(ray: Ray) = vec3()
+        .takeIf { Intersector.intersectRayBounds(ray, boundingBox, it) }
+        ?.toImmutable()
 
     override fun dispose() {
         super.dispose()
