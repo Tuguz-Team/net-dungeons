@@ -13,7 +13,7 @@ class TableDataButton(
     private val data = mutableMapOf<Int, Pair<String, Int>>()
 
     init {
-        repeat(20) { index ->
+        repeat(16) { index ->
             data[index + 1] = sortByText to 0
         }
 

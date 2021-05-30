@@ -3,6 +3,7 @@ package com.tuguzteam.netdungeons.screens.main.rating
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.addRow
+import com.tuguzteam.netdungeons.ui.LongPressListener
 
 class TableScroll : ScrollPane(null) {
     private val ratingTableContent = VisTable(false)
@@ -13,6 +14,11 @@ class TableScroll : ScrollPane(null) {
         setFlingTime(.001f)
 
         actor = ratingTableContent
+
+        addListener(LongPressListener {
+            if (scrollPercentY >= .9375f)
+                addRow(ratingTableContent, Triple("...", "...", "..."))
+        })
     }
 
     fun setContentFrom(data: MutableMap<Int, Pair<String, Int>>) {
