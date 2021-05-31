@@ -6,6 +6,8 @@ import com.tuguzteam.netdungeons.Loader.Companion.random
 import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.immutableVec3
+import com.tuguzteam.netdungeons.toMutable
+import ktx.math.plus
 import ktx.math.vec3
 
 @Suppress("unused")
@@ -31,7 +33,7 @@ class Box(
         val i = index % width.toInt()
         val j = index / width.toInt()
         Cell(
-            position = immutableVec3(
+            position = position + immutableVec3(
                 x = (i - (width.toInt() - 1) / 2f) * Cell.width.toInt(),
                 z = (j - (length.toInt() - 1) / 2f) * Cell.length.toInt(),
             ),
@@ -73,7 +75,7 @@ class Box(
                         z = Cell.length.toInt() * (index / height.toInt() + 1 - (length.toInt() + 1) / 2f),
                     )
                 }
-                mutWalls += Wall(wallPosition, texture, direction.inverse())
+                mutWalls += Wall(position + wallPosition, texture, direction.inverse())
             }
         }
         this.walls = mutWalls
@@ -93,11 +95,11 @@ class Box(
     }
 
     override val boundingBox = BoundingBox(
-        vec3(
+        position.toMutable() + vec3(
             x = -(Cell.width * width).toInt() / 2f,
             z = -(Cell.length * length).toInt() / 2f,
         ),
-        vec3(
+        position.toMutable() + vec3(
             x = (Cell.width * width).toInt() / 2f,
             z = (Cell.length * length).toInt() / 2f,
         ),

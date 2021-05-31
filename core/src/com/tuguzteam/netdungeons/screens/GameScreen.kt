@@ -33,7 +33,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         private val logger = logger<GameScreen>()
         private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
 
-        private const val fieldOfView = 1u
+        private const val fieldOfView = 10u
     }
 
     val assetManager = loader.assetManager
