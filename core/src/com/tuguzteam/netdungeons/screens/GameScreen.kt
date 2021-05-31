@@ -108,7 +108,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         KtxAsync.launch {
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
-            field = Field(side = 9u, gameScreen = this@GameScreen)
+            field = Field(gameScreen = this@GameScreen)
             logger.info { "Map generation finished" }
         }
     }

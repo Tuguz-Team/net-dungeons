@@ -2,6 +2,7 @@ package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.field.generator.Generator
 import com.tuguzteam.netdungeons.field.rooms.Box
 import com.tuguzteam.netdungeons.field.rooms.MultiRoom
 import com.tuguzteam.netdungeons.field.rooms.Room
@@ -11,7 +12,6 @@ import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.assets.dispose
 
 class Field(
-    val side: UInt,
     gameScreen: GameScreen,
 ) : Disposable, Iterable<GameObject> {
 
@@ -21,7 +21,7 @@ class Field(
     }
 
     init {
-        require(side % 2u == 1u) { "side of field must be positive and odd: $side given" }
+        Generator.generate(20u, 20u, 5u)
     }
 
     private val rooms = listOf(

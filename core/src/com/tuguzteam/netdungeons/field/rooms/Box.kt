@@ -25,7 +25,7 @@ class Box(
         require(height > 0u) { "height must be positive" }
     }
 
-    val cells = Array((width * length).toInt()) { index ->
+    val cells = List((width * length).toInt()) { index ->
         val asset = Field.cells.random(random)
         val texture = assetManager[asset]!!
         val i = index % width.toInt()
@@ -39,7 +39,8 @@ class Box(
         )
     }
 
-    val walls: Array<Wall>
+    val walls: List<Wall>
+
     init {
         val mutWalls = mutableListOf<Wall>()
         walls.forEach { direction ->
@@ -75,7 +76,7 @@ class Box(
                 mutWalls += Wall(wallPosition, texture, direction.inverse())
             }
         }
-        this.walls = mutWalls.toTypedArray()
+        this.walls = mutWalls
     }
 
     val forwardWall = this.walls.filterTo(ArrayList((width * height).toInt())) { wall ->
