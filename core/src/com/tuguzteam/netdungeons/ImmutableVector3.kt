@@ -45,6 +45,8 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
 
     override fun dst2(vector: ImmutableVector3) = dst2(vector.x, vector.y, vector.z)
 
+    fun dst2(vector: Vector3) = dst2(vector.x, vector.y, vector.z)
+
     fun dst2(x: Float, y: Float, z: Float) = Vector3.dst2(this.x, this.y, this.z, x, y, z)
 
     override fun epsilonEquals(other: ImmutableVector3, epsilon: Float) =

@@ -1,48 +1,45 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
-import com.tuguzteam.netdungeons.Loader.Companion.random
-import com.tuguzteam.netdungeons.assets.AssetManager
 import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.field.rooms.Box
+import com.tuguzteam.netdungeons.field.rooms.MultiRoom
+import com.tuguzteam.netdungeons.field.rooms.Room
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.screens.GameScreen
+import ktx.assets.dispose
 
-class Field(val side: UInt, assetManager: AssetManager) : Disposable, Iterable<GameObject> {
+class Field(
+    val side: UInt,
+    gameScreen: GameScreen,
+) : Disposable, Iterable<GameObject> {
+
     companion object {
-        val cells = arrayOf(TextureAsset.Wood, TextureAsset.Wood1)
-        val walls = arrayOf(TextureAsset.Wood)
+        val cells = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+        val walls = listOf(TextureAsset.Wood)
     }
 
     init {
-        if (side % 2u == 0u) {
-            throw IllegalArgumentException("Side of field must be positive and odd: $side given")
-        }
+        require(side % 2u == 1u) { "side of field must be positive and odd: $side given" }
     }
 
-    val cells = Array((side * side).toInt()) { i ->
-        val asset = Companion.cells.random(random)
-        val cell = assetManager[asset]!!
-        Cell(
-            position = immutableVec3(
-                x = (i / side.toInt() - side.toInt() / 2) * cell.width.toFloat(),
-                z = (i % side.toInt() - side.toInt() / 2) * cell.height.toFloat(),
-            ),
-            texture = cell,
-        )
-    }
-    val walls = Array(1) {
-        val asset = Companion.walls.random(random)
-        val wall = assetManager[asset]!!
-        Wall(
-            position = immutableVec3(y = wall.height / 2f),
-            direction = Direction.Left,
-            texture = wall,
-        )
-    }
+    private val rooms = listOf(
+        Box(
+            position = immutableVec3(), type = Type.Slum,
+            walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
+            gameScreen.assetManager, width = 3u, length = 7u, height = 2u,
+        ),
+    )
 
-    override fun iterator() = (cells.asSequence() + walls.asSequence()).iterator()
+    override fun iterator() = rooms.asSequence().map(::roomObjects).flatten().iterator()
+
+    private fun roomObjects(room: Room) = when (room) {
+        is Box -> room.asSequence()
+        is MultiRoom -> room.asSequence().map { (it as Room).asSequence() }.flatten()
+    }
 
     override fun dispose() {
-        forEach(GameObject::dispose)
+        rooms.dispose()
     }
 }

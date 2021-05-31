@@ -2,10 +2,9 @@ package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Camera
-import com.badlogic.gdx.graphics.g3d.Attribute
-import com.badlogic.gdx.graphics.g3d.Environment
-import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
@@ -19,13 +18,23 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T : ModelBatch> T.use(camera: Camera, action: T.() -> Unit) {
+inline fun ModelBatch.use(camera: Camera, action: ModelBatch.() -> Unit) {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
     }
     begin(camera)
     action()
     end()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun ModelBuilder.create(action: ModelBuilder.() -> Unit): Model {
+    contract {
+        callsInPlace(action, InvocationKind.EXACTLY_ONCE)
+    }
+    begin()
+    action()
+    return end()
 }
 
 interface KtxGestureAdapter : GestureDetector.GestureListener {
@@ -53,7 +62,7 @@ interface KtxGestureAdapter : GestureDetector.GestureListener {
     override fun pinchStop() = Unit
 }
 
-fun <T : Actor> T.isDoneActing() = actions.isEmpty
+fun Actor.isDoneActing() = actions.isEmpty
 
 fun widthFraction(fraction: Float) = Gdx.graphics.width * fraction
 fun heightFraction(fraction: Float) = Gdx.graphics.height * fraction
@@ -91,4 +100,8 @@ fun addLabel(
 
     if (expand) cell.expandX()
     if (pad) cell.pad(cellHeight, cellWidth, cellHeight, cellWidth)
+}
+
+infix fun Material.with(attribute: Attribute) {
+    set(attribute)
 }

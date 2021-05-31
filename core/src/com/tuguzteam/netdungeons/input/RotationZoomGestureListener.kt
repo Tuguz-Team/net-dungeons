@@ -6,10 +6,13 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.math.Vector3
 import com.tuguzteam.netdungeons.KtxGestureAdapter
+import com.tuguzteam.netdungeons.screens.GameScreen
+import ktx.math.toMutable
+import ktx.math.vec3
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-class RotationZoomGestureListener(private val camera: OrthographicCamera) : KtxGestureAdapter {
+class RotationZoomGestureListener(private val gameScreen: GameScreen) : KtxGestureAdapter {
     private companion object {
         private const val FLING_VELOCITY = 1.25f
         private const val ROTATION_ANGLE = 90f
@@ -20,6 +23,8 @@ class RotationZoomGestureListener(private val camera: OrthographicCamera) : KtxG
         private const val ZOOM_SPEED = 0.75f
         private const val ZOOM_DURATION = 0.25f
     }
+
+    private val camera = gameScreen.camera as OrthographicCamera
 
     private var sign = 0
     private var rotationTime = 0f
@@ -65,7 +70,11 @@ class RotationZoomGestureListener(private val camera: OrthographicCamera) : KtxG
             rotationTime -= Gdx.graphics.deltaTime
             val progress = if (rotationTime < 0) 1f else 1f - rotationTime / ROTATION_DURATION
             val angle = Interpolation.fade.apply(0f, ROTATION_ANGLE, progress)
-            camera.rotateAround(Vector3(), Vector3.Y, (angle - rotationOldAngle) * sign)
+            camera.rotateAround(
+                vec3(x = gameScreen.playerPosition.x, z = gameScreen.playerPosition.y),
+                Vector3.Y,
+                (angle - rotationOldAngle) * sign,
+            )
 
             rotationOldAngle = angle
             rotationOldProgress = progress

@@ -6,10 +6,16 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.objects.TextureObject
 
 class Wall(
-    position: ImmutableVector3 = ImmutableVector3.ZERO,
+    position: ImmutableVector3,
     texture: Texture,
     direction: Direction,
-) : TextureObject(position, texture) {
+) : TextureObject(position, texture, width, height) {
+
+    companion object {
+        const val width = 15u
+        const val height = width
+    }
+
     init {
         transform.rotate(Vector3.Y, direction.degrees)
     }

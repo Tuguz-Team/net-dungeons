@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.tuguzteam.netdungeons.ImmutableVector3
+import com.tuguzteam.netdungeons.with
 
 open class Cube(
     dimensions: ImmutableVector3,
@@ -19,7 +20,7 @@ open class Cube(
 ) {
     var color = color
         set(value) {
-            materials[0].set(ColorAttribute.createDiffuse(value))
+            materials[0] with ColorAttribute.createDiffuse(value)
             field = value
         }
 
