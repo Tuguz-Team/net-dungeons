@@ -83,10 +83,22 @@ infix fun Environment.with(attribute: Attribute) {
     set(attribute)
 }
 
-fun addRow(table: VisTable, triple: Triple<String, String, String>) {
-    addLabel(table, VisLabel(triple.first, Align.center), pad = true)
-    addLabel(table, VisLabel(triple.second, Align.center), expand = true, multiply = 5f)
-    addLabel(table, VisLabel(triple.third, Align.center), pad = true)
+fun addRow(table: VisTable, triple: Triple<Any, Any, Any>) {
+    when (triple.first) {
+        is String -> {
+            addLabel(table, VisLabel(
+                triple.first as String, Align.center), pad = true)
+            addLabel(table, VisLabel(
+                triple.second as String, Align.center), expand = true, multiply = 5f)
+            addLabel(table, VisLabel(
+                triple.third as String, Align.center), pad = true)
+        }
+        is VisLabel -> {
+            addLabel(table, triple.first as VisLabel, pad = true)
+            addLabel(table, triple.second as VisLabel, expand = true, multiply = 5f)
+            addLabel(table, triple.third as VisLabel, pad = true)
+        }
+    }
     table.row()
 }
 

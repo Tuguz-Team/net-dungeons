@@ -3,7 +3,7 @@ package com.tuguzteam.netdungeons.screens.main.rating
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTable
-import com.tuguzteam.netdungeons.addLabel
+import com.tuguzteam.netdungeons.addRow
 
 class TableBlock(
     position: String? = null, nickname: String? = null, points: String? = null
@@ -15,10 +15,6 @@ class TableBlock(
     fun setPosition(position: String) = positionLabel.setText(position)
     fun setPoints(points: String) = pointsLabel.setText(points)
 
-    fun addTo(table: VisTable) {
-        addLabel(table, positionLabel, pad = true)
-        addLabel(table, nicknameLabel, expand = true, multiply = 5f)
-        addLabel(table, pointsLabel, pad = true)
-        table.row()
-    }
+    fun addTo(table: VisTable) =
+        addRow(table, Triple(positionLabel, nicknameLabel, pointsLabel))
 }
