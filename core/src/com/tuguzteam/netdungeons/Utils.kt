@@ -86,29 +86,29 @@ infix fun Environment.with(attribute: Attribute) {
 fun addRow(table: VisTable, triple: Triple<Any, Any, Any>) {
     when (triple.first) {
         is String -> {
-            addLabel(table, VisLabel(
+            addActor(table, VisLabel(
                 triple.first as String, Align.center), pad = true)
-            addLabel(table, VisLabel(
+            addActor(table, VisLabel(
                 triple.second as String, Align.center), expand = true, multiply = 5f)
-            addLabel(table, VisLabel(
+            addActor(table, VisLabel(
                 triple.third as String, Align.center), pad = true)
         }
-        is VisLabel -> {
-            addLabel(table, triple.first as VisLabel, pad = true)
-            addLabel(table, triple.second as VisLabel, expand = true, multiply = 5f)
-            addLabel(table, triple.third as VisLabel, pad = true)
+        is Actor -> {
+            addActor(table, triple.first as Actor, pad = true)
+            addActor(table, triple.second as Actor, expand = true, multiply = 5f)
+            addActor(table, triple.third as Actor, pad = true)
         }
     }
     table.row()
 }
 
-fun addLabel(
-    table: VisTable, label: VisLabel, pad: Boolean = false,
+fun addActor(
+    table: VisTable, actor: Actor, pad: Boolean = false,
     expand: Boolean = false, multiply: Float = 1f
 ) {
     val cellWidth = widthFraction(.025f)
     val cellHeight = heightFraction(.0375f)
-    val cell = table.add(label).width(cellWidth * 3f * multiply)
+    val cell = table.add(actor).width(cellWidth * 3f * multiply)
 
     if (expand) cell.expandX()
     if (pad) cell.pad(cellHeight, cellWidth, cellHeight, cellWidth)

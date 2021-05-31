@@ -34,28 +34,58 @@ class TableDataButton(
 
         addListener(VerticalDragListener(true) {
             if (!wasDragged && scrollPercentY == 1f) {
-                val positionLabel = VisLabel("Loading...", Align.center)
-                val nicknameLabel = VisLabel("Loading...", Align.center)
-                val pointsLabel = VisLabel("Loading...", Align.center)
-                addRow(
-                    tableContent, Triple(
-                        positionLabel, nicknameLabel, pointsLabel
-                    )
-                )
+
+                val positionContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+                val nicknameContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+                val pointsContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+
+                loading(true, Triple(
+                    positionContainer, nicknameContainer, pointsContainer
+                ))
                 wasDragged--
 
                 KtxAsync.launch {
                     delay(Duration.Companion.seconds(1))
                     wasDragged = false
-                    // Pulling new data from server
-                    updateContent(
-                        Triple(positionLabel, nicknameLabel, pointsLabel)
-                    )
+
+                    downloading(true, Triple(
+                        positionContainer, nicknameContainer, pointsContainer
+                    ))
+                }
+            }
+        })
+
+        addListener(VerticalDragListener(false) {
+            if (!wasDragged && scrollPercentY == 0f) {
+
+                val positionContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+                val nicknameContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+                val pointsContainer = Container<Actor>(
+                    VisLabel("Loading...", Align.center)).fill()
+
+                loading(false, Triple(
+                    positionContainer, nicknameContainer, pointsContainer
+                ))
+                wasDragged--
+
+                KtxAsync.launch {
+                    delay(Duration.Companion.seconds(1))
+                    wasDragged = false
+
+                    downloading(false, Triple(
+                        positionContainer, nicknameContainer, pointsContainer
+                    ))
                 }
             }
         })
     }
 
+//    TODO("Pull data from server about the best 20 players")
     val data = mutableMapOf<Int, Pair<String, Int>>().apply {
         repeat(rowCount) { index ->
             this[index + 1] = sortByText to 0
@@ -63,12 +93,7 @@ class TableDataButton(
     }
 
     init {
-        data.forEach {
-            addRow(tableContent, Triple(
-                it.key.toString(), it.value.first,
-                it.value.second.toString()
-            ))
-        }
+        loadData()
 
         addListener(ClickListener {
             block.setPosition(sortByText)
@@ -78,13 +103,44 @@ class TableDataButton(
         })
     }
 
-    private fun updateContent(triple: Triple<VisLabel, VisLabel, VisLabel>) {
-        triple.first.setText("...")
-        triple.second.setText("...")
-        triple.third.setText("...")
+    @ExperimentalTime
+    private fun loading(loadBottom: Boolean, triple: Triple<Actor, Actor, Actor>) {
+        tableContent.clearChildren()
 
-        addRow(tableContent, Triple(
-            "...", "...", "..."
-        ))
+        KtxAsync.launch {
+            if (!loadBottom) {
+                addRow(tableContent, triple)
+                tableScroll.scrollPercentY = 2f / (rowCount + 1f)
+                loadData()
+
+                delay(Duration.Companion.seconds(.1))
+                tableScroll.scrollPercentY = 0f
+            } else {
+                loadData()
+                tableScroll.scrollPercentY = (rowCount - 1f) / (rowCount + 1f)
+                addRow(tableContent, triple)
+
+                delay(Duration.Companion.seconds(.1))
+                tableScroll.scrollPercentY = 1f
+            }
+        }
+    }
+
+    private fun downloading(downloadBottom: Boolean,
+        triple: Triple<Container<Actor>, Container<Actor>, Container<Actor>>
+    ) {
+        // tableContent.clearChildren()
+        triple.first.actor = VisLabel("...", Align.center)
+        triple.second.actor = VisLabel("...", Align.center)
+        triple.third.actor = VisLabel("...", Align.center)
+    }
+
+    private fun loadData() {
+        data.forEach {
+            addRow(tableContent, Triple(
+                it.key.toString(), it.value.first,
+                it.value.second.toString()
+            ))
+        }
     }
 }
