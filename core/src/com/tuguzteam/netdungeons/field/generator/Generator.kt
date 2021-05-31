@@ -12,7 +12,6 @@ object Generator {
 
     fun generate(width: UInt, height: UInt, attempts: UInt): List<List<TileType?>> {
         val matrix = List(width.toInt()) { MutableList<TileType?>(height.toInt()) { null } }
-        // TODO: level generation
         // Create rooms
         val mid = (width + height) / 2u
         val rooms = arrayListOf<Rectangle>()
@@ -48,6 +47,7 @@ object Generator {
                 }
             }
         }
+        // TODO: maze generation...
         // Fill the matrix
         rooms.forEach { room ->
             val x = room.x.toInt()
@@ -56,7 +56,7 @@ object Generator {
             val iHeight = room.height.toInt()
             (x until x + iWidth).forEach { i ->
                 (y until y + iHeight).forEach { j ->
-                    matrix[i][j] = TileType.Floor
+                    matrix[i][j] = TileType.Room
                 }
             }
         }
@@ -68,8 +68,8 @@ object Generator {
             list.forEach {
                 stringBuilder.append(
                     when (it) {
-                        TileType.Floor -> 'f'
-                        TileType.Wall -> 'w'
+                        TileType.Room -> 'r'
+                        TileType.Maze -> 'm'
                         TileType.Chest -> 'c'
                         null -> '•'
                     }

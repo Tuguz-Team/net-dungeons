@@ -1,7 +1,6 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
-import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.generator.Generator
 import com.tuguzteam.netdungeons.field.generator.Rectangle
@@ -13,7 +12,6 @@ import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.assets.dispose
-import ktx.log.debug
 
 class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
     companion object {
@@ -31,24 +29,23 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
         matrix.forEachIndexed { i, list ->
             list.forEachIndexed { j, tile ->
                 val notContains = rectangles.none { it.contains(i.toUInt(), j.toUInt()) }
-                if (tile == TileType.Floor && notContains) {
+                if (tile == TileType.Room && notContains) {
                     var iTemp = i
                     do {
                         iTemp++
-                    } while (iTemp.toUInt() < matrixWidth && matrix[iTemp][j] == TileType.Floor)
+                    } while (iTemp.toUInt() < matrixWidth && matrix[iTemp][j] == TileType.Room)
                     val width = (iTemp - i).toUInt()
 
                     var jTemp = j
                     do {
                         jTemp++
-                    } while (jTemp.toUInt() < matrixHeight && list[jTemp] == TileType.Floor)
+                    } while (jTemp.toUInt() < matrixHeight && list[jTemp] == TileType.Room)
                     val height = (jTemp - j).toUInt()
 
                     rectangles += Rectangle(x = i.toUInt(), y = j.toUInt(), width, height)
                 }
             }
         }
-        Loader.logger.debug { rectangles.toString() }
         rooms += rectangles.map {
             val x = it.x.toFloat() - (matrixWidth.toInt() - it.width.toInt()) / 2f
             val z = it.y.toFloat() - (matrixHeight.toInt() - it.height.toInt()) / 2f
