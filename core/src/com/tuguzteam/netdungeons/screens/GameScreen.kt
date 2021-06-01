@@ -33,7 +33,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         private val logger = logger<GameScreen>()
         private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
 
-        private const val fieldOfView = 10u
+        private const val viewDistance = 10u
+        private val viewWidth = 1u + viewDistance * 2u
     }
 
     val assetManager = loader.assetManager
@@ -151,7 +152,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                         distanceX -= Cell.width.toFloat() / 2
                         distanceY -= Cell.length.toFloat() / 2
                     }
-                    distanceX <= fieldOfView.toFloat() && distanceY <= fieldOfView.toFloat()
+                    distanceX <= viewDistance.toFloat() && distanceY <= viewDistance.toFloat()
                     // TODO: check if an object is REALLY visible
                     //  (there are no others between this object and the player)
                 }

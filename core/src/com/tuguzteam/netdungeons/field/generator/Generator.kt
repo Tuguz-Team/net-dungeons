@@ -12,6 +12,26 @@ object Generator {
 
     fun generate(width: UInt, height: UInt, attempts: UInt): List<List<TileType?>> {
         val matrix = List(width.toInt()) { MutableList<TileType?>(height.toInt()) { null } }
+        fun printMatrix() {
+            val stringBuilder = StringBuilder()
+            stringBuilder.append(' ')
+            matrix.forEach { list ->
+                stringBuilder.append("\n|")
+                list.forEach {
+                    stringBuilder.append(
+                        when (it) {
+                            TileType.Room -> 'r'
+                            TileType.Maze -> '•'
+                            TileType.Wall -> 'W'
+                            TileType.Door -> 'd'
+                            null -> ' '
+                        }
+                    )
+                }
+                stringBuilder.append('|')
+            }
+            Loader.logger.debug { stringBuilder.toString() }
+        }
         // Create rooms
         val mid = (width + height) / 2u
         val rooms = arrayListOf<Rectangle>()
@@ -47,37 +67,70 @@ object Generator {
                 }
             }
         }
-        // TODO: maze generation...
-        // Fill the matrix
+        // Fill the matrix with rooms and walls
         rooms.forEach { room ->
             val x = room.x.toInt()
             val y = room.y.toInt()
             val iWidth = room.width.toInt()
             val iHeight = room.height.toInt()
-            (x until x + iWidth).forEach { i ->
-                (y until y + iHeight).forEach { j ->
+            (x - 1..x + iWidth).forEach { i ->
+                (y - 1..y + iHeight).forEach inner@ { j ->
+                    if (i == x - 1 || j == y - 1 || i == x + iWidth || j == y + iHeight) {
+                        matrix[i][j] = TileType.Wall
+                        return@inner
+                    }
                     matrix[i][j] = TileType.Room
                 }
             }
         }
-        // Print into console
-        val stringBuilder = StringBuilder()
-        stringBuilder.append(' ')
-        matrix.forEach { list ->
-            stringBuilder.append("\n|")
-            list.forEach {
-                stringBuilder.append(
-                    when (it) {
-                        TileType.Room -> 'r'
-                        TileType.Maze -> 'm'
-                        TileType.Chest -> 'c'
-                        null -> '•'
+        // TODO: maze generation...
+        // Create mazes
+        matrix.forEachIndexed { i, list ->
+            list.forEachIndexed { j, tile ->
+                if (tile == null) {
+                    // Start maze generator
+                    val backtrace = mutableListOf(i to j)
+                    while (backtrace.isNotEmpty()) {
+                        val (i, j) = backtrace.removeAt(0)
+                        matrix[i][j] = TileType.Maze
+                        val neighbors = mutableListOf<Pair<Int, Int>>().apply {
+                            if (i - 1 >= 0 && matrix[i - 1][j] == null) {
+                                this += i - 1 to j
+                            }
+                            if (i + 1 < width.toInt() && matrix[i + 1][j] == null) {
+                                this += i + 1 to j
+                            }
+                            if (j - 1 >= 0 && matrix[i][j - 1] == null) {
+                                this += i to j - 1
+                            }
+                            if (j + 1 < height.toInt() && matrix[i][j + 1] == null) {
+                                this += i to j + 1
+                            }
+                        }
+                        if (neighbors.isNotEmpty()) {
+                            val neighbor = neighbors.random(random)
+                            matrix[neighbor.first][neighbor.second] = TileType.Maze
+                            // TODO place walls
+                            if (i - 1 >= 0 && matrix[i - 1][j] == null) {
+                                matrix[i - 1][j] = TileType.Wall
+                            }
+                            if (i + 1 < width.toInt() && matrix[i + 1][j] == null) {
+                                matrix[i + 1][j] = TileType.Wall
+                            }
+                            if (j - 1 >= 0 && matrix[i][j - 1] == null) {
+                                matrix[i][j - 1] = TileType.Wall
+                            }
+                            if (j + 1 < height.toInt() && matrix[i][j + 1] == null) {
+                                matrix[i][j + 1] = TileType.Wall
+                            }
+                            backtrace.add(0, neighbor)
+                        }
                     }
-                )
+                }
             }
-            stringBuilder.append('|')
         }
-        Loader.logger.debug { stringBuilder.toString() }
+        // Print into console
+        printMatrix()
         return matrix
     }
 }
