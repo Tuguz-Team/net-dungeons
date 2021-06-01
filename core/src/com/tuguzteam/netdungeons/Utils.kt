@@ -14,6 +14,14 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+operator fun Appendable.plusAssign(charSequence: CharSequence) {
+    append(charSequence)
+}
+
+operator fun Appendable.plusAssign(char: Char) {
+    append(char)
+}
+
 @OptIn(ExperimentalContracts::class)
 inline fun ModelBatch.use(camera: Camera, action: ModelBatch.() -> Unit) {
     contract {
