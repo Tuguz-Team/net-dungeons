@@ -79,9 +79,7 @@ operator fun <T : BaseLight<T>> Environment.plusAssign(light: T) {
     add(light)
 }
 
-infix fun Environment.with(attribute: Attribute) {
-    set(attribute)
-}
+infix fun Environment.with(attribute: Attribute) = set(attribute)
 
 fun addRow(table: VisTable, triple: Triple<Any, Any, Any>) {
     when (triple.first) {
@@ -114,6 +112,6 @@ fun addActor(
     if (pad) cell.pad(cellHeight, cellWidth, cellHeight, cellWidth)
 }
 
-infix fun Material.with(attribute: Attribute) {
-    set(attribute)
-}
+infix fun Material.with(attribute: Attribute) = set(attribute)
+
+fun Boolean.toFloat(): Float = if (this) 1f else 0f
