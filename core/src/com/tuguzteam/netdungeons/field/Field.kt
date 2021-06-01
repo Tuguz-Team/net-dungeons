@@ -27,7 +27,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
         val rectangles = arrayListOf<Rectangle>()
         matrix.forEachIndexed { i, list ->
             list.forEachIndexed { j, tile ->
-                val notContains = rectangles.none { it.contains(i.toUInt(), j.toUInt()) }
+                val notContains = rectangles.none { it.contains(i, j) }
                 if (tile == TileType.Room && notContains) {
                     var iTemp = i
                     do {
@@ -41,18 +41,18 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
                     } while (jTemp.toUInt() < matrixWidth && list[jTemp] == TileType.Room)
                     val height = (jTemp - j).toUInt()
 
-                    rectangles += Rectangle(x = i.toUInt(), y = j.toUInt(), width, height)
+                    rectangles += Rectangle(x = i, y = j, width.toInt(), height.toInt())
                 }
             }
         }
         rooms += rectangles.map {
-            val x = it.x.toFloat() - (matrixWidth.toInt() - it.width.toInt()) / 2f
-            val z = it.y.toFloat() - (matrixWidth.toInt() - it.height.toInt()) / 2f
+            val x = it.x.toFloat() - (matrixWidth.toInt() - it.width) / 2f
+            val z = it.y.toFloat() - (matrixWidth.toInt() - it.height) / 2f
             Box(
                 position = immutableVec3(x = x, z = z), type = Type.Slum,
                 walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
                 assetManager = gameScreen.assetManager,
-                width = it.width, length = it.height, height = 2u,
+                width = it.width.toUInt(), length = it.height.toUInt(), height = 2u,
             )
         }
     }

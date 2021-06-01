@@ -7,7 +7,6 @@ import ktx.log.debug
 import ktx.math.ImmutableVector2
 import ktx.math.toImmutable
 import kotlin.math.absoluteValue
-import kotlin.random.nextUInt
 
 object Generator {
     private val random = Loader.random
@@ -35,45 +34,45 @@ object Generator {
         // Create rooms
         val rooms = mutableListOf<Rectangle>()
         repeat(attempts.toInt()) {
-            val size = random.nextUInt(from = 2u, until = width / 8u + 4u)
+            val size = random.nextInt(from = 2, until = width.toInt() / 8 + 4)
             var uWidth = size
             var uHeight = size
-            val offset = random.nextUInt(until = 1u + size / 4u)
+            val offset = random.nextInt(until = 1 + size / 4)
             if (random.nextBoolean()) {
                 uWidth += offset
             } else {
                 uHeight += offset
             }
-            uWidth = uWidth or 1u
-            uHeight = uHeight or 1u
+            uWidth = uWidth or 1
+            uHeight = uHeight or 1
 
             val room = Rectangle(
-                x = random.nextUInt(from = uWidth - 1u, until = width - uWidth - 1u) or 1u,
-                y = random.nextUInt(from = uHeight - 1u, until = width - uHeight - 1u) or 1u,
+                x = random.nextInt(from = uWidth - 1, until = width.toInt() - uWidth - 1) or 1,
+                y = random.nextInt(from = uHeight - 1, until = width.toInt() - uHeight - 1) or 1,
                 width = uWidth,
                 height = uHeight,
             ).apply {
-                x -= 1u
-                y -= 1u
-                this.width += 2u
-                this.height += 2u
+                x -= 1
+                y -= 1
+                this.width += 2
+                this.height += 2
             }
             if (rooms.none(room::overlaps)) {
                 rooms += room
                 room.apply {
-                    x += 1u
-                    y += 1u
-                    this.width -= 2u
-                    this.height -= 2u
+                    x += 1
+                    y += 1
+                    this.width -= 2
+                    this.height -= 2
                 }
             }
         }
         // Fill the matrix with rooms and walls
         rooms.forEach { room ->
-            val x = room.x.toInt()
-            val y = room.y.toInt()
-            val iWidth = room.width.toInt()
-            val iHeight = room.height.toInt()
+            val x = room.x
+            val y = room.y
+            val iWidth = room.width
+            val iHeight = room.height
             (x - 1..x + iWidth).forEach { i ->
                 (y - 1..y + iHeight).forEach inner@ { j ->
                     if (i == x - 1 || j == y - 1 || i == x + iWidth || j == y + iHeight) {
@@ -86,29 +85,31 @@ object Generator {
         }
         // Create maze
         fun generateMaze(i: Int, j: Int) {
-            val backtrace = mutableListOf(i to j)
+            val backtrace = mutableListOf(Point(i, j))
             while (backtrace.isNotEmpty()) {
-                val (x, y) = backtrace[0]
+                val point = backtrace.first()
+                val x = point.x
+                val y = point.y
                 matrix[x][y] = TileType.Maze
-                val neighbors = mutableListOf<Pair<Int, Int>>().apply {
+                val neighbors = mutableListOf<Point>().apply {
                     if (x - 2 >= 0 && matrix[x - 2][y] == TileType.Wall) {
-                        this += x - 2 to y
+                        this += Point(x - 2, y)
                     }
                     if (x + 2 < width.toInt() && matrix[x + 2][y] == TileType.Wall) {
-                        this += x + 2 to y
+                        this += Point(x + 2, y)
                     }
                     if (y - 2 >= 0 && matrix[x][y - 2] == TileType.Wall) {
-                        this += x to y - 2
+                        this += Point(x, y - 2)
                     }
                     if (y + 2 < width.toInt() && matrix[x][y + 2] == TileType.Wall) {
-                        this += x to y + 2
+                        this += Point(x, y + 2)
                     }
                 }
                 if (neighbors.isNotEmpty()) {
                     val neighbor = neighbors.random(random)
-                    matrix[neighbor.first][neighbor.second] = TileType.Maze
-                    val offsetI = (x + neighbor.first + 1) / 2
-                    val offsetJ = (y + neighbor.second + 1) / 2
+                    matrix[neighbor.x][neighbor.y] = TileType.Maze
+                    val offsetI = (x + neighbor.x + 1) / 2
+                    val offsetJ = (y + neighbor.y + 1) / 2
                     matrix[offsetI][offsetJ] = TileType.Maze
                     backtrace.add(0, neighbor)
                 } else {
@@ -123,8 +124,8 @@ object Generator {
         }
         // Generate doors for rooms
         // 1) Find candidates to doors
-        val verticalDoors = mutableListOf<Pair<Int, Int>>()
-        val horizontalDoors = mutableListOf<Pair<Int, Int>>()
+        val verticalDoors = mutableListOf<Point>()
+        val horizontalDoors = mutableListOf<Point>()
         matrix.forEachIndexed { i, list ->
             list.forEachIndexed { j, tile ->
                 val notOnBorder = i > 0 && i + 1 < width.toInt()
@@ -137,7 +138,7 @@ object Generator {
                     val downNotWall = down != TileType.Wall && down != TileType.Door
                     val upDownRooms = up == TileType.Room && up == down
                     if (upNotWall && downNotWall && up != down || upDownRooms) {
-                        horizontalDoors += i to j
+                        horizontalDoors += Point(i, j)
                     }
                     // Vertical door candidates
                     val left = matrix[i][j - 1]
@@ -146,7 +147,7 @@ object Generator {
                     val rightNotWall = right != TileType.Wall && right != TileType.Door
                     val leftRightRooms = left == TileType.Room && left == right
                     if (leftNotWall && rightNotWall && left != right || leftRightRooms) {
-                        verticalDoors += i to j
+                        verticalDoors += Point(i, j)
                     }
                 }
             }
@@ -155,13 +156,11 @@ object Generator {
         while (horizontalDoors.isNotEmpty()) {
             val wall = kotlin.run {
                 val first = horizontalDoors.first()
-                val row = horizontalDoors.asSequence().filter {
-                    first.first == it.first
-                }
+                val row = horizontalDoors.asSequence().filter { first.x == it.x }
                 val list = mutableListOf(first)
                 var temp = first
                 row.forEach {
-                    if (temp != it && (temp.second - it.second).absoluteValue < 2) {
+                    if (temp != it && (temp.y - it.y).absoluteValue < 2) {
                         list += it
                         temp = it
                     }
@@ -169,20 +168,18 @@ object Generator {
                 list
             }
             val door = wall.random(random)
-            matrix[door.first][door.second] = TileType.Door
+            matrix[door.x][door.y] = TileType.Door
             horizontalDoors.removeAll(wall)
         }
         // 3) Get vertical walls from candidates
         while (verticalDoors.isNotEmpty()) {
             val wall = kotlin.run {
                 val first = verticalDoors.first()
-                val row = verticalDoors.asSequence().filter {
-                    first.second == it.second
-                }
+                val row = verticalDoors.asSequence().filter { first.y == it.y }
                 val list = mutableListOf(first)
                 var temp = first
                 row.forEach {
-                    if (temp != it && (temp.first - it.first).absoluteValue < 2) {
+                    if (temp != it && (temp.x - it.x).absoluteValue < 2) {
                         list += it
                         temp = it
                     }
@@ -190,7 +187,7 @@ object Generator {
                 list
             }
             val door = wall.random(random)
-            matrix[door.first][door.second] = TileType.Door
+            matrix[door.x][door.y] = TileType.Door
             verticalDoors.removeAll(wall)
         }
         // Remove dead ends from the maze
@@ -199,30 +196,30 @@ object Generator {
                 if (tile != TileType.Maze) return@inner
                 var nextX = x
                 var nextY = y
-                fun neighbors() = mutableListOf<Pair<Int, Int>>().apply {
+                fun neighbors() = mutableListOf<Point>().apply {
                     val up = matrix[nextX - 1][nextY]
                     if (up == TileType.Maze || up == TileType.Door) {
-                        this += nextX - 1 to nextY
+                        this += Point(nextX - 1, nextY)
                     }
                     val down = matrix[nextX + 1][nextY]
                     if (down == TileType.Maze || down == TileType.Door) {
-                        this += nextX + 1 to nextY
+                        this += Point(nextX + 1, nextY)
                     }
                     val left = matrix[nextX][nextY - 1]
                     if (left == TileType.Maze || left == TileType.Door) {
-                        this += nextX to nextY - 1
+                        this += Point(nextX, nextY - 1)
                     }
                     val right = matrix[nextX][nextY + 1]
                     if (right == TileType.Maze || right == TileType.Door) {
-                        this += nextX to nextY + 1
+                        this += Point(nextX, nextY + 1)
                     }
                 }
                 var neighbors = neighbors()
                 while (neighbors.size == 1) {
                     matrix[nextX][nextY] = TileType.Wall
                     val neighbor = neighbors.first()
-                    nextX = neighbor.first
-                    nextY = neighbor.second
+                    nextX = neighbor.x
+                    nextY = neighbor.y
                     neighbors = neighbors()
                 }
             }
@@ -233,15 +230,17 @@ object Generator {
     }
 }
 
-data class Rectangle(var x: UInt, var y: UInt, var width: UInt, var height: UInt) {
+data class Point(var x: Int, var y: Int)
+
+data class Rectangle(var x: Int, var y: Int, var width: Int, var height: Int) {
     fun overlaps(rectangle: Rectangle) =
         x < rectangle.x + rectangle.width && x + width > rectangle.x &&
                 y < rectangle.y + rectangle.height && y + height > rectangle.y
 
-    fun contains(x: UInt, y: UInt) =
+    fun contains(x: Int, y: Int) =
         this.x <= x && this.x + width >= x && this.y <= y && this.y + height >= y
 
-    operator fun contains(vector2: Pair<UInt, UInt>) = contains(vector2.first, vector2.second)
+    operator fun contains(vector2: Pair<Int, Int>) = contains(vector2.first, vector2.second)
 
     operator fun contains(vector2: ImmutableVector2) =
         x.toFloat() <= vector2.x && (x + width).toFloat() >= vector2.x &&
