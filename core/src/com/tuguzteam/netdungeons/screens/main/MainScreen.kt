@@ -12,6 +12,7 @@ import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.screens.main.game.NavGame
 import com.tuguzteam.netdungeons.screens.main.profile.NavProfile
 import com.tuguzteam.netdungeons.screens.main.rating.NavRating
+import com.tuguzteam.netdungeons.ui.doClick
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync
@@ -30,9 +31,9 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     private val navRating = NavRating(contentSplitPane, header)
 
     private val navigation = VisTable().apply {
-        center().add(navGame.navButton).expand().row()
-        add(navProfile.navButton).expand().row()
-        add(navRating.navButton).expand()
+        center().add(navGame.navButton).grow().row()
+        add(navProfile.navButton).grow().row()
+        add(navRating.navButton).grow()
     }
     private val mainSplitPane = SplitPane(
         navigation, contentSplitPane, false, 0.15f
@@ -43,6 +44,8 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
     init {
         isDebugAll = true
         this += mainSplitPane
+        doClick(navProfile.navButton)
+
         loader.addScreen(screen = GameScreen(loader, this))
     }
 

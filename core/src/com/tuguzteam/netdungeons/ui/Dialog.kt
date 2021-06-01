@@ -24,11 +24,7 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
         isHidden = true
     }
 
-    fun pad() {
-        buttonsTable.cells.forEach { cell ->
-            cell.pad(heightFraction(1 / 60f))
-        }
-    }
+    fun pad() = buttonsTable.cells.forEach { it.pad(heightFraction(1 / 60f)) }
 
     init {
         titleLabel.setAlignment(Align.top)

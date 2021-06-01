@@ -12,16 +12,14 @@ import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.screens.main.ContentHeader
+import com.tuguzteam.netdungeons.screens.main.NavButton
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader) {
     private val content = VerticalGroup().apply {
-        pad(
-            heightFraction(.1f), heightFraction(1 / 8f),
-            heightFraction(.1f), heightFraction(1 / 8f)
-        ).space(heightFraction(1 / 8f))
+        pad(heightFraction(.1f)).space(heightFraction(.25f))
     }
     private val contentScroll = VisScrollPane(content).apply {
         setOverscroll(false, false)
@@ -71,15 +69,10 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     private val headerSplitPane = SplitPane(
         headerContent, Container(playButton), false, 0.8f
     )
-    val navButton = VisImageTextButton(
-        "Game",
-        VisImageTextButtonStyle(null, null, null, BitmapFont())
-    ).apply {
-        addListener(ClickListener {
-            contentSplitPane.setSecondWidget(contentScroll)
-            header.setFirstWidget(headerSplitPane)
-            uncheck()
-        })
+    val navButton = NavButton("Game", contentSplitPane, contentScroll) {
+        contentSplitPane.setSecondWidget(contentScroll)
+        header.setFirstWidget(headerSplitPane)
+        uncheck()
     }
 
     private fun uncheck() {
