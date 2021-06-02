@@ -12,6 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.NetDungeons"
         android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
+        android:resizeableActivity="false"
         tools:targetApi="o">
         <activity
             android:name="com.tuguzteam.netdungeons.MainActivity"
