@@ -133,7 +133,7 @@ infix fun Material.with(attribute: Attribute) = set(attribute)
 
 fun Boolean.toFloat(): Float = if (this) 1f else 0f
 
-fun Float.toBoolean(): Boolean = !(this == 0f)
+fun Float.toBoolean(): Boolean = this != 0f
 
 fun gridPoint2(x: Int = 0, y: Int = 0) = GridPoint2(x, y)
 

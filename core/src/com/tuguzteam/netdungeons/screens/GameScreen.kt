@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
@@ -82,7 +83,10 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         super.show()
         playerPosition = gridPoint2()
         camera = OrthographicCamera().apply {
-            position.set(vec3(x = 10f, y = 10f, z = 10f))
+            val pos = vec3(x = 10f, z = 10f)
+            val angle = 30f
+            pos.y = pos.len() * MathUtils.sinDeg(angle)
+            position.set(pos)
             lookAt(vec3())
             near = 1f
             far = 50f
