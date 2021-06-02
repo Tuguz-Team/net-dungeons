@@ -2,7 +2,6 @@ package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.math.Vector3
 import com.tuguzteam.netdungeons.ImmutableVector3
-import com.tuguzteam.netdungeons.toImmutable
 import ktx.math.unaryMinus
 
 enum class Direction(val degrees: Float) {

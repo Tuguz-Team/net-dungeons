@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.*
-import com.tuguzteam.netdungeons.field.generator.TileType
+import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -24,9 +24,6 @@ import ktx.graphics.color
 import ktx.log.info
 import ktx.log.logger
 import ktx.math.*
-import kotlin.math.absoluteValue
-import kotlin.math.max
-import kotlin.math.min
 
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
@@ -37,12 +34,12 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     }
 
     val assetManager = loader.assetManager
-    var playerPosition = immutableVec2()
+    var playerPosition = gridPoint2()
         set(value) {
             camera?.apply {
                 position += vec3(
-                    x = value.x - field.x,
-                    z = value.y - field.y,
+                    x = value.x.toFloat() - field.x.toFloat(),
+                    z = value.y.toFloat() - field.y.toFloat(),
                 )
                 update(true)
             }
@@ -83,7 +80,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun show() {
         super.show()
-        playerPosition = immutableVec2()
+        playerPosition = gridPoint2()
         camera = OrthographicCamera().apply {
             position.set(vec3(x = 10f, y = 10f, z = 10f))
             lookAt(vec3())
@@ -109,9 +106,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen).apply {
-                playerPosition = immutableVec2(
-                    x = (size * Cell.width).toInt() / 2f,
-                    y = (size * Cell.length).toInt() / 2f,
+                playerPosition = gridPoint2(
+                    x = (size * Tile.size / 2u).toInt(),
+                    y = (size * Tile.size / 2u).toInt(),
                 )
             }
             updateVisibleObjects()
@@ -133,70 +130,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     fun updateVisibleObjects() {
         field?.let { field ->
             _visibleObjects.clear()
-            // Filter visible objects
-            val candidates = field.asSequence().filter { gameObject ->
-                var distanceX = (playerPosition.x - gameObject.position.x).absoluteValue
-                var distanceY = (playerPosition.y - gameObject.position.z).absoluteValue
-                if (gameObject is Wall) {
-                    // TODO: check direction of wall
-                    distanceX -= Cell.width.toFloat() / 2
-                    distanceY -= Cell.length.toFloat() / 2
-                }
-                distanceX <= (viewDistance * Cell.width).toFloat()
-                        && distanceY <= (viewDistance * Cell.length).toFloat()
-            }
-            // TODO: check if an object is REALLY visible
-            //  (there are no walls between this object and the player)
-            val plX = playerPosition.x.toInt()
-            val plY = playerPosition.y.toInt()
-            if (plX in 0 until field.size.toInt() && plY in 0 until field.size.toInt()) {
-                _visibleObjects += candidates.filter { gameObject ->
-                    val offsetX = when (gameObject) {
-                        is Wall -> when (gameObject.direction) {
-                            Direction.Left -> 0.5f
-                            Direction.Right -> -0.5f
-                            else -> 0f
-                        }
-                        else -> 0f
-                    }
-                    val offsetY = when (gameObject) {
-                        is Wall -> when (gameObject.direction) {
-                            Direction.Forward -> 0.5f
-                            Direction.Back -> -0.5f
-                            else -> 0f
-                        }
-                        else -> 0f
-                    }
-                    val goX = (gameObject.position.x + offsetX).toInt()
-                    val goY = (gameObject.position.z + offsetY).toInt()
-                    when {
-                        // On one row
-                        goX == plX -> {
-                            val min = min(goY, plY)
-                            val max = max(goY, plY)
-                            for (y in min..max) {
-                                if (field.matrix[goX][y] == TileType.Wall) {
-                                    return@filter false
-                                }
-                            }
-                            true
-                        }
-                        // On one column
-                        goY == plY -> {
-                            val min = min(goX, plX)
-                            val max = max(goX, plX)
-                            for (x in min..max) {
-                                if (field.matrix[x][goY] == TileType.Wall) {
-                                    return@filter false
-                                }
-                            }
-                            true
-                        }
-                        else -> false
-                    }
-                }
-                visitedObjects += _visibleObjects
-            }
+            // TODO: filter visible objects and implement FOV
+            _visibleObjects += field.asSequence()
+            visitedObjects += _visibleObjects
         }
     }
 
@@ -211,13 +147,13 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             modelBatch.use(camera) {
                 render(
                     (visitedObjects.asSequence() as Sequence<Renderable>)
-                        .map(Renderable::renderableProvider)
+                        .map(Renderable::renderableProviders).flatten()
                         .asIterable(),
                     environmentVisited,
                 )
                 render(
                     (visibleObjects.asSequence() as Sequence<Renderable>)
-                        .map(Renderable::renderableProvider)
+                        .map(Renderable::renderableProviders).flatten()
                         .asIterable(),
                     environmentVisible,
                 )

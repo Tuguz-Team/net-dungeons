@@ -1,7 +1,9 @@
 package com.tuguzteam.netdungeons.field.generator
 
+import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.gridPoint2
 import com.tuguzteam.netdungeons.plusAssign
 import ktx.log.debug
 import ktx.math.ImmutableVector2
@@ -85,31 +87,33 @@ object Generator {
         }
         // Create maze
         fun generateMaze(i: Int, j: Int) {
-            val backtrace = mutableListOf(Point(i, j))
+            val backtrace = mutableListOf(gridPoint2(i, j))
             while (backtrace.isNotEmpty()) {
                 val point = backtrace.first()
                 val x = point.x
                 val y = point.y
                 matrix[x][y] = TileType.Maze
-                val neighbors = mutableListOf<Point>().apply {
+                val neighbors = mutableListOf<GridPoint2>().apply {
                     if (x - 2 >= 0 && matrix[x - 2][y] == TileType.Wall) {
-                        this += Point(x - 2, y)
+                        this += gridPoint2(x - 2, y)
                     }
                     if (x + 2 < width.toInt() && matrix[x + 2][y] == TileType.Wall) {
-                        this += Point(x + 2, y)
+                        this += gridPoint2(x + 2, y)
                     }
                     if (y - 2 >= 0 && matrix[x][y - 2] == TileType.Wall) {
-                        this += Point(x, y - 2)
+                        this += gridPoint2(x, y - 2)
                     }
                     if (y + 2 < width.toInt() && matrix[x][y + 2] == TileType.Wall) {
-                        this += Point(x, y + 2)
+                        this += gridPoint2(x, y + 2)
                     }
                 }
                 if (neighbors.isNotEmpty()) {
                     val neighbor = neighbors.random(random)
-                    matrix[neighbor.x][neighbor.y] = TileType.Maze
-                    val offsetI = (x + neighbor.x + 1) / 2
-                    val offsetJ = (y + neighbor.y + 1) / 2
+                    val nX = neighbor.x
+                    val nY = neighbor.y
+                    matrix[nX][nY] = TileType.Maze
+                    val offsetI = (x + nX + 1) / 2
+                    val offsetJ = (y + nY + 1) / 2
                     matrix[offsetI][offsetJ] = TileType.Maze
                     backtrace.add(0, neighbor)
                 } else {
@@ -124,8 +128,8 @@ object Generator {
         }
         // Generate doors for rooms
         // 1) Find candidates to doors
-        val verticalDoors = mutableListOf<Point>()
-        val horizontalDoors = mutableListOf<Point>()
+        val verticalDoors = mutableListOf<GridPoint2>()
+        val horizontalDoors = mutableListOf<GridPoint2>()
         matrix.forEachIndexed { i, list ->
             list.forEachIndexed { j, tile ->
                 val notOnBorder = i > 0 && i + 1 < width.toInt()
@@ -138,7 +142,7 @@ object Generator {
                     val downNotWall = down != TileType.Wall && down != TileType.Door
                     val upDownRooms = up == TileType.Room && up == down
                     if (upNotWall && downNotWall && up != down || upDownRooms) {
-                        horizontalDoors += Point(i, j)
+                        horizontalDoors += gridPoint2(i, j)
                     }
                     // Vertical door candidates
                     val left = matrix[i][j - 1]
@@ -147,7 +151,7 @@ object Generator {
                     val rightNotWall = right != TileType.Wall && right != TileType.Door
                     val leftRightRooms = left == TileType.Room && left == right
                     if (leftNotWall && rightNotWall && left != right || leftRightRooms) {
-                        verticalDoors += Point(i, j)
+                        verticalDoors += gridPoint2(i, j)
                     }
                 }
             }
@@ -196,22 +200,22 @@ object Generator {
                 if (tile != TileType.Maze) return@inner
                 var nextX = x
                 var nextY = y
-                fun neighbors() = mutableListOf<Point>().apply {
+                fun neighbors() = mutableListOf<GridPoint2>().apply {
                     val up = matrix[nextX - 1][nextY]
                     if (up == TileType.Maze || up == TileType.Door) {
-                        this += Point(nextX - 1, nextY)
+                        this += gridPoint2(nextX - 1, nextY)
                     }
                     val down = matrix[nextX + 1][nextY]
                     if (down == TileType.Maze || down == TileType.Door) {
-                        this += Point(nextX + 1, nextY)
+                        this += gridPoint2(nextX + 1, nextY)
                     }
                     val left = matrix[nextX][nextY - 1]
                     if (left == TileType.Maze || left == TileType.Door) {
-                        this += Point(nextX, nextY - 1)
+                        this += gridPoint2(nextX, nextY - 1)
                     }
                     val right = matrix[nextX][nextY + 1]
                     if (right == TileType.Maze || right == TileType.Door) {
-                        this += Point(nextX, nextY + 1)
+                        this += gridPoint2(nextX, nextY + 1)
                     }
                 }
                 var neighbors = neighbors()
@@ -229,8 +233,6 @@ object Generator {
         return matrix
     }
 }
-
-data class Point(var x: Int, var y: Int)
 
 data class Rectangle(var x: Int, var y: Int, var width: Int, var height: Int) {
     fun overlaps(rectangle: Rectangle) =

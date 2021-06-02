@@ -19,13 +19,13 @@ import ktx.math.vec3
 abstract class ModelObject(
     position: ImmutableVector3,
     protected val model: Model,
-) : GameObject(position), Renderable, Intersectable {
+) : GameObject(), Renderable, Intersectable {
 
     companion object {
         internal val modelBuilder = ModelBuilder()
     }
 
-    override var position = position
+    open var position = position
         set(value) {
             transform.setTranslation(value.toMutable())
             boundingBox *= transform
@@ -34,7 +34,7 @@ abstract class ModelObject(
 
     private val modelInstance = ModelInstance(model, position.toMutable())
 
-    override val renderableProvider: RenderableProvider = modelInstance
+    override val renderableProviders = sequenceOf(modelInstance as RenderableProvider)
     val transform: Matrix4
         get() = modelInstance.transform
     val materials: Array<Material>

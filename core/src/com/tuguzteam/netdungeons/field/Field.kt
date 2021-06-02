@@ -1,72 +1,77 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
+import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.generator.Generator
-import com.tuguzteam.netdungeons.field.generator.Rectangle
 import com.tuguzteam.netdungeons.field.generator.TileType
-import com.tuguzteam.netdungeons.field.rooms.Box
-import com.tuguzteam.netdungeons.field.rooms.MultiRoom
-import com.tuguzteam.netdungeons.field.rooms.Room
-import com.tuguzteam.netdungeons.immutableVec3
-import com.tuguzteam.netdungeons.objects.GameObject
+import com.tuguzteam.netdungeons.field.tile.Floor
+import com.tuguzteam.netdungeons.field.tile.Tile
+import com.tuguzteam.netdungeons.field.tile.Wall
+import com.tuguzteam.netdungeons.gridPoint2
 import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.assets.dispose
 
-class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
+class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
     companion object {
-        val cells = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+        val random = Loader.random
+
+        val floors = listOf(TextureAsset.Wood, TextureAsset.Wood1)
         val walls = listOf(TextureAsset.Wood)
     }
 
     val size = 11u
-    val matrix = Generator.generate(size, 300u)
+    private val matrix = Generator.generate(size, 300u)
 
-    private val _rooms = ArrayList<Room>(100)
-    val rooms: List<Room> = _rooms
+    private val _tiles = mutableListOf<Tile>()
+    val tiles: List<Tile> = _tiles
 
     init {
-        val rectangles = arrayListOf<Rectangle>()
-        matrix.forEachIndexed { i, list ->
-            list.forEachIndexed { j, tile ->
-                val notContains = rectangles.none { it.contains(i, j) }
-                if (tile == TileType.Room && notContains) {
-                    var iTemp = i
-                    do {
-                        iTemp++
-                    } while (iTemp.toUInt() < size && matrix[iTemp][j] == TileType.Room)
-                    val width = (iTemp - i).toUInt()
-
-                    var jTemp = j
-                    do {
-                        jTemp++
-                    } while (jTemp.toUInt() < size && list[jTemp] == TileType.Room)
-                    val height = (jTemp - j).toUInt()
-
-                    rectangles += Rectangle(x = i, y = j, width.toInt(), height.toInt())
+        matrix.forEachIndexed { x, list ->
+            list.forEachIndexed { y, tile ->
+                when (tile) {
+                    TileType.Wall -> {
+                        fun newWall(x: Int, y: Int): Wall {
+                            val position = gridPoint2(x, y)
+                            val asset = walls.random(random)
+                            val texture = gameScreen.assetManager[asset]!!
+                            return Wall(position, 1u, texture)
+                        }
+                        var wall: Wall? = null
+                        if (x - 1 >= 0 && matrix[x - 1][y] != TileType.Wall) {
+                            wall = wall ?: newWall(x, y)
+                            wall += Direction.Right
+                        }
+                        if (x + 1 < size.toInt() && matrix[x + 1][y] != TileType.Wall) {
+                            wall = wall ?: newWall(x, y)
+                            wall += Direction.Left
+                        }
+                        if (y - 1 >= 0 && matrix[x][y - 1] != TileType.Wall) {
+                            wall = wall ?: newWall(x, y)
+                            wall += Direction.Back
+                        }
+                        if (y + 1 < size.toInt() && matrix[x][y + 1] != TileType.Wall) {
+                            wall = wall ?: newWall(x, y)
+                            wall += Direction.Forward
+                        }
+                        wall?.let {
+                            _tiles += wall
+                        }
+                    }
+                    else -> {
+                        val position = gridPoint2(x, y)
+                        val asset = floors.random(random)
+                        val texture = gameScreen.assetManager[asset]!!
+                        _tiles += Floor(position, texture)
+                    }
                 }
             }
         }
-        _rooms += rectangles.asSequence().map {
-            val x = it.x + it.width / 2f
-            val z = it.y + it.height / 2f
-            Box(
-                position = immutableVec3(x = x, z = z), type = Type.Slum,
-                walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
-                assetManager = gameScreen.assetManager,
-                width = it.width.toUInt(), length = it.height.toUInt(), height = 2u,
-            )
-        }
     }
 
-    override fun iterator() = rooms.asSequence().map(::roomObjects).flatten().iterator()
-
-    private fun roomObjects(room: Room) = when (room) {
-        is Box -> room.asSequence()
-        is MultiRoom -> room.asSequence().map { (it as Room).asSequence() }.flatten()
-    }
+    override fun iterator() = tiles.asSequence().iterator()
 
     override fun dispose() {
-        rooms.dispose()
+        tiles.dispose()
     }
 }

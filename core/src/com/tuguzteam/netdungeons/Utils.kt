@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.collision.BoundingBox
@@ -91,3 +92,7 @@ infix fun Environment.with(attribute: Attribute) {
 infix fun Material.with(attribute: Attribute) {
     set(attribute)
 }
+
+fun gridPoint2(x: Int = 0, y: Int = 0) = GridPoint2(x, y)
+
+operator fun GridPoint2.plus(point: GridPoint2) = gridPoint2(x = point.x + x, y = point.y + y)

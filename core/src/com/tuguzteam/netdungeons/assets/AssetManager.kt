@@ -10,7 +10,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import ktx.assets.async.AssetStorage
-import java.util.*
+import java.util.EnumMap
 
 @Suppress("MemberVisibilityCanBePrivate")
 class AssetManager : Disposable {

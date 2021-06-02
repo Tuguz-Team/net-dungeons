@@ -1,6 +1,6 @@
 package com.tuguzteam.netdungeons.field
 
-enum class Type {
+enum class FieldType {
     Mansion,
     Castle,
     Slum,
