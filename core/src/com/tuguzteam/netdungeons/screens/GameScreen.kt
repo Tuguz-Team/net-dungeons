@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.*
+import com.tuguzteam.netdungeons.field.generator.TileType
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -24,13 +25,15 @@ import ktx.log.info
 import ktx.log.logger
 import ktx.math.*
 import kotlin.math.absoluteValue
+import kotlin.math.max
+import kotlin.math.min
 
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
         private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
 
-        private const val viewDistance = 5u
+        private const val viewDistance = 20u
     }
 
     val assetManager = loader.assetManager
@@ -143,9 +146,57 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                         && distanceY <= (viewDistance * Cell.length).toFloat()
             }
             // TODO: check if an object is REALLY visible
-            //  (there are no others between this object and the player)
-            _visibleObjects += candidates
-            visitedObjects += _visibleObjects
+            //  (there are no walls between this object and the player)
+            val plX = playerPosition.x.toInt()
+            val plY = playerPosition.y.toInt()
+            if (plX in 0 until field.size.toInt() && plY in 0 until field.size.toInt()) {
+                _visibleObjects += candidates.filter { gameObject ->
+                    val offsetX = when (gameObject) {
+                        is Wall -> when (gameObject.direction) {
+                            Direction.Left -> 0.5f
+                            Direction.Right -> -0.5f
+                            else -> 0f
+                        }
+                        else -> 0f
+                    }
+                    val offsetY = when (gameObject) {
+                        is Wall -> when (gameObject.direction) {
+                            Direction.Forward -> 0.5f
+                            Direction.Back -> -0.5f
+                            else -> 0f
+                        }
+                        else -> 0f
+                    }
+                    val goX = (gameObject.position.x + offsetX).toInt()
+                    val goY = (gameObject.position.z + offsetY).toInt()
+                    when {
+                        // On one row
+                        goX == plX -> {
+                            val min = min(goY, plY)
+                            val max = max(goY, plY)
+                            for (y in min..max) {
+                                if (field.matrix[goX][y] == TileType.Wall) {
+                                    return@filter false
+                                }
+                            }
+                            true
+                        }
+                        // On one column
+                        goY == plY -> {
+                            val min = min(goX, plX)
+                            val max = max(goX, plX)
+                            for (x in min..max) {
+                                if (field.matrix[x][goY] == TileType.Wall) {
+                                    return@filter false
+                                }
+                            }
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                visitedObjects += _visibleObjects
+            }
         }
     }
 

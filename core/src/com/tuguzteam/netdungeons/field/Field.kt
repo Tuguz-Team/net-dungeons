@@ -21,7 +21,9 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
 
     val size = 11u
     val matrix = Generator.generate(size, 300u)
-    private val rooms = ArrayList<Room>(100)
+
+    private val _rooms = ArrayList<Room>(100)
+    val rooms: List<Room> = _rooms
 
     init {
         val rectangles = arrayListOf<Rectangle>()
@@ -45,7 +47,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
                 }
             }
         }
-        rooms += rectangles.map {
+        _rooms += rectangles.asSequence().map {
             val x = it.x + it.width / 2f
             val z = it.y + it.height / 2f
             Box(
