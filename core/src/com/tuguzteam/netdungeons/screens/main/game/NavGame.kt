@@ -1,30 +1,33 @@
 package com.tuguzteam.netdungeons.screens.main.game
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Container
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup
-import com.kotcrab.vis.ui.widget.VisImageTextButton
-import com.kotcrab.vis.ui.widget.VisImageTextButton.VisImageTextButtonStyle
+import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.widget.VisImageButton
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
+import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.screens.main.NavButton
+import com.tuguzteam.netdungeons.addActor
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
 
 class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader) {
-    private val content = VerticalGroup().apply {
-        pad(heightFraction(.1f)).space(heightFraction(.25f))
-    }
+    private val navPad = heightFraction(.1f)
+
+    private val content = VerticalGroup().pad(navPad).space(navPad)
+
     private val contentScroll = VisScrollPane(content).apply {
         setOverscroll(false, false)
         fadeScrollBars = false
+        setFlingTime(0f)
     }
+
     private val gameMode = NavGameElement(
         contentScroll, 0f, "Mode",
         "Choose game mode", listOf("Team Fight", "Slaughter")
@@ -46,17 +49,27 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
         }
     }
 
-    private val headerContent = HorizontalGroup().apply {
-        center().space(heightFraction(.05f))
-        this += gameMode.innerLabel
-        this += VisLabel("in")
-        this += gameSize.innerLabel
-        this += gameType.innerLabel
+    private val headerContent = VisTable(false).apply {
+        left().padRight(navPad)
+
+        addActor(this, gameMode.innerLabel)
+        addActor(this,
+            VisLabel("in", Align.center), navPad)
+        addActor(this, gameSize.innerLabel)
+        addActor(this, gameType.innerLabel)
     }
-    private val playButton = VisImageTextButton(
-        "Play",
-        VisImageTextButtonStyle(null, null, null, BitmapFont())
+
+    private val imageButton =
+        VisImageButton(null, null, null)
+
+    private val playButton = Container(
+        VisTable(false).apply {
+            add(imageButton).grow()
+            add(VisLabel("Play", Align.center)).grow()
+        }
     ).apply {
+        fill().pad(navPad / 2.5f)
+
         addListener(ClickListener {
             when {
                 !gameMode.anyChecked() -> gameMode.click()
@@ -66,8 +79,9 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
             }
         })
     }
+
     private val headerSplitPane = SplitPane(
-        headerContent, Container(playButton), false, 0.8f
+        headerContent, playButton, false, 0.8f
     )
     val navButton = NavButton("Game", contentSplitPane, contentScroll) {
         contentSplitPane.setSecondWidget(contentScroll)

@@ -112,6 +112,16 @@ fun addActor(
     if (pad) cell.pad(cellHeight, cellWidth, cellHeight, cellWidth)
 }
 
+fun addActor(table: VisTable, actor: Actor, widthMultiplier: Float = 0f) {
+    val cell = table.add(actor).width(widthMultiplier).pad(
+        heightFraction(.1f) / 2.5f, heightFraction(.1f),
+        heightFraction(.1f) / 2.5f, 0f)
+
+    if (!widthMultiplier.toBoolean()) cell.grow()
+}
+
 infix fun Material.with(attribute: Attribute) = set(attribute)
 
 fun Boolean.toFloat(): Float = if (this) 1f else 0f
+
+fun Float.toBoolean(): Boolean = !(this == 0f)

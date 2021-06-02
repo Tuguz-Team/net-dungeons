@@ -1,17 +1,23 @@
 package com.tuguzteam.netdungeons.screens.main.game
 
+import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.widget.VisImageButton
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
+import com.kotcrab.vis.ui.widget.VisTable
+import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.RadioButtonGroup
-import com.tuguzteam.netdungeons.ui.Window
 import com.tuguzteam.netdungeons.ui.doClick
+import com.tuguzteam.netdungeons.widthFraction
 
 class NavGameElement(
     scrollPane: VisScrollPane, percentage: Float,
     private val labelName: String, windowTitle: String,
     buttonNames: List<String>
 ) {
+    private val windowPad = heightFraction(.05f)
+
     private val radioButton = RadioButtonGroup(false, buttonNames).apply {
         groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
@@ -22,14 +28,36 @@ class NavGameElement(
             })
         }
     }
-    val innerLabel = VisLabel(labelName).apply {
+    val innerLabel = VisLabel(labelName, Align.center).apply {
         addListener(ClickListener {
-            scrollPane.cancel()
-            scrollPane.layout()
             scrollPane.scrollPercentY = percentage
         })
     }
-    val window = Window(windowTitle, false, radioButton.groupButtons)
+
+    private val buttons = mutableListOf<VisTable>().apply {
+        radioButton.groupButtons.forEach { radioButton ->
+            add(VisTable(true).apply {
+                add(VisImageButton(null, null, null))
+                    .height(windowPad * 5).grow().row()
+                add(radioButton).padTop(windowPad)
+                    .width(windowPad * 5).height(windowPad)
+
+                radioButton.listeners.forEach { listener ->
+                    addListener(listener)
+                }
+            })
+        }
+    }
+
+    val window = VisTable(false).apply {
+        add(VisLabel(windowTitle, Align.center))
+            .colspan(buttons.size).padTop(windowPad)
+            .width(widthFraction(.625f)).row()
+
+        buttons.forEach { button ->
+            add(button).grow().pad(windowPad)
+        }
+    }
 
     fun anyChecked() = radioButton.anyChecked()
 
