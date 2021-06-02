@@ -105,7 +105,12 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         KtxAsync.launch {
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
-            field = Field(gameScreen = this@GameScreen)
+            field = Field(gameScreen = this@GameScreen).apply {
+                playerPosition = immutableVec2(
+                    x = (size * Cell.width).toInt() / 2f,
+                    y = (size * Cell.length).toInt() / 2f,
+                )
+            }
             updateVisibleObjects()
             logger.info { "Map generation finished" }
         }
@@ -134,7 +139,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                     distanceX -= Cell.width.toFloat() / 2
                     distanceY -= Cell.length.toFloat() / 2
                 }
-                distanceX <= viewDistance.toFloat() && distanceY <= viewDistance.toFloat()
+                distanceX <= (viewDistance * Cell.width).toFloat()
+                        && distanceY <= (viewDistance * Cell.length).toFloat()
             }
             // TODO: check if an object is REALLY visible
             //  (there are no others between this object and the player)

@@ -19,11 +19,11 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
         val walls = listOf(TextureAsset.Wood)
     }
 
+    val size = 11u
+    val matrix = Generator.generate(size, 300u)
     private val rooms = ArrayList<Room>(100)
 
     init {
-        val matrixWidth = 31u
-        val matrix = Generator.generate(matrixWidth, 300u)
         val rectangles = arrayListOf<Rectangle>()
         matrix.forEachIndexed { i, list ->
             list.forEachIndexed { j, tile ->
@@ -32,13 +32,13 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
                     var iTemp = i
                     do {
                         iTemp++
-                    } while (iTemp.toUInt() < matrixWidth && matrix[iTemp][j] == TileType.Room)
+                    } while (iTemp.toUInt() < size && matrix[iTemp][j] == TileType.Room)
                     val width = (iTemp - i).toUInt()
 
                     var jTemp = j
                     do {
                         jTemp++
-                    } while (jTemp.toUInt() < matrixWidth && list[jTemp] == TileType.Room)
+                    } while (jTemp.toUInt() < size && list[jTemp] == TileType.Room)
                     val height = (jTemp - j).toUInt()
 
                     rectangles += Rectangle(x = i, y = j, width.toInt(), height.toInt())
@@ -46,8 +46,8 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<GameObject> {
             }
         }
         rooms += rectangles.map {
-            val x = it.x.toFloat() - (matrixWidth.toInt() - it.width) / 2f
-            val z = it.y.toFloat() - (matrixWidth.toInt() - it.height) / 2f
+            val x = it.x + it.width / 2f
+            val z = it.y + it.height / 2f
             Box(
                 position = immutableVec3(x = x, z = z), type = Type.Slum,
                 walls = setOf(Direction.Forward, Direction.Back, Direction.Right, Direction.Left),
