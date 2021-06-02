@@ -16,7 +16,7 @@ class GameFragment : AndroidFragmentApplication() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val config = AndroidApplicationConfiguration().apply {
             a = 8

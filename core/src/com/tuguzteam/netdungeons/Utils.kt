@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
+import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.collision.BoundingBox
@@ -16,6 +17,14 @@ import com.kotcrab.vis.ui.widget.VisTable
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+
+operator fun Appendable.plusAssign(charSequence: CharSequence) {
+    append(charSequence)
+}
+
+operator fun Appendable.plusAssign(char: Char) {
+    append(char)
+}
 
 @OptIn(ExperimentalContracts::class)
 inline fun ModelBatch.use(camera: Camera, action: ModelBatch.() -> Unit) {
@@ -125,3 +134,7 @@ infix fun Material.with(attribute: Attribute) = set(attribute)
 fun Boolean.toFloat(): Float = if (this) 1f else 0f
 
 fun Float.toBoolean(): Boolean = !(this == 0f)
+
+fun gridPoint2(x: Int = 0, y: Int = 0) = GridPoint2(x, y)
+
+operator fun GridPoint2.plus(point: GridPoint2) = gridPoint2(x = point.x + x, y = point.y + y)
