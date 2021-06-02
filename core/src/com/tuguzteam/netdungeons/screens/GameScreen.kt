@@ -10,9 +10,7 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.TextureAsset
-import com.tuguzteam.netdungeons.field.Cell
-import com.tuguzteam.netdungeons.field.Field
-import com.tuguzteam.netdungeons.field.Wall
+import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
@@ -24,8 +22,7 @@ import ktx.async.KtxAsync
 import ktx.graphics.color
 import ktx.log.info
 import ktx.log.logger
-import ktx.math.plusAssign
-import ktx.math.vec3
+import ktx.math.*
 import kotlin.math.absoluteValue
 
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
@@ -33,8 +30,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         private val logger = logger<GameScreen>()
         private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
 
-        private const val viewDistance = 10u
-        private val viewWidth = 1u + viewDistance * 2u
+        private const val viewDistance = 5u
     }
 
     val assetManager = loader.assetManager
@@ -49,8 +45,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             }
             field = value
         }
-    var visibleObjects = mutableListOf<GameObject>()
-        private set
+    private val _visibleObjects = mutableListOf<GameObject>()
+    val visibleObjects = _visibleObjects as List<GameObject>
 
     private var camera: OrthographicCamera? = null
     private val modelBatch = ModelBatch()
@@ -71,7 +67,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             color(red = ambient, green = ambient, blue = ambient),
         )
     }
-    private var visitedObjects = mutableSetOf<GameObject>()
+    private val visitedObjects = mutableSetOf<GameObject>()
     private var field: Field? = null
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
@@ -110,6 +106,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen)
+            updateVisibleObjects()
             logger.info { "Map generation finished" }
         }
     }
@@ -119,10 +116,31 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         runBlocking {
             assetManager.unload(assets)
         }
-        visibleObjects.clear()
+        _visibleObjects.clear()
         visitedObjects.clear()
         field?.dispose()
         field = null
+    }
+
+    fun updateVisibleObjects() {
+        field?.let { field ->
+            _visibleObjects.clear()
+            // Filter visible objects
+            val candidates = field.asSequence().filter { gameObject ->
+                var distanceX = (playerPosition.x - gameObject.position.x).absoluteValue
+                var distanceY = (playerPosition.y - gameObject.position.z).absoluteValue
+                if (gameObject is Wall) {
+                    // TODO: check direction of wall
+                    distanceX -= Cell.width.toFloat() / 2
+                    distanceY -= Cell.length.toFloat() / 2
+                }
+                distanceX <= viewDistance.toFloat() && distanceY <= viewDistance.toFloat()
+            }
+            // TODO: check if an object is REALLY visible
+            //  (there are no others between this object and the player)
+            _visibleObjects += candidates
+            visitedObjects += _visibleObjects
+        }
     }
 
     override fun render(delta: Float) {
@@ -132,36 +150,16 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         if (camera != null && field != null && assetManager.loaded(assets)) {
             rotationZoomGestureListener.update()
 
+            @Suppress("UNCHECKED_CAST")
             modelBatch.use(camera) {
-                // Render already visited objects
                 render(
-                    visitedObjects.asSequence()
-                        .filterIsInstance<Renderable>()
+                    (visitedObjects.asSequence() as Sequence<Renderable>)
                         .map(Renderable::renderableProvider)
                         .asIterable(),
                     environmentVisited,
                 )
-
-                // Filter visible objects
-                visibleObjects.clear()
-                visibleObjects += field.asSequence().filter { gameObject ->
-                    var distanceX = (playerPosition.x - gameObject.position.x).absoluteValue
-                    var distanceY = (playerPosition.y - gameObject.position.z).absoluteValue
-                    if (gameObject is Wall) {
-                        // TODO: check direction of wall
-                        distanceX -= Cell.width.toFloat() / 2
-                        distanceY -= Cell.length.toFloat() / 2
-                    }
-                    distanceX <= viewDistance.toFloat() && distanceY <= viewDistance.toFloat()
-                    // TODO: check if an object is REALLY visible
-                    //  (there are no others between this object and the player)
-                }
-                visitedObjects += visibleObjects
-
-                // Render visible objects
                 render(
-                    visibleObjects.asSequence()
-                        .filterIsInstance<Renderable>()
+                    (visibleObjects.asSequence() as Sequence<Renderable>)
                         .map(Renderable::renderableProvider)
                         .asIterable(),
                     environmentVisible,

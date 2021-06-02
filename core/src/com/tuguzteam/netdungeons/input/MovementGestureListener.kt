@@ -10,13 +10,20 @@ class MovementGestureListener(private val gameScreen: GameScreen) : KtxGestureAd
     override fun fling(velocityX: Float, velocityY: Float, button: Int): Boolean {
         val vX = velocityX / Gdx.graphics.width
         val vY = velocityY / Gdx.graphics.height
-        gameScreen.playerPosition += when {
+        val offset = when {
             vX > 0.2f -> immutableVec2(x = Cell.width.toFloat())
             vX < -0.2f -> immutableVec2(x = -Cell.width.toFloat())
             vY > 0.2f -> immutableVec2(y = Cell.width.toFloat())
             vY < -0.2f -> immutableVec2(y = -Cell.width.toFloat())
-            else -> immutableVec2()
+            else -> null
         }
-        return true
+        offset?.let {
+            gameScreen.apply {
+                playerPosition += offset
+                updateVisibleObjects()
+            }
+            return true
+        }
+        return false
     }
 }
