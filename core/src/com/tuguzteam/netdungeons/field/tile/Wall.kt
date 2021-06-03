@@ -1,8 +1,8 @@
 package com.tuguzteam.netdungeons.field.tile
 
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector3
+import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.field.Direction
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.Renderable
@@ -10,7 +10,7 @@ import com.tuguzteam.netdungeons.objects.TextureObject
 import java.util.EnumMap
 
 class Wall(
-    position: GridPoint2,
+    position: ImmutableGridPoint2,
     val height: UInt,
     val texture: Texture,
 ) : Tile(position), Renderable {

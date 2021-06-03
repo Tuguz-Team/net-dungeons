@@ -2,9 +2,9 @@ package com.tuguzteam.netdungeons.field.tile
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.Ray
+import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.Intersectable
@@ -12,7 +12,7 @@ import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.objects.TextureObject
 
 class Floor(
-    position: GridPoint2,
+    position: ImmutableGridPoint2,
     texture: Texture,
 ) : Tile(position), Renderable, Focusable, Intersectable {
 

@@ -35,7 +35,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     }
 
     val assetManager = loader.assetManager
-    var playerPosition = gridPoint2()
+    var playerPosition = immutableGridPoint2()
         set(value) {
             camera?.apply {
                 position += vec3(
@@ -81,7 +81,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun show() {
         super.show()
-        playerPosition = gridPoint2()
+        playerPosition = immutableGridPoint2()
         camera = OrthographicCamera().apply {
             val pos = vec3(x = 10f, z = 10f)
             val angle = 30f
@@ -110,7 +110,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             assetManager.load(assets)
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen).apply {
-                playerPosition = gridPoint2(
+                playerPosition = immutableGridPoint2(
                     x = (size * Tile.size / 2u).toInt(),
                     y = (size * Tile.size / 2u).toInt(),
                 )

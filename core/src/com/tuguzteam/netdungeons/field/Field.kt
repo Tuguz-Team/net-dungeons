@@ -8,7 +8,7 @@ import com.tuguzteam.netdungeons.field.generator.TileType
 import com.tuguzteam.netdungeons.field.tile.Floor
 import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.field.tile.Wall
-import com.tuguzteam.netdungeons.gridPoint2
+import com.tuguzteam.netdungeons.immutableGridPoint2
 import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.assets.dispose
 
@@ -32,7 +32,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                 when (tile) {
                     TileType.Wall -> {
                         fun newWall(x: Int, y: Int): Wall {
-                            val position = gridPoint2(x, y)
+                            val position = immutableGridPoint2(x, y)
                             val asset = walls.random(random)
                             val texture = gameScreen.assetManager[asset]!!
                             return Wall(position, 1u, texture)
@@ -59,7 +59,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                         }
                     }
                     else -> {
-                        val position = gridPoint2(x, y)
+                        val position = immutableGridPoint2(x, y)
                         val asset = floors.random(random)
                         val texture = gameScreen.assetManager[asset]!!
                         _tiles += Floor(position, texture)

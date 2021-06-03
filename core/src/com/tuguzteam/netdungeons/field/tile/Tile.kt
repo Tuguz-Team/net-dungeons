@@ -1,10 +1,10 @@
 package com.tuguzteam.netdungeons.field.tile
 
-import com.badlogic.gdx.math.GridPoint2
+import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.GameObject
 
-sealed class Tile(val position: GridPoint2) : GameObject() {
+sealed class Tile(val position: ImmutableGridPoint2) : GameObject() {
     companion object : Iterable<Tile> {
         const val size = 1u
 
