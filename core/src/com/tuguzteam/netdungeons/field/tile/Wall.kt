@@ -15,13 +15,26 @@ class Wall(
     val texture: Texture,
 ) : Tile(position), Renderable {
 
-    private val textureObjects: MutableMap<Direction, List<TextureObject>> =
+    private val topTextureObject = object : TextureObject(
+        position = immutableVec3(
+            x = position.x.toFloat(),
+            y = (height * size).toFloat(),
+            z = position.y.toFloat(),
+        ),
+        texture, width = size, height = size,
+    ) {
+        init {
+            transform.rotate(Vector3.X, -90f)
+        }
+    }
+
+    private val wallTextureObjects: MutableMap<Direction, List<TextureObject>> =
         EnumMap(Direction::class.java)
 
     operator fun plusAssign(direction: Direction) {
-        val textureObject = textureObjects[direction]
+        val textureObject = wallTextureObjects[direction]
         if (textureObject == null) {
-            textureObjects[direction] = (0 until height.toInt()).map { index ->
+            wallTextureObjects[direction] = (0 until height.toInt()).map { index ->
                 val wallPosition = when (direction) {
                     Direction.Forward -> immutableVec3(
                         x = -size.toInt() / 2f + 0.5f,
@@ -53,8 +66,10 @@ class Wall(
         }
     }
 
-    operator fun get(direction: Direction) = textureObjects[direction]
+    operator fun get(direction: Direction) = wallTextureObjects[direction]
 
-    override val renderableProviders = textureObjects.values.asSequence().flatten()
-        .map(Renderable::renderableProviders).flatten()
+    override val renderableProviders =
+        (wallTextureObjects.values.asSequence().flatten() + topTextureObject)
+            .map(Renderable::renderableProviders)
+            .flatten()
 }

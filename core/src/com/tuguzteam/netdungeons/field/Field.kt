@@ -31,32 +31,25 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
             list.forEachIndexed { y, tile ->
                 when (tile) {
                     TileType.Wall -> {
-                        fun newWall(x: Int, y: Int): Wall {
-                            val position = immutableGridPoint2(x, y)
-                            val asset = walls.random(random)
-                            val texture = gameScreen.assetManager[asset]!!
-                            return Wall(position, 1u, texture)
-                        }
-                        var wall: Wall? = null
-                        if (x - 1 >= 0 && matrix[x - 1][y] != TileType.Wall) {
-                            wall = wall ?: newWall(x, y)
+                        val position = immutableGridPoint2(x, y)
+                        val asset = walls.random(random)
+                        val texture = gameScreen.assetManager[asset]!!
+                        val wall = Wall(position, 1u, texture)
+
+                        if (x - 1 < 0 || matrix[x - 1][y] != TileType.Wall) {
                             wall += Direction.Right
                         }
-                        if (x + 1 < size.toInt() && matrix[x + 1][y] != TileType.Wall) {
-                            wall = wall ?: newWall(x, y)
+                        if (x + 1 >= size.toInt() || matrix[x + 1][y] != TileType.Wall) {
                             wall += Direction.Left
                         }
-                        if (y - 1 >= 0 && matrix[x][y - 1] != TileType.Wall) {
-                            wall = wall ?: newWall(x, y)
+                        if (y - 1 < 0 || matrix[x][y - 1] != TileType.Wall) {
                             wall += Direction.Back
                         }
-                        if (y + 1 < size.toInt() && matrix[x][y + 1] != TileType.Wall) {
-                            wall = wall ?: newWall(x, y)
+                        if (y + 1 >= size.toInt() || matrix[x][y + 1] != TileType.Wall) {
                             wall += Direction.Forward
                         }
-                        wall?.let {
-                            _tiles += wall
-                        }
+
+                        _tiles += wall
                     }
                     else -> {
                         val position = immutableGridPoint2(x, y)
