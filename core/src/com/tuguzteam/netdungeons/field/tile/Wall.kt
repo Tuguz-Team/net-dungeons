@@ -15,7 +15,7 @@ class Wall(
     position: ImmutableGridPoint2,
     val texture: Texture,
     val height: UInt,
-    val walls: Set<Direction>,
+    val walls: Set<Direction> = Direction.values().toSet(),
 ) : Tile(position), Renderable {
 
     private val topTextureObject = object : TextureObject(
