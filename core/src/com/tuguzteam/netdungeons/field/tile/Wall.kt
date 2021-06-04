@@ -2,11 +2,13 @@ package com.tuguzteam.netdungeons.field.tile
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.field.Direction
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.objects.TextureObject
+import ktx.assets.dispose
 import java.util.EnumMap
 
 class Wall(
@@ -29,7 +31,7 @@ class Wall(
         }
     }
 
-    private val wallTextures: Map<Direction, List<TextureObject>>
+    private val wallTextureObjects: Map<Direction, List<TextureObject>>
 
     init {
         val map: MutableMap<Direction, List<TextureObject>> = EnumMap(Direction::class.java)
@@ -64,11 +66,17 @@ class Wall(
                 }
             }
         }
-        wallTextures = map
+        wallTextureObjects = map
     }
 
     override val renderableProviders =
-        (wallTextures.values.asSequence().flatten() + topTextureObject)
+        (wallTextureObjects.values.asSequence().flatten() + topTextureObject)
             .map(Renderable::renderableProviders)
             .flatten()
+
+    override fun dispose() {
+        super.dispose()
+        topTextureObject.dispose()
+        wallTextureObjects.values.forEach(Iterable<Disposable>::dispose)
+    }
 }

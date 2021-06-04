@@ -8,7 +8,7 @@ import com.kotcrab.vis.ui.VisUI
 import com.tuguzteam.netdungeons.assets.*
 import com.tuguzteam.netdungeons.net.AuthManager
 import com.tuguzteam.netdungeons.net.GameManager
-import com.tuguzteam.netdungeons.objects.TextureObject
+import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.screens.SplashScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
     override fun dispose() {
         super.dispose()
         assetManager.dispose()
-        TextureObject.dispose()
+        GameObject.dispose()
         VisUI.dispose()
     }
 }

@@ -77,5 +77,6 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
 
     override fun dispose() {
         tiles.dispose()
+        _tiles.clear()
     }
 }
