@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package com.tuguzteam.netdungeons
 
 import com.badlogic.gdx.math.GridPoint2
@@ -23,12 +25,7 @@ data class ImmutableGridPoint2(val x: Int, val y: Int) {
 
     operator fun times(scalar: Int) = immutableGridPoint2(x * scalar, y * scalar)
 
-    operator fun div(scalar: Int): ImmutableGridPoint2 {
-        if (scalar == 0) {
-            return immutableGridPoint2(x = 0, y = 0)
-        }
-        return immutableGridPoint2(x / scalar, y / scalar)
-    }
+    operator fun div(scalar: Int) = immutableGridPoint2(x / scalar, y / scalar)
 
     operator fun unaryMinus() = immutableGridPoint2(-x, -y)
 
@@ -49,12 +46,7 @@ operator fun GridPoint2.minus(point: GridPoint2) = gridPoint2(x - point.x, y - p
 
 operator fun GridPoint2.times(scalar: Int) = gridPoint2(x * scalar, y * scalar)
 
-operator fun GridPoint2.div(scalar: Int): GridPoint2 {
-    if (scalar == 0) {
-        return gridPoint2(x = 0, y = 0)
-    }
-    return gridPoint2(x / scalar, y / scalar)
-}
+operator fun GridPoint2.div(scalar: Int) = gridPoint2(x / scalar, y / scalar)
 
 operator fun GridPoint2.unaryMinus() = gridPoint2(-x, -y)
 

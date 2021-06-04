@@ -13,6 +13,7 @@ class Wall(
     position: ImmutableGridPoint2,
     val height: UInt,
     val texture: Texture,
+    val walls: Set<Direction>,
 ) : Tile(position), Renderable {
 
     private val topTextureObject = object : TextureObject(
@@ -28,13 +29,12 @@ class Wall(
         }
     }
 
-    private val wallTextureObjects: MutableMap<Direction, List<TextureObject>> =
-        EnumMap(Direction::class.java)
+    private val wallTextures: Map<Direction, List<TextureObject>>
 
-    operator fun plusAssign(direction: Direction) {
-        val textureObject = wallTextureObjects[direction]
-        if (textureObject == null) {
-            wallTextureObjects[direction] = (0 until height.toInt()).map { index ->
+    init {
+        val map: MutableMap<Direction, List<TextureObject>> = EnumMap(Direction::class.java)
+        walls.forEach { direction ->
+            map[direction] = (0 until height.toInt()).map { index ->
                 val wallPosition = when (direction) {
                     Direction.Forward -> immutableVec3(
                         x = -size.toInt() / 2f + 0.5f,
@@ -64,12 +64,11 @@ class Wall(
                 }
             }
         }
+        wallTextures = map
     }
 
-    operator fun get(direction: Direction) = wallTextureObjects[direction]
-
     override val renderableProviders =
-        (wallTextureObjects.values.asSequence().flatten() + topTextureObject)
+        (wallTextures.values.asSequence().flatten() + topTextureObject)
             .map(Renderable::renderableProviders)
             .flatten()
 }

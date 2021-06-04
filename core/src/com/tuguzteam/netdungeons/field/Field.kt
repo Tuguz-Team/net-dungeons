@@ -34,22 +34,22 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                         val position = immutableGridPoint2(x, y)
                         val asset = walls.random(random)
                         val texture = gameScreen.assetManager[asset]!!
-                        val wall = Wall(position, 1u, texture)
 
+                        val directions = mutableSetOf<Direction>()
                         if (x - 1 < 0 || matrix[x - 1][y] != TileType.Wall) {
-                            wall += Direction.Right
+                            directions += Direction.Right
                         }
                         if (x + 1 >= size.toInt() || matrix[x + 1][y] != TileType.Wall) {
-                            wall += Direction.Left
+                            directions += Direction.Left
                         }
                         if (y - 1 < 0 || matrix[x][y - 1] != TileType.Wall) {
-                            wall += Direction.Back
+                            directions += Direction.Back
                         }
                         if (y + 1 >= size.toInt() || matrix[x][y + 1] != TileType.Wall) {
-                            wall += Direction.Forward
+                            directions += Direction.Forward
                         }
 
-                        _tiles += wall
+                        _tiles += Wall(position, 1u, texture, directions)
                     }
                     else -> {
                         val position = immutableGridPoint2(x, y)
