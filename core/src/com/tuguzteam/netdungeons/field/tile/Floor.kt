@@ -20,7 +20,8 @@ class Floor(
         position = immutableVec3(
             x = position.x.toFloat(),
             z = position.y.toFloat(),
-        ), texture, width = size, height = size,
+        ),
+        texture, width = size, height = size,
     ) {
         init {
             transform.rotate(Vector3.X, -90f)

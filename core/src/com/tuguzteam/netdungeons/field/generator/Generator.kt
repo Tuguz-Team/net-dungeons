@@ -76,7 +76,7 @@ object Generator {
             val iWidth = room.width
             val iHeight = room.height
             (x - 1..x + iWidth).forEach { i ->
-                (y - 1..y + iHeight).forEach inner@ { j ->
+                (y - 1..y + iHeight).forEach inner@{ j ->
                     if (i == x - 1 || j == y - 1 || i == x + iWidth || j == y + iHeight) {
                         matrix[i][j] = TileType.Wall
                         return@inner
@@ -196,7 +196,7 @@ object Generator {
         }
         // Remove dead ends from the maze
         matrix.forEachIndexed { x, list ->
-            list.forEachIndexed inner@ { y, tile ->
+            list.forEachIndexed inner@{ y, tile ->
                 if (tile != TileType.Maze) return@inner
                 var nextX = x
                 var nextY = y
@@ -218,6 +218,7 @@ object Generator {
                         this += gridPoint2(nextX, nextY + 1)
                     }
                 }
+
                 var neighbors = neighbors()
                 while (neighbors.size == 1) {
                     matrix[nextX][nextY] = TileType.Wall

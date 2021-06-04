@@ -28,8 +28,11 @@ class ObjectChooseGestureListener(private val gameScreen: GameScreen) : KtxGestu
             (chosenGameObject as? Focusable)?.unfocus()
             chosenGameObject = gameObject
             (chosenGameObject as? Focusable)?.focus()
-            logger.debug { "Chosen game object: $chosenGameObject" }
+        } else {
+            (chosenGameObject as? Focusable)?.unfocus()
+            chosenGameObject = null
         }
+        logger.debug { "Chosen game object: $chosenGameObject" }
 
         return chosenGameObject != null
     }
