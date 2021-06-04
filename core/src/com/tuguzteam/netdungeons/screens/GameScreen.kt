@@ -10,7 +10,6 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
-import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.input.MovementGestureListener
@@ -29,7 +28,7 @@ import ktx.math.*
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
-        private val assets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+        private val assets = Field.assets
 
         private const val viewDistance = 20u
     }

@@ -16,8 +16,15 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
     companion object {
         val random = Loader.random
 
-        val floors = listOf(TextureAsset.Wood, TextureAsset.Wood1)
-        val walls = listOf(TextureAsset.Wood)
+        private val floorAssets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
+        private val wallAssets = listOf(
+            TextureAsset.WallBrick,
+            TextureAsset.WallBrick1,
+            TextureAsset.WallBrick2,
+        )
+        private val doorAssets = listOf(TextureAsset.WallBrickDark)
+        private val mazeAssets = listOf(TextureAsset.WoodDark)
+        val assets = floorAssets + wallAssets + doorAssets + mazeAssets
     }
 
     val size = 11u
@@ -32,7 +39,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                 when (tile) {
                     TileType.Wall -> {
                         val position = immutableGridPoint2(x, y)
-                        val asset = walls.random(random)
+                        val asset = wallAssets.random(random)
                         val texture = gameScreen.assetManager[asset]!!
 
                         val directions = mutableSetOf<Direction>()
@@ -53,7 +60,11 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                     }
                     else -> {
                         val position = immutableGridPoint2(x, y)
-                        val asset = floors.random(random)
+                        val asset = when (tile) {
+                            TileType.Door -> doorAssets.random(random)
+                            TileType.Maze -> mazeAssets.random(random)
+                            else -> floorAssets.random(random)
+                        }
                         val texture = gameScreen.assetManager[asset]!!
                         _tiles += Floor(position, texture)
                     }
