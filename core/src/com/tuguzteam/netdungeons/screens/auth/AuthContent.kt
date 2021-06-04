@@ -1,22 +1,41 @@
 package com.tuguzteam.netdungeons.screens.auth
 
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
-import com.kotcrab.vis.ui.widget.VisTable
-import com.kotcrab.vis.ui.widget.VisTextButton
+import com.badlogic.gdx.scenes.scene2d.ui.Container
+import com.badlogic.gdx.utils.Align
+import com.kotcrab.vis.ui.util.dialog.Dialogs
+import com.kotcrab.vis.ui.widget.*
 import com.tuguzteam.netdungeons.dec
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.KeyTypeListener
+import com.tuguzteam.netdungeons.ui.SplitPane
 
 class AuthContent(
-    context: String, clickListener: ClickListener, parent: VisTable,
+    stage: Stage,
+    headerText: String,
+    buttonText: String,
+    clickListener: ClickListener,
+    parent: Container<Actor>, buttonTable: VisTable,
     private val passwordTextField: ExtValidTextField,
     private val textFields: Iterable<ExtValidTextField>
 ) : VisTable(true) {
 
     private var textFieldsStates = mutableListOf<Pair<String, String>>()
+    private val policyCheckBox = VisCheckBox("Accept privacy policy").apply {
+        label.setAlignment(Align.center)
+        imageStackCell.size(heightFraction(.0375f))
+        labelCell.width(heightFraction(.375f)).grow()
 
-    private val authButton = VisTextButton(context).apply {
+        addListener(ClickListener {
+            setStateInvalid(!isChecked)
+            anyError()
+        })
+    }
+
+    private val authButton = VisTextButton(buttonText).apply {
         isFocusBorderEnabled = false
         addListener(ClickListener {
             textFields.forEach(ExtValidTextField::setEmptyError)
@@ -31,13 +50,72 @@ class AuthContent(
         })
     }
 
-    val radioButton = VisTextButton(context, "toggle").apply {
+    private val viewPolicyButton = VisTextButton(" ? ").apply {
+        isFocusBorderEnabled = false
+        addListener(ClickListener {
+            Dialogs.showDetailsDialog(
+                stage,
+                "Please, read terms of our Privacy Policy!",
+                "Privacy Policy",
+                "Just enjoy the game!!!\nJust enjoy the game!!!\nJust enjoy the game!!!",
+                true
+            ).apply dialog@ {
+                isResizable = false
+                isMovable = false
+
+                titleLabel.setAlignment(Align.top)
+
+                buttonsTable.clear()
+                buttonsTable.add(VisTextButton("OK").apply {
+                    addListener(ClickListener { this@dialog.hide() })
+                })
+
+                buttonsTable.cells.forEach { it.pad(heightFraction(.02f)) }
+                buttonsTable.cells.forEach {
+                    it.width(0f).size(
+                        heightFraction(.15f), heightFraction(.075f))
+                }
+
+                isCopyDetailsButtonVisible = false
+                setWrapDetails(true)
+            }
+        })
+    }
+
+    val radioButton = VisTextButton(headerText, "toggle").apply {
         addListener(ClickListener {
             this@AuthContent.clearChildren()
-            this@AuthContent.addChildren()
 
-            parent.clearChildren()
-            parent.add(this@AuthContent)
+            if (textFields.count() > 1) {
+                parent.actor = SplitPane(null, null, false).apply {
+                    setFirstWidget(Container(
+                        VisTable().apply {
+                            textFields.forEach { textField -> textField.addTo(this) }
+                        }).pad(0f, heightFraction(.025f),
+                        0f, heightFraction(.05f)).fill()
+                    )
+                    setSecondWidget(Container(
+                        VisTable().apply {
+                            passwordTextField.addTo(this, viewPasswordButton)
+                            add(policyCheckBox).padTop(heightFraction(.025f))
+                            add(viewPolicyButton).size(
+                                heightFraction(.075f), heightFraction(.05f)
+                            ).padTop(heightFraction(.025f)).row()
+                        }).pad(0f, heightFraction(.05f),
+                        0f, heightFraction(.025f)).fill()
+                    )
+                }
+            } else {
+                parent.actor = VisTable().apply {
+                    pad(0f, heightFraction(.375f),
+                        0f, heightFraction(.375f))
+                    textFields.forEach { textField -> textField.addTo(this) }
+                    passwordTextField.addTo(this, viewPasswordButton)
+                }
+            }
+            buttonTable.clearChildren()
+            buttonTable.add(authButton).grow()
+                .size(heightFraction(.75f), heightFraction(.1f))
 
             updateState()
             anyError()
@@ -46,7 +124,8 @@ class AuthContent(
 
     init {
         authButton.addListener(ClickListener { anyError() })
-        addChildren()
+        policyCheckBox.setStateInvalid(true)
+
         center()
     }
 
@@ -97,15 +176,9 @@ class AuthContent(
         }
         if (!authButton.isDisabled)
             authButton.isDisabled = passwordTextField.isError()
+                    || (policyCheckBox.setStateInvalid() && textFields.count() > 1)
 
         if (authButton.isDisabled)
             authButton.touchable = Touchable.disabled
-    }
-
-    private fun addChildren() {
-        textFields.forEach { textField -> textField.addTo(this) }
-        passwordTextField.addTo(this, viewPasswordButton)
-        add(authButton).colspan(2)
-            .fillX().pad(heightFraction(.025f))
     }
 }
