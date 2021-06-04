@@ -19,7 +19,7 @@ import ktx.math.vec3
 abstract class ModelObject(
     position: ImmutableVector3,
     protected val model: Model,
-) : GameObject(), Renderable, Intersectable {
+) : GameObject(), Renderable, Intersectable, Bounded {
 
     companion object {
         internal val modelBuilder = ModelBuilder()
@@ -40,7 +40,8 @@ abstract class ModelObject(
     val materials: Array<Material>
         get() = modelInstance.materials
 
-    private var boundingBox = modelInstance.calculateBoundingBox() * transform
+    final override var boundingBox = modelInstance.calculateBoundingBox() * transform
+        private set
 
     override fun intersectedBy(ray: Ray) = Intersector.intersectRayBoundsFast(ray, boundingBox)
 

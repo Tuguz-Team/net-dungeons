@@ -2,10 +2,12 @@ package com.tuguzteam.netdungeons.field.tile
 
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector3
+import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.field.Direction
 import com.tuguzteam.netdungeons.immutableVec3
+import com.tuguzteam.netdungeons.objects.Bounded
 import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.objects.TextureObject
 import ktx.assets.dispose
@@ -78,6 +80,10 @@ class Wall(
             }
             field = value
         }
+
+    override val boundingBox = BoundingBox().apply {
+        textureObjects.asSequence().map(Bounded::boundingBox).forEach(this::ext)
+    }
 
     override val renderableProviders =
         (wallTextureObjects.values.asSequence().flatten() + topTextureObject)

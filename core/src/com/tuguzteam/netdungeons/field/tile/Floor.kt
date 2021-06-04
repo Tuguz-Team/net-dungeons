@@ -50,6 +50,8 @@ class Floor(
             field = value
         }
 
+    override val boundingBox = textureObject.boundingBox
+
     override fun intersectedBy(ray: Ray) = textureObject.intersectedBy(ray)
 
     override fun intersectionPoint(ray: Ray) = textureObject.intersectionPoint(ray)

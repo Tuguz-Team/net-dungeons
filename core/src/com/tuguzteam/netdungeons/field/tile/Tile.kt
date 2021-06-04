@@ -4,10 +4,11 @@ import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.Blendable
+import com.tuguzteam.netdungeons.objects.Bounded
 import com.tuguzteam.netdungeons.objects.GameObject
 import ktx.assets.dispose
 
-sealed class Tile(val position: ImmutableGridPoint2) : GameObject(), Blendable {
+sealed class Tile(val position: ImmutableGridPoint2) : GameObject(), Blendable, Bounded {
     companion object : Iterable<Tile>, Disposable {
         const val size = 1u
 

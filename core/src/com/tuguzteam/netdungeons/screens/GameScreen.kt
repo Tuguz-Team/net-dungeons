@@ -16,10 +16,7 @@ import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
-import com.tuguzteam.netdungeons.objects.Blendable
-import com.tuguzteam.netdungeons.objects.GameObject
-import com.tuguzteam.netdungeons.objects.ModelObject
-import com.tuguzteam.netdungeons.objects.Renderable
+import com.tuguzteam.netdungeons.objects.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ktx.async.KtxAsync
@@ -161,6 +158,11 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         }
     }
 
+    private fun isVisible(gameObject: GameObject): Boolean {
+        if (gameObject !is Bounded) return false
+        return camera?.frustum?.boundsInFrustum(gameObject.boundingBox) == true
+    }
+
     override fun render(delta: Float) {
         super.render(delta)
         val camera = camera
@@ -173,21 +175,23 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 Gdx.gl20.glEnable(GL20.GL_BLEND)
                 Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
 
-                val filteredVisitedObjects = visitedObjects.asSequence().filter { gameObject ->
-                    when (gameObject) {
-                        is Tile -> {
-                            val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                            val y = (gameObject.position.y - playerPosition.y).absoluteValue
-                            x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
+                val filteredVisitedObjects = visitedObjects.asSequence()
+                    .filter(::isVisible)
+                    .filter { gameObject ->
+                        when (gameObject) {
+                            is Tile -> {
+                                val x = (gameObject.position.x - playerPosition.x).absoluteValue
+                                val y = (gameObject.position.y - playerPosition.y).absoluteValue
+                                x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
+                            }
+                            is ModelObject -> {
+                                val x = (gameObject.position.x - playerPosition.x).absoluteValue
+                                val y = (gameObject.position.z - playerPosition.y).absoluteValue
+                                x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
+                            }
+                            else -> false
                         }
-                        is ModelObject -> {
-                            val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                            val y = (gameObject.position.z - playerPosition.y).absoluteValue
-                            x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
-                        }
-                        else -> false
                     }
-                }
                 render(
                     filteredVisitedObjects
                         .filterIsInstance<Renderable>()
@@ -195,8 +199,10 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                         .asIterable(),
                     environmentVisited,
                 )
+
+                val filteredVisibleObjects = visibleObjects.asSequence().filter(::isVisible)
                 render(
-                    visibleObjects.asSequence()
+                    filteredVisibleObjects
                         .filterIsInstance<Renderable>()
                         .map(Renderable::renderableProviders).flatten()
                         .asIterable(),
