@@ -1,6 +1,7 @@
 package com.tuguzteam.netdungeons.screens
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
@@ -15,6 +16,7 @@ import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
+import com.tuguzteam.netdungeons.objects.Blendable
 import com.tuguzteam.netdungeons.objects.GameObject
 import com.tuguzteam.netdungeons.objects.ModelObject
 import com.tuguzteam.netdungeons.objects.Renderable
@@ -68,7 +70,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         )
     }
     private val environmentVisited = Environment().apply {
-        val ambient = 0.25f
+        val ambient = 0.3f
         this with ColorAttribute.createAmbientLight(
             color(red = ambient, green = ambient, blue = ambient),
         )
@@ -149,6 +151,13 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
             // Update set of visited objects
             _visitedObjects += visibleObjects
+
+            visitedObjects.forEach { gameObject ->
+                if (gameObject is Blendable) gameObject.alpha = 0.75f
+            }
+            visibleObjects.forEach { gameObject ->
+                if (gameObject is Blendable) gameObject.alpha = 1f
+            }
         }
     }
 
@@ -160,7 +169,11 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             rotationZoomGestureListener.update()
 
             modelBatch.use(camera) {
-                val filteredVisibleObjects = visitedObjects.asSequence().filter { gameObject ->
+                // Enable blending
+                Gdx.gl20.glEnable(GL20.GL_BLEND)
+                Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+
+                val filteredVisitedObjects = visitedObjects.asSequence().filter { gameObject ->
                     when (gameObject) {
                         is Tile -> {
                             val x = (gameObject.position.x - playerPosition.x).absoluteValue
@@ -176,7 +189,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                     }
                 }
                 render(
-                    filteredVisibleObjects
+                    filteredVisitedObjects
                         .filterIsInstance<Renderable>()
                         .map(Renderable::renderableProviders).flatten()
                         .asIterable(),

@@ -69,6 +69,16 @@ class Wall(
         wallTextureObjects = map
     }
 
+    val textureObjects = wallTextureObjects.values.flatten() + topTextureObject
+
+    override var alpha = 1f
+        set(value) {
+            textureObjects.forEach { textureObject ->
+                textureObject.alpha = value
+            }
+            field = value
+        }
+
     override val renderableProviders =
         (wallTextureObjects.values.asSequence().flatten() + topTextureObject)
             .map(Renderable::renderableProviders)

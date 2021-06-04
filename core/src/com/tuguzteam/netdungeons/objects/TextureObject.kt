@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes.Usage
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute
 import com.badlogic.gdx.utils.Disposable
@@ -13,6 +14,7 @@ import com.tuguzteam.netdungeons.ImmutableVector3
 import com.tuguzteam.netdungeons.create
 import com.tuguzteam.netdungeons.with
 import ktx.assets.dispose
+import ktx.graphics.color
 import ktx.math.vec3
 
 abstract class TextureObject(
@@ -20,7 +22,7 @@ abstract class TextureObject(
     texture: Texture,
     val width: UInt,
     val height: UInt,
-) : ModelObject(position, createRect(texture, width, height)) {
+) : ModelObject(position, createRect(texture, width, height)), Blendable {
 
     companion object : Disposable {
         override fun dispose() {
@@ -29,9 +31,16 @@ abstract class TextureObject(
         }
     }
 
-    var color: Color = Color.WHITE
+    var color: Color = Color.WHITE.cpy()
         set(value) {
             materials[0] with ColorAttribute.createDiffuse(value)
+            field = value
+        }
+
+    override var alpha = 1f
+        set(value) {
+            val color = color(color.r, color.g, color.b, value)
+            this.color = color
             field = value
         }
 }
@@ -47,7 +56,10 @@ private fun createRect(texture: Texture, width: UInt, height: UInt): Model {
     }
 
     val attributes = (Usage.Position or Usage.Normal or Usage.TextureCoordinates).toLong()
-    val material = Material(TextureAttribute.createDiffuse(texture))
+    val material = Material(
+        TextureAttribute.createDiffuse(texture),
+        BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
+    )
 
     val x = width.toInt() * 0.5f
     val y = height.toInt() * 0.5f

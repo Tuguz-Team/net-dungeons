@@ -16,7 +16,7 @@ class Floor(
     texture: Texture,
 ) : Tile(position), Renderable, Focusable, Intersectable {
 
-    private val textureObject = object : TextureObject(
+    val textureObject = object : TextureObject(
         position = immutableVec3(
             x = position.x.toFloat(),
             z = position.y.toFloat(),
@@ -43,6 +43,12 @@ class Floor(
         super.dispose()
         textureObject.dispose()
     }
+
+    override var alpha = 1f
+        set(value) {
+            textureObject.alpha = value
+            field = value
+        }
 
     override fun intersectedBy(ray: Ray) = textureObject.intersectedBy(ray)
 
