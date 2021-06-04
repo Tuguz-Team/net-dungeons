@@ -13,8 +13,8 @@ import java.util.EnumMap
 
 class Wall(
     position: ImmutableGridPoint2,
-    val height: UInt,
     val texture: Texture,
+    val height: UInt,
     val walls: Set<Direction>,
 ) : Tile(position), Renderable {
 

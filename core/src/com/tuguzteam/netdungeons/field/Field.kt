@@ -1,6 +1,7 @@
 package com.tuguzteam.netdungeons.field
 
 import com.badlogic.gdx.utils.Disposable
+import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.assets.TextureAsset
 import com.tuguzteam.netdungeons.field.generator.Generator
@@ -27,16 +28,16 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
         val assets = floorAssets + wallAssets + doorAssets + mazeAssets
     }
 
-    val size = 11u
-    private val matrix = Generator.generate(size, 300u)
+    val size = 31u
 
-    private val _tiles = mutableListOf<Tile>()
+    private val _tiles = arrayListOf<Tile>()
     val tiles: List<Tile> = _tiles
 
     init {
+        val matrix = Generator.generate(size, 300u)
         matrix.forEachIndexed { x, list ->
             list.forEachIndexed { y, tile ->
-                when (tile) {
+                _tiles += when (tile) {
                     TileType.Wall -> {
                         val position = immutableGridPoint2(x, y)
                         val asset = wallAssets.random(random)
@@ -56,7 +57,7 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                             directions += Direction.Forward
                         }
 
-                        _tiles += Wall(position, 1u, texture, directions)
+                        Wall(position, texture, height = 1u, directions)
                     }
                     else -> {
                         val position = immutableGridPoint2(x, y)
@@ -66,17 +67,23 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                             else -> floorAssets.random(random)
                         }
                         val texture = gameScreen.assetManager[asset]!!
-                        _tiles += Floor(position, texture)
+                        Floor(position, texture)
                     }
                 }
             }
         }
     }
 
-    override fun iterator() = tiles.asSequence().iterator()
+    operator fun get(x: Int, y: Int): Tile? {
+        if (x !in 0 until size.toInt() || y !in 0 until size.toInt()) return null
+        return tiles[x * size.toInt() + y]
+    }
+
+    operator fun get(position: ImmutableGridPoint2) = get(position.x, position.y)
+
+    override fun iterator() = tiles.iterator()
 
     override fun dispose() {
         tiles.dispose()
-        _tiles.clear()
     }
 }
