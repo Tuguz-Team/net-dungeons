@@ -131,7 +131,9 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     override fun hide() {
         super.hide()
         _visibleObjects.clear()
+        renderVisibleObjects.clear()
         _visitedObjects.clear()
+        renderVisitedObjects.clear()
         field?.dispose()
         field = null
     }
@@ -193,9 +195,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             rotationZoomGestureListener.update(delta)
 
             modelBatch.use(camera) {
-                // Enable blending
-                Gdx.gl20.glEnable(GL20.GL_BLEND)
-                Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+                renderContext.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
+                renderContext.setDepthTest(GL20.GL_LESS)
 
                 // Render already visited objects
                 renderVisitedObjects.forEach { visited ->
