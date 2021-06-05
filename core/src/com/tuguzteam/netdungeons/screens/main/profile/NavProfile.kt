@@ -26,7 +26,13 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
         addActor(this, VisLabel("Name", Align.left), navPad * 9)
     }
 
-    private val skillTreeScroll = VisScrollPane(SkillTreeContent(navPad)).apply {
+    private val skillWindow = SkillWindow(
+        onYesOption = { /**/ },
+        onNoOption = { /**/ }
+    )
+    private val skillTreeScroll = VisScrollPane(
+        SkillTreeContent(navPad, skillWindow)
+    ).apply {
         setOverscroll(false, false)
         fadeScrollBars = false
         setFlingTime(0f)

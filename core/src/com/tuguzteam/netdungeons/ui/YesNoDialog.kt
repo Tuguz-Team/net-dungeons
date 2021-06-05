@@ -1,13 +1,18 @@
 package com.tuguzteam.netdungeons.ui
 
-class YesNoDialog(title: String,
+open class YesNoDialog(title: String,
     private val onYesOption: () -> Unit,
     private val onNoOption: () -> Unit = {}
 ) : Dialog(title) {
 
     init {
-        button("Yes", true).button("No", false)
+        addButton()
         size().pad()
+    }
+
+    private fun addButton(): YesNoDialog {
+        button("Yes", true).button("No", false)
+        return this
     }
 
     override fun result(`object`: Any?) {
