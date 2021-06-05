@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ktx.async.KtxAsync
 import ktx.graphics.color
+import ktx.log.debug
 import ktx.log.info
 import ktx.log.logger
 import ktx.math.*
@@ -135,24 +136,45 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         field = null
     }
 
+    private val renderVisitedObjects = mutableListOf<GameObject>()
+    private val renderVisibleObjects = mutableListOf<GameObject>()
     fun updateVisibleObjects() {
         field?.let { field ->
             _visibleObjects.clear()
 
             // Current tile is always visible
-            val currentTile = field[playerPosition] ?: return
-            _visibleObjects += currentTile
-
+            _visibleObjects += field[playerPosition] ?: return
             // Filter visible objects (Field Of Vision by shadow casting)
             _visibleObjects += FieldOfVision.compute(field, playerPosition, viewDistance)
-
-            // Update set of visited objects
             _visitedObjects += visibleObjects
 
-            visitedObjects.forEach { gameObject ->
+            // Preserve list of visited objects to render
+            renderVisitedObjects.clear()
+            visitedObjects.filterTo(renderVisitedObjects) { gameObject ->
+                // Avoid duplicates (we don't need to render visible objects as visited)
+                if (gameObject in visibleObjects) return@filterTo false
+                when (gameObject) {
+                    is Tile -> {
+                        val x = (gameObject.position.x - playerPosition.x).absoluteValue
+                        val y = (gameObject.position.y - playerPosition.y).absoluteValue
+                        x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
+                    }
+                    is ModelObject -> {
+                        val x = (gameObject.position.x - playerPosition.x).absoluteValue
+                        val y = (gameObject.position.z - playerPosition.y).absoluteValue
+                        x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
+                    }
+                    else -> false
+                }
+            }
+            renderVisitedObjects.forEach { gameObject ->
                 if (gameObject is Blendable) gameObject.alpha = 0.75f
             }
-            visibleObjects.forEach { gameObject ->
+
+            // Preserve list of visible objects to render
+            renderVisibleObjects.clear()
+            renderVisibleObjects += visibleObjects
+            renderVisibleObjects.forEach { gameObject ->
                 if (gameObject is Blendable) gameObject.alpha = 1f
             }
         }
@@ -168,47 +190,32 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         val camera = camera
         val field = field
         if (camera != null && field != null && assetManager.loaded(assets)) {
-            rotationZoomGestureListener.update()
+            rotationZoomGestureListener.update(delta)
 
             modelBatch.use(camera) {
                 // Enable blending
                 Gdx.gl20.glEnable(GL20.GL_BLEND)
                 Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
 
-                val filteredVisitedObjects = visitedObjects.asSequence()
-                    .filter(::isVisible)
-                    .filter { gameObject ->
-                        when (gameObject) {
-                            is Tile -> {
-                                val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                                val y = (gameObject.position.y - playerPosition.y).absoluteValue
-                                x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
-                            }
-                            is ModelObject -> {
-                                val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                                val y = (gameObject.position.z - playerPosition.y).absoluteValue
-                                x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
-                            }
-                            else -> false
+                // Render already visited objects
+                renderVisitedObjects.forEach { visited ->
+                    if (isVisible(visited) && visited is Renderable) {
+                        visited.renderableProviders.forEach {
+                            render(it, environmentVisited)
                         }
                     }
-                render(
-                    filteredVisitedObjects
-                        .filterIsInstance<Renderable>()
-                        .map(Renderable::renderableProviders).flatten()
-                        .asIterable(),
-                    environmentVisited,
-                )
+                }
 
-                val filteredVisibleObjects = visibleObjects.asSequence().filter(::isVisible)
-                render(
-                    filteredVisibleObjects
-                        .filterIsInstance<Renderable>()
-                        .map(Renderable::renderableProviders).flatten()
-                        .asIterable(),
-                    environmentVisible,
-                )
+                // Render currently visible objects
+                renderVisibleObjects.forEach { visible ->
+                    if (isVisible(visible) && visible is Renderable) {
+                        visible.renderableProviders.forEach {
+                            render(it, environmentVisible)
+                        }
+                    }
+                }
             }
+            logger.debug(Gdx.graphics.framesPerSecond::toString)
         } else {
             logger.info { "Asset loading progress: ${assetManager.progress.percent * 100}%" }
         }

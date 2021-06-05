@@ -56,17 +56,17 @@ class RotationZoomGestureListener(private val gameScreen: GameScreen) : KtxGestu
         return true
     }
 
-    fun update() {
+    fun update(delta: Float) {
         val updateZoom = zoomTime > 0
         if (updateZoom) {
-            zoomTime -= Gdx.graphics.deltaTime
+            zoomTime -= delta
             val progress = if (zoomTime < 0) 1f else 1f - zoomTime / ZOOM_DURATION
             camera.zoom = Interpolation.pow3Out.apply(zoomOrigin, zoomTarget, progress)
         }
 
         val updateRotation = rotationTime > 0
         if (updateRotation) {
-            rotationTime -= Gdx.graphics.deltaTime
+            rotationTime -= delta
             val progress = if (rotationTime < 0) 1f else 1f - rotationTime / ROTATION_DURATION
             val angle = Interpolation.fade.apply(0f, ROTATION_ANGLE, progress)
             camera.rotateAround(
