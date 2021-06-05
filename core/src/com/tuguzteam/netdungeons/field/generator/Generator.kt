@@ -4,8 +4,6 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
 import com.tuguzteam.netdungeons.Loader
 import com.tuguzteam.netdungeons.gridPoint2
-import com.tuguzteam.netdungeons.plusAssign
-import ktx.log.debug
 import ktx.math.ImmutableVector2
 import ktx.math.toImmutable
 import kotlin.math.absoluteValue
@@ -17,22 +15,6 @@ object Generator {
         require(width > 10u) { "width must be greater than 10: $width given" }
         require(width % 2u == 1u) { "width must be odd: $width given" }
         val matrix = List(width.toInt()) { MutableList(width.toInt()) { TileType.Wall } }
-        fun printMatrix() {
-            val stringBuilder = StringBuilder().append(' ')
-            matrix.forEach { list ->
-                stringBuilder += "\n|"
-                list.forEach { tile ->
-                    stringBuilder += when (tile) {
-                        TileType.Room -> 'r'
-                        TileType.Maze -> '•'
-                        TileType.Wall -> 'W'
-                        TileType.Door -> 'd'
-                    }
-                }
-                stringBuilder += '|'
-            }
-            Loader.logger.debug { stringBuilder.toString() }
-        }
         // Create rooms
         val rooms = mutableListOf<Rectangle>()
         repeat(attempts.toInt()) {
@@ -229,8 +211,6 @@ object Generator {
                 }
             }
         }
-        // Print to console
-        printMatrix()
         return matrix
     }
 }
