@@ -4,20 +4,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Container
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
-import com.kotcrab.vis.ui.util.dialog.Dialogs
 import com.kotcrab.vis.ui.widget.*
 import com.tuguzteam.netdungeons.dec
 import com.tuguzteam.netdungeons.heightFraction
-import com.tuguzteam.netdungeons.ui.ClickListener
-import com.tuguzteam.netdungeons.ui.KeyTypeListener
-import com.tuguzteam.netdungeons.ui.SplitPane
+import com.tuguzteam.netdungeons.ui.*
+import com.tuguzteam.netdungeons.ui.doClick
+import com.tuguzteam.netdungeons.widthFraction
 
 class AuthContent(
-    stage: Stage,
-    headerText: String,
-    buttonText: String,
-    clickListener: ClickListener,
+    stage: Stage, headerText: String,
+    buttonText: String, clickListener: ClickListener,
     parent: Container<Actor>, buttonTable: VisTable,
     private val passwordTextField: ExtValidTextField,
     private val textFields: Iterable<ExtValidTextField>
@@ -50,36 +48,33 @@ class AuthContent(
         })
     }
 
+    private val textArea = VisLabel(
+        "\nJust enjoy the game!!!\n".repeat(50), Align.center
+    ).apply { wrap = true }
+
+    private val policyWindow = Dialog("Privacy Policy").apply dialog@ {
+        buttonsTable.add(VisTextButton("I accept!").apply {
+            addListener(ClickListener {
+                if (policyCheckBox.setStateInvalid())
+                    doClick(policyCheckBox)
+                this@dialog.hide()
+            })
+        })
+        button("Close", false)
+
+        contentTable.add(ScrollPane(textArea).apply {
+            setScrollingDisabled(true, false)
+            setOverscroll(false, false)
+        }).pad(heightFraction(.05f)).size(
+            widthFraction(.65f), heightFraction(.35f)
+        )
+
+        size().pad()
+    }
+
     private val viewPolicyButton = VisTextButton(" ? ").apply {
         isFocusBorderEnabled = false
-        addListener(ClickListener {
-            Dialogs.showDetailsDialog(
-                stage,
-                "Please, read terms of our Privacy Policy!",
-                "Privacy Policy",
-                "Just enjoy the game!!!\nJust enjoy the game!!!\nJust enjoy the game!!!",
-                true
-            ).apply dialog@ {
-                isResizable = false
-                isMovable = false
-
-                titleLabel.setAlignment(Align.top)
-
-                buttonsTable.clear()
-                buttonsTable.add(VisTextButton("OK").apply {
-                    addListener(ClickListener { this@dialog.hide() })
-                })
-
-                buttonsTable.cells.forEach { it.pad(heightFraction(.02f)) }
-                buttonsTable.cells.forEach {
-                    it.width(0f).size(
-                        heightFraction(.15f), heightFraction(.075f))
-                }
-
-                isCopyDetailsButtonVisible = false
-                setWrapDetails(true)
-            }
-        })
+        addListener(ClickListener { policyWindow.show(stage) })
     }
 
     val radioButton = VisTextButton(headerText, "toggle").apply {

@@ -26,8 +26,14 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
         "Cancel registration?",
         onYesOption = { loader.setScreen<MainScreen>() }
     )
-    private val registerErrorDialog = OkDialog("Registration error!").apply { text("") }
-    private val signInErrorDialog = OkDialog("Sign in error!").apply { text("") }
+    private val registerErrorDialog = OkDialog("Registration error!").apply {
+        text("")
+        pad()
+    }
+    private val signInErrorDialog = OkDialog("Sign in error!").apply {
+        text("")
+        pad()
+    }
     private val registerWaitDialog = Dialog("Waiting server for registration...")
     private val signInWaitDialog = Dialog("Waiting for server for sign in...")
 

@@ -26,7 +26,7 @@ class ContentHeader(stage: Stage, horGroup: WidgetGroup?, splitAmount: Float) :
         })
     }
     private val settingsDialog = Dialog("Settings").apply {
-        button("Return").button(exitButton)
+        button(exitButton).button("Return")
         size().pad()
     }
 

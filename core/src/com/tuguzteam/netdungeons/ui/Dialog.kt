@@ -32,6 +32,7 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
 
     fun pad(): Dialog {
         buttonsTable.cells.forEach { it.pad(heightFraction(.02f)) }
+        contentTable.cells.forEach { it.pad(heightFraction(.02f)) }
         return this
     }
 
