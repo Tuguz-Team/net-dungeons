@@ -42,10 +42,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     var playerPosition = immutableGridPoint2()
         set(value) {
             camera?.apply {
-                position += vec3(
-                    x = value.x.toFloat() - field.x.toFloat(),
-                    z = value.y.toFloat() - field.y.toFloat(),
-                )
+                position += Tile.toImmutableVec3(point = value - field).toMutable()
                 update(true)
             }
             field = value
@@ -84,20 +81,20 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     private lateinit var movementGestureListener: MovementGestureListener
 
     init {
-        viewport = ExtendViewport(10f, 10f)
+        viewport = ExtendViewport(120f, 120f)
     }
 
     override fun show() {
         super.show()
         playerPosition = immutableGridPoint2()
         camera = OrthographicCamera().apply {
-            val pos = vec3(x = 10f, z = 10f)
+            val pos = vec3(x = 80f, z = 80f)
             val angle = 30f
             pos.y = pos.len() * MathUtils.sinDeg(angle)
             position.set(pos)
             lookAt(vec3())
             near = 1f
-            far = 50f
+            far = 250f
             update(true)
         }
         viewport.apply {
@@ -119,8 +116,8 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen).apply {
                 playerPosition = immutableGridPoint2(
-                    x = (size * Tile.size / 2u).toInt(),
-                    y = (size * Tile.size / 2u).toInt(),
+                    x = (size / 2u).toInt(),
+                    y = (size / 2u).toInt(),
                 )
             }
             updateVisibleObjects()
@@ -198,23 +195,16 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 renderContext.setBlending(true, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
                 renderContext.setDepthTest(GL20.GL_LESS)
 
-                // Render already visited objects
-                renderVisitedObjects.forEach { visited ->
-                    if (isVisible(visited) && visited is Renderable) {
-                        visited.renderableProviders.forEach {
-                            render(it, environmentVisited)
+                fun render(gameObject: GameObject, environment: Environment) {
+                    if (isVisible(gameObject) && gameObject is Renderable) {
+                        gameObject.renderableProviders.forEach {
+                            render(it, environment)
                         }
                     }
                 }
 
-                // Render currently visible objects
-                renderVisibleObjects.forEach { visible ->
-                    if (isVisible(visible) && visible is Renderable) {
-                        visible.renderableProviders.forEach {
-                            render(it, environmentVisible)
-                        }
-                    }
-                }
+                renderVisitedObjects.forEach { render(it, environmentVisited) }
+                renderVisibleObjects.forEach { render(it, environmentVisible) }
             }
             logger.debug(Gdx.graphics.framesPerSecond::toString)
         } else {

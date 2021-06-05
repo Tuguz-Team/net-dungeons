@@ -10,7 +10,7 @@ import ktx.assets.dispose
 
 sealed class Tile(val position: ImmutableGridPoint2) : GameObject(), Blendable, Bounded {
     companion object : Iterable<Tile>, Disposable {
-        const val size = 1u
+        const val size = 15u
 
         private val tiles = arrayListOf<Tile>()
         override fun iterator() = tiles.iterator()
@@ -19,6 +19,11 @@ sealed class Tile(val position: ImmutableGridPoint2) : GameObject(), Blendable, 
             tiles.dispose()
             tiles.clear()
         }
+
+        fun toImmutableVec3(point: ImmutableGridPoint2) = immutableVec3(
+            x = point.x.toFloat() * size.toInt(),
+            z = point.y.toFloat() * size.toInt(),
+        )
     }
 
     init {
@@ -31,4 +36,4 @@ sealed class Tile(val position: ImmutableGridPoint2) : GameObject(), Blendable, 
     }
 }
 
-fun Tile.vec3Position() = immutableVec3(x = position.x.toFloat(), z = position.y.toFloat())
+fun Tile.toImmutableVec3() = Tile.toImmutableVec3(position)

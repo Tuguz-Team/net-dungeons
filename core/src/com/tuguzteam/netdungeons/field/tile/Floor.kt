@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.Ray
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
-import com.tuguzteam.netdungeons.immutableVec3
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.Intersectable
 import com.tuguzteam.netdungeons.objects.Renderable
@@ -17,10 +16,7 @@ class Floor(
 ) : Tile(position), Renderable, Focusable, Intersectable {
 
     val textureObject = object : TextureObject(
-        position = immutableVec3(
-            x = position.x.toFloat(),
-            z = position.y.toFloat(),
-        ),
+        position = toImmutableVec3(position),
         textureRegion, width = size, height = size,
     ) {
         init {

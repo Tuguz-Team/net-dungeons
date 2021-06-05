@@ -21,11 +21,7 @@ class Wall(
 ) : Tile(position), Renderable {
 
     private val topTextureObject = object : TextureObject(
-        position = immutableVec3(
-            x = position.x.toFloat(),
-            y = (height * size).toFloat(),
-            z = position.y.toFloat(),
-        ),
+        position = toImmutableVec3(position) + immutableVec3(y = (height * size).toFloat()),
         textureRegion, width = size, height = size,
     ) {
         init {
@@ -39,28 +35,24 @@ class Wall(
         val map: MutableMap<Direction, List<TextureObject>> = EnumMap(Direction::class.java)
         walls.forEach { direction ->
             map[direction] = (0 until height.toInt()).map { index ->
-                val wallPosition = when (direction) {
+                val wallPosition = toImmutableVec3(position) + when (direction) {
                     Direction.Forward -> immutableVec3(
-                        x = -size.toInt() / 2f + 0.5f,
                         y = size.toInt() * (index % height.toInt() + 0.5f),
                         z = size.toInt() / 2f,
                     )
                     Direction.Back -> immutableVec3(
-                        x = size.toInt() / 2f - 0.5f,
                         y = size.toInt() * (index % height.toInt() + 0.5f),
                         z = -size.toInt() / 2f,
                     )
                     Direction.Left -> immutableVec3(
                         x = size.toInt() / 2f,
                         y = size.toInt() * (index % height.toInt() + 0.5f),
-                        z = -size.toInt() / 2f + 0.5f,
                     )
                     Direction.Right -> immutableVec3(
                         x = -size.toInt() / 2f,
                         y = size.toInt() * (index % height.toInt() + 0.5f),
-                        z = size.toInt() / 2f - 0.5f,
                     )
-                } + immutableVec3(x = position.x.toFloat(), z = position.y.toFloat())
+                }
                 object : TextureObject(wallPosition, textureRegion, width = size, height = size) {
                     init {
                         transform.rotate(Vector3.Y, direction.degrees)

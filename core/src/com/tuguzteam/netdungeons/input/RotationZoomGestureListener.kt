@@ -6,8 +6,9 @@ import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.math.Vector3
 import com.tuguzteam.netdungeons.KtxGestureAdapter
+import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.screens.GameScreen
-import ktx.math.vec3
+import com.tuguzteam.netdungeons.toMutable
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -70,10 +71,7 @@ class RotationZoomGestureListener(private val gameScreen: GameScreen) : KtxGestu
             val progress = if (rotationTime < 0) 1f else 1f - rotationTime / ROTATION_DURATION
             val angle = Interpolation.fade.apply(0f, ROTATION_ANGLE, progress)
             camera.rotateAround(
-                vec3(
-                    x = gameScreen.playerPosition.x.toFloat(),
-                    z = gameScreen.playerPosition.y.toFloat(),
-                ),
+                Tile.toImmutableVec3(gameScreen.playerPosition).toMutable(),
                 Vector3.Y,
                 (angle - rotationOldAngle) * sign,
             )

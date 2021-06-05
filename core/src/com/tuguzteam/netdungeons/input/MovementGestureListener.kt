@@ -13,10 +13,10 @@ class MovementGestureListener(private val gameScreen: GameScreen) : KtxGestureAd
         val vX = velocityX / Gdx.graphics.width
         val vY = velocityY / Gdx.graphics.height
         val offset = when {
-            vX > 0.2f -> immutableGridPoint2(x = Tile.size.toInt())
-            vX < -0.2f -> immutableGridPoint2(x = -Tile.size.toInt())
-            vY > 0.2f -> immutableGridPoint2(y = Tile.size.toInt())
-            vY < -0.2f -> immutableGridPoint2(y = -Tile.size.toInt())
+            vX > 0.2f -> immutableGridPoint2(x = 1)
+            vX < -0.2f -> immutableGridPoint2(x = -1)
+            vY > 0.2f -> immutableGridPoint2(y = 1)
+            vY < -0.2f -> immutableGridPoint2(y = -1)
             else -> null
         }
         offset?.let {
