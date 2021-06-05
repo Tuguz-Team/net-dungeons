@@ -11,6 +11,8 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
+import com.tuguzteam.netdungeons.assets.TextureAtlasAll
+import com.tuguzteam.netdungeons.assets.TextureAtlasAsset
 import com.tuguzteam.netdungeons.field.*
 import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.input.MovementGestureListener
@@ -18,7 +20,6 @@ import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.objects.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import ktx.async.KtxAsync
 import ktx.graphics.color
 import ktx.log.debug
@@ -30,13 +31,14 @@ import kotlin.math.absoluteValue
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
-        private val assets = Field.assets
 
         private const val viewDistance = 4u
         private const val maxViewDistance = 6u
     }
 
     val assetManager = loader.assetManager
+    val textureAtlasAll = assetManager[TextureAtlasAsset.All]!! as TextureAtlasAll
+
     var playerPosition = immutableGridPoint2()
         set(value) {
             camera?.apply {
@@ -48,6 +50,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             }
             field = value
         }
+
     private val _visibleObjects = mutableSetOf<GameObject>()
     val visibleObjects: Set<GameObject> = _visibleObjects
 
@@ -112,7 +115,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         }
 
         KtxAsync.launch {
-            assetManager.load(assets)
+            assetManager.load(Loader.requiredAssets)
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen).apply {
                 playerPosition = immutableGridPoint2(
@@ -127,9 +130,6 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     override fun hide() {
         super.hide()
-        runBlocking {
-            assetManager.unload(assets)
-        }
         _visibleObjects.clear()
         _visitedObjects.clear()
         field?.dispose()
@@ -189,7 +189,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         super.render(delta)
         val camera = camera
         val field = field
-        if (camera != null && field != null && assetManager.loaded(assets)) {
+        if (camera != null && field != null) {
             rotationZoomGestureListener.update(delta)
 
             modelBatch.use(camera) {

@@ -1,0 +1,62 @@
+
+atlas.png
+size: 1024, 256
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+logo_libGDX
+  rotate: false
+  xy: 2, 53
+  size: 780, 130
+  orig: 780, 130
+  offset: 0, 0
+  index: -1
+wall_brick
+  rotate: false
+  xy: 2, 36
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+wall_brick
+  rotate: false
+  xy: 784, 168
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 1
+wall_brick
+  rotate: false
+  xy: 2, 19
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 2
+wall_brick_dark
+  rotate: false
+  xy: 19, 36
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: -1
+wood
+  rotate: false
+  xy: 784, 151
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 0
+wood
+  rotate: false
+  xy: 801, 168
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: 1
+wood_dark
+  rotate: false
+  xy: 2, 2
+  size: 15, 15
+  orig: 15, 15
+  offset: 0, 0
+  index: -1

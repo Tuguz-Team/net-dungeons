@@ -3,7 +3,7 @@ package com.tuguzteam.netdungeons.field
 import com.badlogic.gdx.utils.Disposable
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.Loader
-import com.tuguzteam.netdungeons.assets.TextureAsset
+import com.tuguzteam.netdungeons.assets.TextureAtlasAll
 import com.tuguzteam.netdungeons.field.generator.Generator
 import com.tuguzteam.netdungeons.field.generator.TileType
 import com.tuguzteam.netdungeons.field.tile.Floor
@@ -17,14 +17,21 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
     companion object {
         val random = Loader.random
 
-        private val floorAssets = listOf(TextureAsset.Wood, TextureAsset.Wood1)
-        private val wallAssets = listOf(
-            TextureAsset.WallBrick,
-            TextureAsset.WallBrick1,
-            TextureAsset.WallBrick2,
+        private val floorAssets = listOf(
+            TextureAtlasAll.Region.Wood,
+            TextureAtlasAll.Region.Wood1,
         )
-        private val doorAssets = listOf(TextureAsset.WallBrickDark)
-        private val mazeAssets = listOf(TextureAsset.WoodDark)
+        private val wallAssets = listOf(
+            TextureAtlasAll.Region.WallBrick,
+            TextureAtlasAll.Region.WallBrick1,
+            TextureAtlasAll.Region.WallBrick2,
+        )
+        private val doorAssets = listOf(
+            TextureAtlasAll.Region.WallBrickDark,
+        )
+        private val mazeAssets = listOf(
+            TextureAtlasAll.Region.WoodDark,
+        )
         val assets = floorAssets + wallAssets + doorAssets + mazeAssets
     }
 
@@ -41,8 +48,8 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                     TileType.Wall -> {
                         val position = immutableGridPoint2(x, y)
                         val asset = wallAssets.random(random)
-                        val texture = gameScreen.assetManager[asset]!!
-                        Wall(position, texture, height = 1u)
+                        val atlasRegion = gameScreen.textureAtlasAll[asset]
+                        Wall(position, atlasRegion, height = 1u)
                     }
                     else -> {
                         val position = immutableGridPoint2(x, y)
@@ -51,8 +58,8 @@ class Field(gameScreen: GameScreen) : Disposable, Iterable<Tile> {
                             TileType.Maze -> mazeAssets.random(random)
                             else -> floorAssets.random(random)
                         }
-                        val texture = gameScreen.assetManager[asset]!!
-                        Floor(position, texture)
+                        val atlasRegion = gameScreen.textureAtlasAll[asset]
+                        Floor(position, atlasRegion)
                     }
                 }
             }

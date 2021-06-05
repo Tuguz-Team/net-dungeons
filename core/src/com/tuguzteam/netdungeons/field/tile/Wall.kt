@@ -1,6 +1,6 @@
 package com.tuguzteam.netdungeons.field.tile
 
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.utils.Disposable
@@ -15,7 +15,7 @@ import java.util.EnumMap
 
 class Wall(
     position: ImmutableGridPoint2,
-    val texture: Texture,
+    val textureRegion: TextureRegion,
     val height: UInt,
     val walls: Set<Direction> = Direction.values().toSet(),
 ) : Tile(position), Renderable {
@@ -26,7 +26,7 @@ class Wall(
             y = (height * size).toFloat(),
             z = position.y.toFloat(),
         ),
-        texture, width = size, height = size,
+        textureRegion, width = size, height = size,
     ) {
         init {
             transform.rotate(Vector3.X, -90f)
@@ -61,7 +61,7 @@ class Wall(
                         z = size.toInt() / 2f - 0.5f,
                     )
                 } + immutableVec3(x = position.x.toFloat(), z = position.y.toFloat())
-                object : TextureObject(wallPosition, texture, width = size, height = size) {
+                object : TextureObject(wallPosition, textureRegion, width = size, height = size) {
                     init {
                         transform.rotate(Vector3.Y, direction.degrees)
                     }

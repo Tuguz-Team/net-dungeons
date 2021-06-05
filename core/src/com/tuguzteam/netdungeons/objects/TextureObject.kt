@@ -2,8 +2,8 @@ package com.tuguzteam.netdungeons.objects
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.VertexAttributes.Usage
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.g3d.Material
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute
@@ -19,10 +19,10 @@ import ktx.math.vec3
 
 abstract class TextureObject(
     position: ImmutableVector3,
-    texture: Texture,
+    textureRegion: TextureRegion,
     val width: UInt,
     val height: UInt,
-) : ModelObject(position, createRect(texture, width, height)), Blendable {
+) : ModelObject(position, createRect(textureRegion, width, height)), Blendable {
 
     companion object : Disposable {
         override fun dispose() {
@@ -47,17 +47,17 @@ abstract class TextureObject(
 
 private val models = mutableMapOf<ModelData, Model>()
 
-private data class ModelData(val texture: Texture, val width: UInt, val height: UInt)
+private data class ModelData(val textureRegion: TextureRegion, val width: UInt, val height: UInt)
 
-private fun createRect(texture: Texture, width: UInt, height: UInt): Model {
-    val modelData = ModelData(texture, width, height)
+private fun createRect(textureRegion: TextureRegion, width: UInt, height: UInt): Model {
+    val modelData = ModelData(textureRegion, width, height)
     if (modelData in models) {
         return models[modelData]!!
     }
 
     val attributes = (Usage.Position or Usage.Normal or Usage.TextureCoordinates).toLong()
     val material = Material(
-        TextureAttribute.createDiffuse(texture),
+        TextureAttribute.createDiffuse(textureRegion),
         BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
     )
 

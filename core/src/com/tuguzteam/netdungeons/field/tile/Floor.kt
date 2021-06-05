@@ -1,7 +1,7 @@
 package com.tuguzteam.netdungeons.field.tile
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.collision.Ray
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
@@ -13,7 +13,7 @@ import com.tuguzteam.netdungeons.objects.TextureObject
 
 class Floor(
     position: ImmutableGridPoint2,
-    texture: Texture,
+    textureRegion: TextureRegion,
 ) : Tile(position), Renderable, Focusable, Intersectable {
 
     val textureObject = object : TextureObject(
@@ -21,7 +21,7 @@ class Floor(
             x = position.x.toFloat(),
             z = position.y.toFloat(),
         ),
-        texture, width = size, height = size,
+        textureRegion, width = size, height = size,
     ) {
         init {
             transform.rotate(Vector3.X, -90f)
