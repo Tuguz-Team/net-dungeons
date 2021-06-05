@@ -64,7 +64,8 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
     private val content = SplitPane(
         Container(playerStats).fill().pad(heightFraction(.1f)).padRight(0f),
         Container(skillTree).fill().pad(heightFraction(.1f)).padLeft(0f),
-        false, .5f)
+        false
+    )
 
     val navButton = NavButton("Profile", contentSplitPane, content) {
         contentSplitPane.setSecondWidget(content)

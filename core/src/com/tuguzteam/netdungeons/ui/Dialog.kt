@@ -24,11 +24,23 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
         isHidden = true
     }
 
-    fun pad() = buttonsTable.cells.forEach { it.pad(heightFraction(1 / 60f)) }
-
     init {
         titleLabel.setAlignment(Align.top)
         isResizable = false
         isMovable = false
+    }
+
+    fun pad(): Dialog {
+        buttonsTable.cells.forEach { it.pad(heightFraction(.02f)) }
+        contentTable.cells.forEach { it.pad(heightFraction(.02f)) }
+        return this
+    }
+
+    fun size(): Dialog {
+        buttonsTable.cells.forEach {
+            it.width(0f).size(
+                heightFraction(.15f), heightFraction(.075f))
+        }
+        return this
     }
 }

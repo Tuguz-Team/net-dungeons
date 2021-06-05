@@ -1,7 +1,8 @@
 package com.tuguzteam.netdungeons.screens.auth
 
+import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.kotcrab.vis.ui.layout.FlowGroup
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
@@ -12,7 +13,6 @@ import com.tuguzteam.netdungeons.screens.main.MainScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
 import com.tuguzteam.netdungeons.ui.*
 import kotlinx.coroutines.launch
-import ktx.actors.centerPosition
 import ktx.actors.plusAssign
 import ktx.async.KtxAsync
 import ktx.log.debug
@@ -20,12 +20,20 @@ import ktx.log.error
 import ktx.log.info
 
 class AuthScreen(loader: Loader) : StageScreen(loader) {
+    private val authPad = heightFraction(.125f)
+
     private val cancelDialog = YesNoDialog(
         "Cancel registration?",
         onYesOption = { loader.setScreen<MainScreen>() }
     )
-    private val registerErrorDialog = OkDialog("Registration error!").apply { text("") }
-    private val signInErrorDialog = OkDialog("Sign in error!").apply { text("") }
+    private val registerErrorDialog = OkDialog("Registration error!").apply {
+        text("")
+        pad()
+    }
+    private val signInErrorDialog = OkDialog("Sign in error!").apply {
+        text("")
+        pad()
+    }
     private val registerWaitDialog = Dialog("Waiting server for registration...")
     private val signInWaitDialog = Dialog("Waiting for server for sign in...")
 
@@ -43,10 +51,14 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
         PASSWORD_REGEX, "Enter your password",
         "Password doesn't match pattern",
         "Password couldn't be empty",
-    ).apply { setPasswordMode('*') }
+        passwordMode = true,
+    )
 
-    private val optionContent = VisTable(true)
-    private val registerContent = AuthContent("Register", ClickListener {
+    private val optionFooter = VisTable(false)
+    private val optionContent = Container<Actor>().fill()
+
+    private val registerContent = AuthContent(this, "Start new adventure",
+        "Register", ClickListener {
         KtxAsync.launch {
             registerWaitDialog.show(this@AuthScreen)
             val name = nameTextField.text
@@ -76,9 +88,10 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
             }
             registerWaitDialog.hide()
         }
-    }, optionContent, passwordTextField, arrayListOf(nameTextField, emailTextField))
+    }, optionContent, optionFooter, passwordTextField, arrayListOf(nameTextField, emailTextField))
 
-    private val signInContent = AuthContent("Login", ClickListener {
+    private val signInContent = AuthContent(this, "Continue playing",
+        "Login", ClickListener {
         KtxAsync.launch {
             signInWaitDialog.show(this@AuthScreen)
             val email = emailTextField.text
@@ -106,29 +119,33 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
             }
             signInWaitDialog.hide()
         }
-    }, optionContent, passwordTextField, listOf(emailTextField))
+    }, optionContent, optionFooter, passwordTextField, listOf(emailTextField))
 
     private val radioButton = RadioButtonGroup(
         true, arrayListOf(registerContent.radioButton, signInContent.radioButton)
     )
-    private val chooseOptionButtons = FlowGroup(
-        false, heightFraction(.05f)
-    ).apply {
-        radioButton.groupButtons.forEach { button -> this += button }
+
+    private val optionHeader = VisTable(false).apply {
+        radioButton.groupButtons.forEach { button ->
+            add(button).size(authPad * 5, authPad / 1.25f).pad(authPad / 5).expandX()
+        }
     }
 
-    private val contentGroup = VisTable(true).apply {
-        width = widthFraction(.1875f)
+    private val contentGroup = VisTable(false).apply {
+        add(optionHeader).growX().row()
+        addSeparator().padBottom(authPad / 5)
 
-        add(chooseOptionButtons).expandX().row()
-        addSeparator().padBottom(heightFraction(.025f))
-        add(optionContent)
+        add(optionContent).grow().row()
+        add(optionFooter).pad(authPad / 5).growX()
     }
 
     init {
         isDebugAll = true
-        this += contentGroup
-        contentGroup.centerPosition()
+
+        this += Container(contentGroup).apply {
+            fill().pad(authPad, authPad * 2, authPad, authPad * 2)
+            setFillParent(true)
+        }
     }
 
     override fun show() {
