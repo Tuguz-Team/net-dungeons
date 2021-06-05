@@ -13,6 +13,7 @@ import com.tuguzteam.netdungeons.ui.RadioButtonGroup
 import com.tuguzteam.netdungeons.ui.SplitPane
 
 class NavRating(contentSplitPane: SplitPane, header: ContentHeader) {
+
     private val navPad = heightFraction(.1f)
 
     private val tableHeader = TableBlock(
