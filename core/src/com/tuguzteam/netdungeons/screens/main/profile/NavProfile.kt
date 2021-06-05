@@ -5,12 +5,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.*
-import com.tuguzteam.netdungeons.addRow
 import com.tuguzteam.netdungeons.addActor
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.screens.main.NavButton
+import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
+import com.tuguzteam.netdungeons.widthFraction
 
 class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
 
@@ -25,11 +26,7 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
         addActor(this, VisLabel("Name", Align.left), navPad * 9)
     }
 
-    private val skillTreeScroll = VisScrollPane(
-        VisTable(true).apply {
-            repeat(15) { addRow(this, Triple("BRUH", "BRUH", "BRUH")) }
-        }
-    ).apply {
+    private val skillTreeScroll = VisScrollPane(SkillTreeContent(navPad)).apply {
         setOverscroll(false, false)
         fadeScrollBars = false
         setFlingTime(0f)
@@ -57,23 +54,28 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
 
     private val playerStats = VisTable(false).apply {
         add(Actor()).grow()
-        add(statsTable).top().pad(
-            0f, heightFraction(.0625f),
-            0f, heightFraction(.0625f)
-        )
+        add(statsTable).top()
+            .padLeft(heightFraction(.0625f))
     }
 
     private val skillTree = VisTable(false).apply {
-        add(VisLabel("Skill tree", Align.center)).growX()
-            .pad(heightFraction(.025f))
+        add(VisLabel("Skill tree", Align.center).apply {
+            addListener(ClickListener {
+                skillTreeScroll.scrollPercentX = .5f
+                skillTreeScroll.scrollPercentY = 0f
+            })
+        }).pad(heightFraction(.025f))
+            .size(widthFraction(.2f), heightFraction(.075f))
+
         add(VisLabel("Progress points: 0", Align.center)).growX()
-            .pad(heightFraction(.025f)).row()
+            .pad(heightFraction(.025f)).size(0f, heightFraction(.075f)).row()
 
         add(skillTreeScroll).colspan(2).expand()
     }
 
     private val content = SplitPane(
-        Container(playerStats).fill().pad(heightFraction(.1f)).padRight(0f),
+        Container(playerStats).fill().pad(heightFraction(.1f))
+            .padRight(heightFraction(.0625f)),
         Container(skillTree).fill().pad(heightFraction(.1f)).padLeft(0f),
         false
     )

@@ -40,7 +40,7 @@ class NavGameElement(
                 add(VisImageButton(null, null, null))
                     .height(windowPad * 5).grow().row()
                 add(radioButton).padTop(windowPad)
-                    .width(windowPad * 5).height(windowPad)
+                    .size(windowPad * 5, windowPad * 2)
 
                 radioButton.listeners.forEach { listener ->
                     addListener(listener)

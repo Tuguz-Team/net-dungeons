@@ -64,7 +64,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
 
     private val playButton = Container(
         VisTable(false).apply {
-            add(imageButton).grow()
+            add(imageButton).size(heightFraction(.12f))
             add(VisLabel("Play", Align.center)).grow()
         }
     ).apply {
@@ -81,7 +81,7 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     }
 
     private val headerSplitPane = SplitPane(
-        headerContent, playButton, false, 0.8f
+        headerContent, playButton, false, 0.75f
     )
     val navButton = NavButton("Game", contentSplitPane, contentScroll) {
         contentSplitPane.setSecondWidget(contentScroll)

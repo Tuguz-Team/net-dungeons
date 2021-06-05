@@ -46,7 +46,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
         this += mainSplitPane
         doClick(navProfile.navButton)
 
-        loader.addScreen(screen = GameScreen(loader, this))
+        loader.addScreen(screen = GameScreen(loader))
     }
 
     override fun show() {
