@@ -2,9 +2,9 @@ package com.tuguzteam.netdungeons.screens.main.rating
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Container
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisLabel
-import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
 import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.addRow
@@ -29,7 +29,7 @@ class TableDataButton(
 
     private val tableContent = VisTable(false)
 
-    private val tableScroll: VisScrollPane = VisScrollPane(tableContent).apply {
+    private val tableScroll: ScrollPane = ScrollPane(tableContent).apply {
         setOverscroll(false, false)
         fadeScrollBars = true
         setFlingTime(.001f)

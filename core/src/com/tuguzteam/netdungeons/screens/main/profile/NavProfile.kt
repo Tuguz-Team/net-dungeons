@@ -2,6 +2,7 @@ package com.tuguzteam.netdungeons.screens.main.profile
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Container
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.*
 import com.tuguzteam.netdungeons.addActor
@@ -37,7 +38,7 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
         setFlingTime(0f)
     }
 
-    private val statsTable = VisScrollPane(VisTable(false).apply {
+    private val statsTable = ScrollPane(VisTable(false).apply {
         repeat(5) {
             add(Container(
                 VisImageButton(null, null, null))
