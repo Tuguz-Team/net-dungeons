@@ -13,7 +13,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import ktx.assets.async.AssetStorage
-import java.util.EnumMap
+import java.util.*
 
 class AssetManager : Disposable {
     private val assetStorage = AssetStorage()

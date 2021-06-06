@@ -39,7 +39,8 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
     fun size(): Dialog {
         buttonsTable.cells.forEach {
             it.width(0f).size(
-                heightFraction(.15f), heightFraction(.075f))
+                heightFraction(.15f), heightFraction(.075f)
+            )
         }
         return this
     }

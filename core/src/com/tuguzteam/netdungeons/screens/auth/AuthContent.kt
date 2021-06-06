@@ -10,7 +10,6 @@ import com.kotcrab.vis.ui.widget.*
 import com.tuguzteam.netdungeons.dec
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.ui.*
-import com.tuguzteam.netdungeons.ui.doClick
 import com.tuguzteam.netdungeons.widthFraction
 
 class AuthContent(
@@ -52,7 +51,7 @@ class AuthContent(
         "\nJust enjoy the game!!!\n".repeat(50), Align.center
     ).apply { wrap = true }
 
-    private val policyWindow = Dialog("Privacy Policy").apply dialog@ {
+    private val policyWindow = Dialog("Privacy Policy").apply dialog@{
         buttonsTable.add(VisTextButton("I accept!").apply {
             addListener(ClickListener {
                 if (policyCheckBox.setStateInvalid())
@@ -83,27 +82,35 @@ class AuthContent(
 
             if (textFields.count() > 1) {
                 parent.actor = SplitPane(null, null, false).apply {
-                    setFirstWidget(Container(
-                        VisTable().apply {
-                            textFields.forEach { textField -> textField.addTo(this) }
-                        }).pad(0f, heightFraction(.025f),
-                        0f, heightFraction(.05f)).fill()
+                    setFirstWidget(
+                        Container(
+                            VisTable().apply {
+                                textFields.forEach { textField -> textField.addTo(this) }
+                            }).pad(
+                            0f, heightFraction(.025f),
+                            0f, heightFraction(.05f)
+                        ).fill()
                     )
-                    setSecondWidget(Container(
-                        VisTable().apply {
-                            passwordTextField.addTo(this, viewPasswordButton)
-                            add(policyCheckBox).padTop(heightFraction(.025f))
-                            add(viewPolicyButton).size(
-                                heightFraction(.075f), heightFraction(.05f)
-                            ).padTop(heightFraction(.025f)).row()
-                        }).pad(0f, heightFraction(.05f),
-                        0f, heightFraction(.025f)).fill()
+                    setSecondWidget(
+                        Container(
+                            VisTable().apply {
+                                passwordTextField.addTo(this, viewPasswordButton)
+                                add(policyCheckBox).padTop(heightFraction(.025f))
+                                add(viewPolicyButton).size(
+                                    heightFraction(.075f), heightFraction(.05f)
+                                ).padTop(heightFraction(.025f)).row()
+                            }).pad(
+                            0f, heightFraction(.05f),
+                            0f, heightFraction(.025f)
+                        ).fill()
                     )
                 }
             } else {
                 parent.actor = VisTable().apply {
-                    pad(0f, heightFraction(.375f),
-                        0f, heightFraction(.375f))
+                    pad(
+                        0f, heightFraction(.375f),
+                        0f, heightFraction(.375f)
+                    )
                     textFields.forEach { textField -> textField.addTo(this) }
                     passwordTextField.addTo(this, viewPasswordButton)
                 }

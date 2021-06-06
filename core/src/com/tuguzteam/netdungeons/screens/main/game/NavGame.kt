@@ -8,11 +8,11 @@ import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.Loader
+import com.tuguzteam.netdungeons.addActor
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.screens.main.NavButton
-import com.tuguzteam.netdungeons.addActor
 import com.tuguzteam.netdungeons.ui.ClickListener
 import com.tuguzteam.netdungeons.ui.SplitPane
 import ktx.actors.plusAssign
@@ -30,15 +30,15 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
 
     private val gameMode = NavGameElement(
         contentScroll, 0f, "Mode",
-        "Choose game mode", listOf("Team Fight", "Slaughter")
+        "Choose game mode", listOf("Team Fight", "Slaughter"),
     )
     private val gameSize = NavGameElement(
         contentScroll, .5f, "Size",
-        "Choose map size", listOf("Medium", "Large", "Very Large")
+        "Choose map size", listOf("Medium", "Large", "Very Large"),
     )
     private val gameType = NavGameElement(
         contentScroll, 1f, "Type",
-        "Choose amounts of treasure", listOf("Mansion", "Castle", "Slum")
+        "Choose amounts of treasure", listOf("Mansion", "Castle", "Slum"),
     )
 
     init {
@@ -53,8 +53,10 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
         left().padRight(navPad)
 
         addActor(this, gameMode.innerLabel)
-        addActor(this,
-            VisLabel("in", Align.center), navPad)
+        addActor(
+            this,
+            VisLabel("in", Align.center), navPad,
+        )
         addActor(this, gameSize.innerLabel)
         addActor(this, gameType.innerLabel)
     }

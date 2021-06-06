@@ -11,14 +11,14 @@ import com.tuguzteam.netdungeons.objects.Bounded
 import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.objects.TextureObject
 import ktx.assets.dispose
-import java.util.EnumMap
+import java.util.*
 
 class Wall(
     position: ImmutableGridPoint2,
     val textureRegion: TextureRegion,
     val height: UInt,
     val walls: Set<Direction> = Direction.values().toSet(),
-) : Tile(position), Renderable {
+) : Tile(position) {
 
     private val topTextureObject = object : TextureObject(
         position = toImmutableVec3(position) + immutableVec3(y = (height * size).toFloat()),

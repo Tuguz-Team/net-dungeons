@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import ktx.math.ImmutableVector
 import ktx.math.ImmutableVector2
+import ktx.math.vec3
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.sqrt
@@ -120,7 +121,7 @@ data class ImmutableVector3(val x: Float, val y: Float, val z: Float) :
         this.toMutable().rotateRad(radians, axisX, axisY, axisZ).toImmutable()
 }
 
-fun ImmutableVector3.toMutable() = Vector3(x, y, z)
+fun ImmutableVector3.toMutable() = vec3(x, y, z)
 
 fun Vector3.toImmutable() = immutableVec3(x, y, z)
 

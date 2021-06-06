@@ -2,7 +2,6 @@ package com.tuguzteam.netdungeons.input
 
 import com.badlogic.gdx.Gdx
 import com.tuguzteam.netdungeons.KtxGestureAdapter
-import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.field.tile.Wall
 import com.tuguzteam.netdungeons.immutableGridPoint2
 import com.tuguzteam.netdungeons.screens.GameScreen

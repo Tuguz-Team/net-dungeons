@@ -6,7 +6,6 @@ import com.tuguzteam.netdungeons.field.tile.Tile
 import com.tuguzteam.netdungeons.field.tile.toImmutableVec3
 import com.tuguzteam.netdungeons.objects.Focusable
 import com.tuguzteam.netdungeons.objects.GameObject
-import com.tuguzteam.netdungeons.objects.Intersectable
 import com.tuguzteam.netdungeons.objects.intersects
 import com.tuguzteam.netdungeons.screens.GameScreen
 import ktx.log.debug
@@ -40,7 +39,7 @@ class ObjectChooseGestureListener(private val gameScreen: GameScreen) : KtxGestu
     private fun intersectedGameObject(ray: Ray): GameObject? {
         var gameObject: Tile? = null
         Tile.asSequence().filter {
-            it in gameScreen.visibleObjects && it is Intersectable && ray intersects it
+            it in gameScreen.visibleObjects && ray intersects it
         }.forEach { tile ->
             val distance2 = gameObject?.toImmutableVec3()?.dst2(ray.origin)
             val itDistance2 = tile.toImmutableVec3().dst2(ray.origin)

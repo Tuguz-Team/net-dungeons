@@ -23,6 +23,7 @@ class TableDataButton(
 ) : VisTextButton(sortByText, "toggle") {
 
     private val rowCount = 50
+
     // TODO("Pull amount of players from server")
     private var maxRowKey = 65
     private var wasDragged = false
@@ -126,10 +127,12 @@ class TableDataButton(
 
     private fun loadData() {
         data.toSortedMap().forEach {
-            addRow(tableContent, Triple(
-                it.key.toString(), it.value.first,
-                it.value.second.toString()
-            ))
+            addRow(
+                tableContent, Triple(
+                    it.key.toString(), it.value.first,
+                    it.value.second.toString()
+                )
+            )
         }
     }
 

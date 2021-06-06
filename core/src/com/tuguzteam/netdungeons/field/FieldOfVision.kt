@@ -55,15 +55,13 @@ object FieldOfVision {
 }
 
 private data class Shadow(var start: Float, var end: Float) {
-    operator fun contains(shadow: Shadow) =
-        start <= shadow.start && end >= shadow.end
+    operator fun contains(shadow: Shadow) = start <= shadow.start && end >= shadow.end
 }
 
 private class ShadowLine {
     private val shadows = mutableListOf<Shadow>()
 
-    val isFullShadow: Boolean
-        get() = shadows.size == 1 && shadows[0].start == 0f && shadows[0].end == 1f
+    val isFullShadow get() = shadows.size == 1 && shadows[0].start == 0f && shadows[0].end == 1f
 
     operator fun contains(projection: Shadow): Boolean {
         shadows.forEach { shadow ->

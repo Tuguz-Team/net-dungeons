@@ -3,17 +3,14 @@ package com.tuguzteam.netdungeons.field.tile
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector3
-import com.badlogic.gdx.math.collision.Ray
 import com.tuguzteam.netdungeons.ImmutableGridPoint2
 import com.tuguzteam.netdungeons.objects.Focusable
-import com.tuguzteam.netdungeons.objects.Intersectable
-import com.tuguzteam.netdungeons.objects.Renderable
 import com.tuguzteam.netdungeons.objects.TextureObject
 
 class Floor(
     position: ImmutableGridPoint2,
     textureRegion: TextureRegion,
-) : Tile(position), Renderable, Focusable, Intersectable {
+) : Tile(position), Focusable {
 
     val textureObject = object : TextureObject(
         position = toImmutableVec3(position),
@@ -48,8 +45,4 @@ class Floor(
         }
 
     override val boundingBox = textureObject.boundingBox
-
-    override fun intersectedBy(ray: Ray) = textureObject.intersectedBy(ray)
-
-    override fun intersectionPoint(ray: Ray) = textureObject.intersectionPoint(ray)
 }

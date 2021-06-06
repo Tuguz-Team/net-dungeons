@@ -1,6 +1,7 @@
 package com.tuguzteam.netdungeons.ui
 
-class YesNoDialog(title: String,
+class YesNoDialog(
+    title: String,
     private val onYesOption: () -> Unit,
     private val onNoOption: () -> Unit = {}
 ) : Dialog(title) {

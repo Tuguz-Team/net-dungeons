@@ -4,7 +4,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
-import com.kotcrab.vis.ui.widget.*
+import com.kotcrab.vis.ui.widget.VisImageButton
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisScrollPane
+import com.kotcrab.vis.ui.widget.VisTable
 import com.tuguzteam.netdungeons.addRow
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.main.ContentHeader

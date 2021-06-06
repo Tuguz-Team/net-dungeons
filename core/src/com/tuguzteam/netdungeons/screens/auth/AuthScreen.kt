@@ -9,8 +9,8 @@ import com.tuguzteam.netdungeons.net.AuthManager.Companion.EMAIL_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.NAME_REGEX
 import com.tuguzteam.netdungeons.net.AuthManager.Companion.PASSWORD_REGEX
 import com.tuguzteam.netdungeons.net.Result
-import com.tuguzteam.netdungeons.screens.main.MainScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
+import com.tuguzteam.netdungeons.screens.main.MainScreen
 import com.tuguzteam.netdungeons.ui.*
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
@@ -57,69 +57,77 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     private val optionFooter = VisTable(false)
     private val optionContent = Container<Actor>().fill()
 
-    private val registerContent = AuthContent(this, "Start new adventure",
-        "Register", ClickListener {
-        KtxAsync.launch {
-            registerWaitDialog.show(this@AuthScreen)
-            val name = nameTextField.text
-            val email = emailTextField.text
-            val password = passwordTextField.text
-            when (val result = loader.authManager.register(name, email, password)) {
-                is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
-                is Result.Failure -> {
-                    Loader.logger.error(result.cause) { "Registration failure!" }
-                    registerErrorDialog.apply {
-                        val message: String = when {
-                            email.isBlank() -> "Email cannot be empty"
-                            password.isBlank() -> "Password cannot be empty"
-                            else -> when (result.cause) {
-                                is AuthInvalidPasswordException -> "Server rejected given password: it is too weak"
-                                is AuthInvalidEmailException -> "Server rejected given email"
-                                is AuthUserCollisionException -> "User with given email already exists"
-                                is WeakNetworkException -> "Check your Internet connection and try again"
-                                else -> "Internal server error"
+    private val registerContent = AuthContent(this,
+        "Start new adventure",
+        "Register",
+        ClickListener {
+            KtxAsync.launch {
+                registerWaitDialog.show(this@AuthScreen)
+                val name = nameTextField.text
+                val email = emailTextField.text
+                val password = passwordTextField.text
+                when (val result = loader.authManager.register(name, email, password)) {
+                    is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                    is Result.Failure -> {
+                        Loader.logger.error(result.cause) { "Registration failure!" }
+                        registerErrorDialog.apply {
+                            val message: String = when {
+                                email.isBlank() -> "Email cannot be empty"
+                                password.isBlank() -> "Password cannot be empty"
+                                else -> when (result.cause) {
+                                    is AuthInvalidPasswordException -> "Server rejected given password: it is too weak"
+                                    is AuthInvalidEmailException -> "Server rejected given email"
+                                    is AuthUserCollisionException -> "User with given email already exists"
+                                    is WeakNetworkException -> "Check your Internet connection and try again"
+                                    else -> "Internal server error"
+                                }
                             }
+                            (contentTable.cells[0].actor as Label).setText(message)
+                            this.show(this@AuthScreen)
                         }
-                        (contentTable.cells[0].actor as Label).setText(message)
-                        this.show(this@AuthScreen)
                     }
+                    is Result.Success -> loader.setScreen<MainScreen>()
                 }
-                is Result.Success -> loader.setScreen<MainScreen>()
+                registerWaitDialog.hide()
             }
-            registerWaitDialog.hide()
-        }
-    }, optionContent, optionFooter, passwordTextField, arrayListOf(nameTextField, emailTextField))
+        },
+        optionContent,
+        optionFooter,
+        passwordTextField,
+        arrayListOf(nameTextField, emailTextField)
+    )
 
     private val signInContent = AuthContent(this, "Continue playing",
         "Login", ClickListener {
-        KtxAsync.launch {
-            signInWaitDialog.show(this@AuthScreen)
-            val email = emailTextField.text
-            val password = passwordTextField.text
-            when (val result = loader.authManager.signIn(email, password)) {
-                is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
-                is Result.Failure -> {
-                    Loader.logger.error(result.cause) { "Sign in failure!" }
-                    signInErrorDialog.apply {
-                        val message = when {
-                            email.isBlank() -> "Email cannot be empty"
-                            password.isBlank() -> "Password cannot be empty"
-                            else -> when (result.cause) {
-                                is AuthInvalidPasswordException -> "Wrong password for account with given email"
-                                is AuthInvalidUserException -> "No user exists with given email"
-                                is WeakNetworkException -> "Check your Internet connection and try again"
-                                else -> "Internal server error"
+            KtxAsync.launch {
+                signInWaitDialog.show(this@AuthScreen)
+                val email = emailTextField.text
+                val password = passwordTextField.text
+                when (val result = loader.authManager.signIn(email, password)) {
+                    is Result.Cancel -> Loader.logger.info { "Task was cancelled normally" }
+                    is Result.Failure -> {
+                        Loader.logger.error(result.cause) { "Sign in failure!" }
+                        signInErrorDialog.apply {
+                            val message = when {
+                                email.isBlank() -> "Email cannot be empty"
+                                password.isBlank() -> "Password cannot be empty"
+                                else -> when (result.cause) {
+                                    is AuthInvalidPasswordException -> "Wrong password for account with given email"
+                                    is AuthInvalidUserException -> "No user exists with given email"
+                                    is WeakNetworkException -> "Check your Internet connection and try again"
+                                    else -> "Internal server error"
+                                }
                             }
+                            (contentTable.cells[0].actor as Label).setText(message)
+                            this.show(this@AuthScreen)
                         }
-                        (contentTable.cells[0].actor as Label).setText(message)
-                        this.show(this@AuthScreen)
                     }
+                    is Result.Success -> loader.setScreen<MainScreen>()
                 }
-                is Result.Success -> loader.setScreen<MainScreen>()
+                signInWaitDialog.hide()
             }
-            signInWaitDialog.hide()
-        }
-    }, optionContent, optionFooter, passwordTextField, listOf(emailTextField))
+        }, optionContent, optionFooter, passwordTextField, listOf(emailTextField)
+    )
 
     private val radioButton = RadioButtonGroup(
         true, arrayListOf(registerContent.radioButton, signInContent.radioButton)

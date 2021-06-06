@@ -6,9 +6,7 @@ import com.badlogic.gdx.graphics.g3d.*
 import com.badlogic.gdx.graphics.g3d.environment.BaseLight
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder
 import com.badlogic.gdx.input.GestureDetector
-import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.collision.BoundingBox
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisLabel
@@ -75,13 +73,9 @@ fun Actor.isDoneActing() = actions.isEmpty
 fun widthFraction(fraction: Float = 1f) = Gdx.graphics.width * fraction
 fun heightFraction(fraction: Float = 1f) = Gdx.graphics.height * fraction
 
+val framesPerSecond get() = Gdx.graphics.framesPerSecond
+
 operator fun Boolean.dec() = !this
-
-operator fun BoundingBox.times(matrix: Matrix4): BoundingBox = BoundingBox(this).mul(matrix)
-
-operator fun BoundingBox.timesAssign(matrix: Matrix4) {
-    mul(matrix)
-}
 
 operator fun <T : BaseLight<T>> Environment.plusAssign(light: T) {
     add(light)
@@ -92,12 +86,21 @@ infix fun Environment.with(attribute: Attribute) = set(attribute)
 fun addRow(table: VisTable, triple: Triple<Any, Any, Any>) {
     when (triple.first) {
         is String -> {
-            addActor(table, VisLabel(
-                triple.first as String, Align.center), pad = true)
-            addActor(table, VisLabel(
-                triple.second as String, Align.center), expand = true, multiply = 5f)
-            addActor(table, VisLabel(
-                triple.third as String, Align.center), pad = true)
+            addActor(
+                table, VisLabel(
+                    triple.first as String, Align.center
+                ), pad = true
+            )
+            addActor(
+                table, VisLabel(
+                    triple.second as String, Align.center
+                ), expand = true, multiply = 5f
+            )
+            addActor(
+                table, VisLabel(
+                    triple.third as String, Align.center
+                ), pad = true
+            )
         }
         is Actor -> {
             addActor(table, triple.first as Actor, pad = true)
@@ -123,7 +126,8 @@ fun addActor(
 fun addActor(table: VisTable, actor: Actor, widthMultiplier: Float = 0f) {
     val cell = table.add(actor).width(widthMultiplier).pad(
         heightFraction(.1f) / 2.5f, heightFraction(.1f),
-        heightFraction(.1f) / 2.5f, 0f)
+        heightFraction(.1f) / 2.5f, 0f
+    )
 
     if (!widthMultiplier.toBoolean()) cell.grow()
 }

@@ -1,6 +1,5 @@
 package com.tuguzteam.netdungeons.screens
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g3d.Environment
@@ -11,6 +10,8 @@ import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.tuguzteam.netdungeons.*
+import com.tuguzteam.netdungeons.assets.Asset
+import com.tuguzteam.netdungeons.assets.ModelAsset
 import com.tuguzteam.netdungeons.assets.TextureAtlasAll
 import com.tuguzteam.netdungeons.assets.TextureAtlasAsset
 import com.tuguzteam.netdungeons.field.*
@@ -31,6 +32,7 @@ import kotlin.math.absoluteValue
 class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
     private companion object {
         private val logger = logger<GameScreen>()
+        private val assets = listOf<Asset>(ModelAsset.MaleExample)
 
         private const val viewDistance = 4u
         private const val maxViewDistance = 6u
@@ -41,6 +43,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
 
     var playerPosition = immutableGridPoint2()
         set(value) {
+            player?.position = Tile.toImmutableVec3(point = value)
             camera?.apply {
                 position += Tile.toImmutableVec3(point = value - field).toMutable()
                 update(true)
@@ -75,31 +78,33 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     }
     var field: Field? = null
         private set
+    var player: ModelObject? = null
+        private set
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
     private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
     private lateinit var movementGestureListener: MovementGestureListener
 
     init {
-        viewport = ExtendViewport(120f, 120f)
+        viewport = ExtendViewport(20f, 20f)
     }
 
     override fun show() {
         super.show()
         playerPosition = immutableGridPoint2()
         camera = OrthographicCamera().apply {
-            val pos = vec3(x = 80f, z = 80f)
+            val pos = vec3(x = 12f, z = 12f)
             val angle = 30f
             pos.y = pos.len() * MathUtils.sinDeg(angle)
             position.set(pos)
             lookAt(vec3())
             near = 1f
-            far = 250f
+            far = 60f
             update(true)
         }
         viewport.apply {
             camera = this@GameScreen.camera
-            update(Gdx.graphics.width, Gdx.graphics.height)
+            update(widthFraction().toInt(), heightFraction().toInt())
         }
 
         rotationZoomGestureListener = RotationZoomGestureListener(gameScreen = this)
@@ -112,7 +117,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         }
 
         KtxAsync.launch {
-            assetManager.load(Loader.requiredAssets)
+            assetManager.load(assets)
             logger.info { "Asset loading finished" }
             field = Field(gameScreen = this@GameScreen).apply {
                 playerPosition = immutableGridPoint2(
@@ -120,67 +125,79 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                     y = (size / 2u).toInt(),
                 )
             }
-            updateVisibleObjects()
             logger.info { "Map generation finished" }
+            player = object : ModelObject(
+                position = Tile.toImmutableVec3(playerPosition),
+                model = assetManager[ModelAsset.MaleExample]!!,
+            ) {}
+            updateVisibleObjects()
         }
     }
 
     override fun hide() {
         super.hide()
+        KtxAsync.launch {
+            assetManager.unload(assets)
+        }
         _visibleObjects.clear()
         renderVisibleObjects.clear()
         _visitedObjects.clear()
         renderVisitedObjects.clear()
         field?.dispose()
         field = null
+        player?.dispose()
+        player = null
     }
 
     private val renderVisitedObjects = mutableListOf<GameObject>()
     private val renderVisibleObjects = mutableListOf<GameObject>()
     fun updateVisibleObjects() {
-        field?.let { field ->
-            _visibleObjects.clear()
+        val field = field ?: return
+        _visibleObjects.clear()
 
-            // Current tile is always visible
-            _visibleObjects += field[playerPosition] ?: return
-            // Filter visible objects (Field Of Vision by shadow casting)
-            _visibleObjects += FieldOfVision.compute(field, playerPosition, viewDistance)
-            _visitedObjects += visibleObjects
+        // Current tile and the player are always visible
+        _visibleObjects += player ?: return
+        _visibleObjects += field[playerPosition] ?: return
+        // Filter visible objects (Field Of Vision by shadow casting)
+        _visibleObjects += FieldOfVision.compute(field, playerPosition, viewDistance)
+        _visitedObjects += visibleObjects
 
-            // Preserve list of visited objects to render
-            renderVisitedObjects.clear()
-            visitedObjects.filterTo(renderVisitedObjects) { gameObject ->
-                // Avoid duplicates (we don't need to render visible objects as visited)
-                if (gameObject in visibleObjects) return@filterTo false
-                when (gameObject) {
-                    is Tile -> {
-                        val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                        val y = (gameObject.position.y - playerPosition.y).absoluteValue
-                        x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
-                    }
-                    is ModelObject -> {
-                        val x = (gameObject.position.x - playerPosition.x).absoluteValue
-                        val y = (gameObject.position.z - playerPosition.y).absoluteValue
-                        x <= maxViewDistance.toInt() && y < maxViewDistance.toInt()
-                    }
-                    else -> false
+        // Preserve list of visited objects to render
+        renderVisitedObjects.clear()
+        visitedObjects.filterTo(renderVisitedObjects) { gameObject ->
+            // Avoid duplicates (we don't need to render visible objects as visited)
+            if (gameObject in visibleObjects) return@filterTo false
+            when (gameObject) {
+                is Tile -> {
+                    val x = (gameObject.position.x - playerPosition.x).absoluteValue
+                    val y = (gameObject.position.y - playerPosition.y).absoluteValue
+                    val distance = maxViewDistance.toInt()
+                    x <= distance && y <= distance
                 }
+                is ModelObject -> {
+                    val position = Tile.toImmutableVec3(playerPosition)
+                    val x = (gameObject.position.x - position.x).absoluteValue
+                    val y = (gameObject.position.z - position.z).absoluteValue
+                    val distance = (maxViewDistance * Tile.size).toFloat()
+                    x <= distance && y <= distance
+                }
+                else -> false
             }
-            renderVisitedObjects.forEach { gameObject ->
-                if (gameObject is Blendable) gameObject.alpha = 0.75f
-            }
+        }
+        renderVisitedObjects.forEach { gameObject ->
+            if (gameObject is Blendable) gameObject.alpha = 0.75f
+        }
 
-            // Preserve list of visible objects to render
-            renderVisibleObjects.clear()
-            renderVisibleObjects += visibleObjects
-            renderVisibleObjects.forEach { gameObject ->
-                if (gameObject is Blendable) gameObject.alpha = 1f
-            }
+        // Preserve list of visible objects to render
+        renderVisibleObjects.clear()
+        renderVisibleObjects += visibleObjects
+        renderVisibleObjects.forEach { gameObject ->
+            if (gameObject is Blendable) gameObject.alpha = 1f
         }
     }
 
     private fun isVisible(gameObject: GameObject): Boolean {
-        if (gameObject !is Bounded) return false
+        if (gameObject !is Renderable) return false
         return camera?.frustum?.boundsInFrustum(gameObject.boundingBox) == true
     }
 
@@ -188,7 +205,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
         super.render(delta)
         val camera = camera
         val field = field
-        if (camera != null && field != null) {
+        if (camera != null && field != null && assetManager.loaded(ModelAsset.MaleExample)) {
             rotationZoomGestureListener.update(delta)
 
             modelBatch.use(camera) {
@@ -206,7 +223,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 renderVisitedObjects.forEach { render(it, environmentVisited) }
                 renderVisibleObjects.forEach { render(it, environmentVisible) }
             }
-            logger.debug(Gdx.graphics.framesPerSecond::toString)
+            logger.debug(framesPerSecond::toString)
         } else {
             logger.info { "Asset loading progress: ${assetManager.progress.percent * 100}%" }
         }

@@ -7,11 +7,11 @@ import com.tuguzteam.netdungeons.net.Result
 import com.tuguzteam.netdungeons.screens.GameScreen
 import com.tuguzteam.netdungeons.screens.StageScreen
 import com.tuguzteam.netdungeons.screens.auth.AuthScreen
-import com.tuguzteam.netdungeons.ui.SplitPane
-import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.screens.main.game.NavGame
 import com.tuguzteam.netdungeons.screens.main.profile.NavProfile
 import com.tuguzteam.netdungeons.screens.main.rating.NavRating
+import com.tuguzteam.netdungeons.ui.SplitPane
+import com.tuguzteam.netdungeons.ui.YesNoDialog
 import com.tuguzteam.netdungeons.ui.doClick
 import kotlinx.coroutines.launch
 import ktx.actors.plusAssign
