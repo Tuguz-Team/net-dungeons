@@ -50,6 +50,11 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
             }
             field = value
         }
+    var playerDirection: Direction?
+        get() = player?.direction
+        set(value) {
+            player?.direction = value ?: return
+        }
 
     private val _visibleObjects = mutableSetOf<GameObject>()
     val visibleObjects: Set<GameObject> = _visibleObjects
@@ -78,8 +83,7 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     }
     var field: Field? = null
         private set
-    var player: ModelObject? = null
-        private set
+    private var player: Player? = null
 
     private lateinit var rotationZoomGestureListener: RotationZoomGestureListener
     private lateinit var objectChooseGestureListener: ObjectChooseGestureListener
@@ -126,10 +130,10 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
                 )
             }
             logger.info { "Map generation finished" }
-            player = object : ModelObject(
+            player = Player(
                 position = Tile.toImmutableVec3(playerPosition),
                 model = assetManager[ModelAsset.MaleExample]!!,
-            ) {}
+            )
             updateVisibleObjects()
         }
     }
