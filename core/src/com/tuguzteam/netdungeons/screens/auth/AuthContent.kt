@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.Container
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.*
 import com.tuguzteam.netdungeons.dec
@@ -62,7 +61,7 @@ class AuthContent(
         })
         button("Close", false)
 
-        contentTable.add(ScrollPane(textArea).apply {
+        contentTable.add(VisScrollPane(textArea).apply {
             setScrollingDisabled(true, false)
             setOverscroll(false, false)
         }).pad(heightFraction(.05f)).size(

@@ -43,6 +43,7 @@ class MainScreen(loader: Loader) : StageScreen(loader) {
 
     init {
         isDebugAll = true
+
         this += mainSplitPane
         doClick(navProfile.navButton)
 
