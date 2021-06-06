@@ -35,7 +35,7 @@ class ContentHeader(stage: Stage, horGroup: WidgetGroup?, splitAmount: Float) :
             addListener(ClickListener {
                 settingsDialog.show(stage)
             })
-        }).fill().pad(heightFraction(.04f))
+        }).fill().size(heightFraction(.12f))
 
     init {
         horGroup?.centerPosition()

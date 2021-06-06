@@ -48,7 +48,7 @@ class AuthContent(
     }
 
     private val textArea = VisLabel(
-        "\nJust enjoy the game!!!\n".repeat(50), Align.center
+        "\nJust enjoy the game!!!\n".repeat(50)
     ).apply { wrap = true }
 
     private val policyWindow = Dialog("Privacy Policy").apply dialog@{

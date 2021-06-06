@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
 import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.utils.viewport.ExtendViewport
+import com.kotcrab.vis.ui.widget.VisTextButton
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.assets.Asset
 import com.tuguzteam.netdungeons.assets.ModelAsset
@@ -20,6 +21,10 @@ import com.tuguzteam.netdungeons.input.MovementGestureListener
 import com.tuguzteam.netdungeons.input.ObjectChooseGestureListener
 import com.tuguzteam.netdungeons.input.RotationZoomGestureListener
 import com.tuguzteam.netdungeons.objects.*
+import com.tuguzteam.netdungeons.screens.main.MainScreen
+import com.tuguzteam.netdungeons.ui.ClickListener
+import com.tuguzteam.netdungeons.ui.Dialog
+import com.tuguzteam.netdungeons.ui.YesNoDialog
 import kotlinx.coroutines.launch
 import ktx.async.KtxAsync
 import ktx.graphics.color
@@ -29,13 +34,29 @@ import ktx.log.logger
 import ktx.math.*
 import kotlin.math.absoluteValue
 
-class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loader, prevScreen) {
+class GameScreen(loader: Loader) : StageScreen(loader) {
     private companion object {
         private val logger = logger<GameScreen>()
         private val assets = listOf<Asset>(ModelAsset.MaleExample)
 
         private const val viewDistance = 4u
         private const val maxViewDistance = 6u
+    }
+
+    private val yesNoDialog = YesNoDialog("Are you sure you want to leave this game?",
+        onYesOption = { loader.setScreen<MainScreen>() },
+        onNoOption = { gameInfoDialog.show(this) }
+    )
+
+    private val leaveButton: VisTextButton = VisTextButton("Leave game").apply {
+        addListener(ClickListener {
+            yesNoDialog.show(this@GameScreen)
+        })
+    }
+
+    private val gameInfoDialog = Dialog("Menu").apply {
+        button("Back to fight!").button(leaveButton)
+        size().pad()
     }
 
     val assetManager = loader.assetManager
@@ -236,5 +257,10 @@ class GameScreen(loader: Loader, prevScreen: StageScreen) : ReturnableScreen(loa
     override fun dispose() {
         super.dispose()
         modelBatch.dispose()
+    }
+
+    override fun onBackPressed() {
+        loader.setScreen<MainScreen>()
+//        if (gameInfoDialog.isHidden) gameInfoDialog.show(this)
     }
 }
