@@ -4,13 +4,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Container
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.utils.Align
-import com.kotcrab.vis.ui.widget.*
-import com.tuguzteam.netdungeons.addActor
 import com.kotcrab.vis.ui.widget.VisImageButton
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisScrollPane
 import com.kotcrab.vis.ui.widget.VisTable
-import com.tuguzteam.netdungeons.addRow
+import com.tuguzteam.netdungeons.addActor
 import com.tuguzteam.netdungeons.heightFraction
 import com.tuguzteam.netdungeons.screens.main.ContentHeader
 import com.tuguzteam.netdungeons.screens.main.NavButton
@@ -25,8 +23,10 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
     private val playerInfo = VisTable(false).apply {
         addActor(this, VisLabel("Level", Align.center), navPad * 2)
 
-        add(Container(VisImageButton(null, null, null))
-            .fill().size(heightFraction(.12f))).grow()
+        add(
+            Container(VisImageButton(null, null, null))
+                .fill().size(heightFraction(.12f))
+        ).grow()
 
         addActor(this, VisLabel("Name", Align.left), navPad * 9)
     }
@@ -45,9 +45,11 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
 
     private val statsTable = ScrollPane(VisTable(false).apply {
         repeat(5) {
-            add(Container(
-                VisImageButton(null, null, null))
-                .fill().pad(heightFraction(.02f))
+            add(
+                Container(
+                    VisImageButton(null, null, null)
+                )
+                    .fill().pad(heightFraction(.02f))
             ).size(heightFraction(.1f))
 
             add(VisLabel("100", Align.center)).size(0f, heightFraction(.05f))
