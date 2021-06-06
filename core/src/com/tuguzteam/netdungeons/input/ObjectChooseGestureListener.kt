@@ -39,7 +39,7 @@ class ObjectChooseGestureListener(private val gameScreen: GameScreen) : KtxGestu
     private fun intersectedGameObject(ray: Ray): GameObject? {
         var gameObject: Tile? = null
         Tile.asSequence().filter {
-            it in gameScreen.visibleObjects && ray intersects it
+            it in gameScreen.visibleObjects && it is Focusable && ray intersects it
         }.forEach { tile ->
             val distance2 = gameObject?.toImmutableVec3()?.dst2(ray.origin)
             val itDistance2 = tile.toImmutableVec3().dst2(ray.origin)
