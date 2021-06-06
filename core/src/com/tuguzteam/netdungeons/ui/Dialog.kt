@@ -6,7 +6,8 @@ import com.badlogic.gdx.utils.Align
 import com.kotcrab.vis.ui.widget.VisDialog
 import com.tuguzteam.netdungeons.heightFraction
 
-open class Dialog(title: String) : VisDialog(title, "noborder") {
+open class Dialog(title: String) : VisDialog(title) {
+
     var isHidden = true
         private set
 

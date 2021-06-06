@@ -152,17 +152,12 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
     }
 
     init {
-        isDebugAll = true
+//        isDebugAll = true
 
         this += Container(contentGroup).apply {
             fill().pad(authPad, authPad * 2, authPad, authPad * 2)
             setFillParent(true)
         }
-    }
-
-    override fun show() {
-        super.show()
-        Loader.logger.debug { "Auth screen is shown..." }
     }
 
     override fun onBackPressed() {

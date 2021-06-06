@@ -86,21 +86,12 @@ infix fun Environment.with(attribute: Attribute) = set(attribute)
 fun addRow(table: VisTable, triple: Triple<Any, Any, Any>) {
     when (triple.first) {
         is String -> {
-            addActor(
-                table, VisLabel(
-                    triple.first as String, Align.center
-                ), pad = true
-            )
-            addActor(
-                table, VisLabel(
-                    triple.second as String, Align.center
-                ), expand = true, multiply = 5f
-            )
-            addActor(
-                table, VisLabel(
-                    triple.third as String, Align.center
-                ), pad = true
-            )
+            addActor(table, VisLabel(triple.first as String, "medium")
+                .apply { setAlignment(Align.center) }, pad = true)
+            addActor(table, VisLabel(triple.second as String, "medium")
+                .apply { setAlignment(Align.center) }, expand = true, multiply = 5f)
+            addActor(table, VisLabel(triple.third as String, "medium")
+                .apply { setAlignment(Align.center) }, pad = true)
         }
         is Actor -> {
             addActor(table, triple.first as Actor, pad = true)

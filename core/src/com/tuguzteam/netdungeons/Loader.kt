@@ -39,7 +39,7 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
 
         logger.debug { "Loader is creating now..." }
         KtxAsync.launch {
-            VisUI.load("skins-dev/tixel.json")
+            VisUI.load("skins-dev/alagard.json")
 
             assetManager.load(TextureAsset.LogoLibGDX)
             addScreen(screen = SplashScreen(this@Loader))

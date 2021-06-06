@@ -50,9 +50,6 @@ class TableDataButton(
         loadData()
 
         addListener(ClickListener {
-            block.setPosition(sortByText)
-            block.setPoints(sortByText)
-
             scrollContainer.actor = tableScroll
         })
     }
@@ -77,9 +74,9 @@ class TableDataButton(
     @OptIn(ExperimentalTime::class)
     private suspend fun loading(loadBottom: Boolean) {
         val triple = Triple(
-            VisLabel("Loading...", Align.center),
-            VisLabel("Loading...", Align.center),
-            VisLabel("Loading...", Align.center)
+            VisLabel("Loading...", "medium").apply { setAlignment(Align.center) },
+            VisLabel("Loading...", "medium").apply { setAlignment(Align.center) },
+            VisLabel("Loading...", "medium").apply { setAlignment(Align.center) }
         )
         tableContent.clearChildren()
 

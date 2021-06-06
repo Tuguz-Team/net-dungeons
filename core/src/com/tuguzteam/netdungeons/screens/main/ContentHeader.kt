@@ -21,9 +21,7 @@ class ContentHeader(stage: Stage, horGroup: WidgetGroup?, splitAmount: Float) :
         onNoOption = { settingsDialog.show(stage) }
     )
     private val exitButton: VisTextButton = VisTextButton("Exit Game").apply {
-        addListener(ClickListener {
-            yesNoDialog.show(stage)
-        })
+        addListener(ClickListener { yesNoDialog.show(stage) })
     }
     private val settingsDialog = Dialog("Settings").apply {
         button(exitButton).button("Return")

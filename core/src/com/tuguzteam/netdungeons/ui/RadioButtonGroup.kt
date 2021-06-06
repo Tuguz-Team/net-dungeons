@@ -3,14 +3,17 @@ package com.tuguzteam.netdungeons.ui
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup
 import com.kotcrab.vis.ui.widget.VisTextButton
 
-class RadioButtonGroup(ifChecked: Boolean, buttonInstances: Iterable<Any>) {
+class RadioButtonGroup(
+    ifChecked: Boolean, buttonInstances: Iterable<Any>, styleAddition: String = ""
+) {
+
     private var controller: ButtonGroup<VisTextButton>
     val groupButtons = mutableListOf<VisTextButton>()
 
     init {
         groupButtons += buttonInstances.map { instance ->
             when (instance) {
-                is String -> VisTextButton(instance, "toggle").apply {
+                is String -> VisTextButton(instance, "toggle$styleAddition").apply {
                     isFocusBorderEnabled = false
                 }
                 is VisTextButton -> instance.apply {

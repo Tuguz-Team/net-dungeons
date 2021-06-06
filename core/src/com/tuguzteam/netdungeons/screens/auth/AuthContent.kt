@@ -23,8 +23,8 @@ class AuthContent(
     private var textFieldsStates = mutableListOf<Pair<String, String>>()
     private val policyCheckBox = VisCheckBox("Accept privacy policy").apply {
         label.setAlignment(Align.center)
-        imageStackCell.size(heightFraction(.0375f))
-        labelCell.width(heightFraction(.375f)).grow()
+        imageStackCell.size(heightFraction(.05f))
+        labelCell.width(heightFraction(.5f)).grow()
 
         addListener(ClickListener {
             setStateInvalid(!isChecked)
@@ -40,16 +40,21 @@ class AuthContent(
         })
         addListener(clickListener)
     }
-    private val viewPasswordButton = VisTextButton("<  >", "toggle").apply {
+    private val viewPasswordButton = VisTextButton("< >", "toggle").apply {
         isFocusBorderEnabled = false
         addListener(ClickListener {
             passwordTextField.isPasswordMode--
+            setText(if (passwordTextField.isPasswordMode)
+                "< >" else "> <")
         })
     }
 
     private val textArea = VisLabel(
-        "\nJust enjoy the game!!!\n".repeat(50)
-    ).apply { wrap = true }
+        "\nJust enjoy the game!!!\n".repeat(50), "medium"
+    ).apply {
+        setAlignment(Align.center)
+        wrap = true
+    }
 
     private val policyWindow = Dialog("Privacy Policy").apply dialog@{
         buttonsTable.add(VisTextButton("I accept!").apply {
@@ -71,7 +76,7 @@ class AuthContent(
         size().pad()
     }
 
-    private val viewPolicyButton = VisTextButton(" ? ").apply {
+    private val viewPolicyButton = VisTextButton("?").apply {
         isFocusBorderEnabled = false
         addListener(ClickListener { policyWindow.show(stage) })
     }

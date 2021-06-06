@@ -6,7 +6,7 @@ import com.kotcrab.vis.ui.widget.VisTextButton
 
 class SkillTreeContent(size: Float, skillWindow: SkillWindow) : VisTable() {
 
-    private val cellWidth = size * 3
+    private val cellWidth = size * 5
     private val cellHeight = size
 
     private val skillsAtRow = 3
@@ -65,7 +65,7 @@ class SkillTreeContent(size: Float, skillWindow: SkillWindow) : VisTable() {
         row()
     }
 
-    private fun skillButton(skill: Skill) = VisTextButton(skill.name)
+    private fun skillButton(skill: Skill) = VisTextButton(skill.name, "default-medium")
 
     private data class Skill(val name: String, val description: String, val cost: Int)
 }

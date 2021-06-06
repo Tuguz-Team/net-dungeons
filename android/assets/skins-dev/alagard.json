@@ -2,6 +2,12 @@
 "BitmapFont": {
 	"alagard": {
 		"file": "alagard.fnt"
+	},
+	"alagard-medium": {
+		"file": "alagard-medium.fnt"
+	},
+	"alagard-small": {
+		"file": "alagard-small.fnt"
 	}
 },
 "Color": {
@@ -496,7 +502,7 @@
 	"small": {
 		"focusBorder": "border",
 		"errorBorder": "border-error",
-		"font": "alagard",
+		"font": "alagard-small",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
 		"selection": "selection",
@@ -510,6 +516,17 @@
 		"font": "alagard",
 		"fontColor": "white",
 		"disabledFontColor": "grey"
+	},
+	"medium": {
+		"focusBorder": "border",
+		"errorBorder": "border-error",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"selection": "selection",
+		"background": "textfield",
+		"backgroundOver": "textfield-over",
+		"cursor": "cursor"
 	}
 },
 "com.kotcrab.vis.ui.widget.VisTextButton$VisTextButtonStyle": {
@@ -550,6 +567,48 @@
 		"fontColor": "white",
 		"down": "button-down",
 		"up": "button",
+		"disabled": "button",
+		"disabledFontColor": "grey"
+	},
+	"default-small": {
+		"focusBorder": "border",
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"toggle-small": {
+		"focusBorder": "border",
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"over": "button-over",
+		"disabled": "button",
+		"disabledFontColor": "grey"
+	},
+	"default-medium": {
+		"focusBorder": "border",
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"toggle-medium": {
+		"focusBorder": "border",
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"over": "button-over",
 		"disabled": "button",
 		"disabledFontColor": "grey"
 	}
@@ -665,6 +724,48 @@
 		"up": "button",
 		"disabled": "button",
 		"disabledFontColor": "grey"
+	},
+	"default-small": {
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"focusBorder": "border"
+	},
+	"toggle-small": {
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"over": "button-over",
+		"disabled": "button",
+		"disabledFontColor": "grey",
+		"focusBorder": "border"
+	},
+	"default-medium": {
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"focusBorder": "border"
+	},
+	"toggle-medium": {
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"over": "button-over",
+		"disabled": "button",
+		"disabledFontColor": "grey",
+		"focusBorder": "border"
 	}
 },
 "com.kotcrab.vis.ui.widget.VisCheckBox$VisCheckBoxStyle": {
@@ -689,6 +790,30 @@
 		"focusBorder": "border-circle",
 		"errorBorder": "border-circle-error",
 		"font": "alagard",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"small": {
+		"checkBackground": "vis-check",
+		"checkBackgroundOver": "vis-check-over",
+		"checkBackgroundDown": "vis-check-down",
+		"tick": "vis-check-tick",
+		"tickDisabled": "vis-check-tick-disabled",
+		"focusBorder": "border",
+		"errorBorder": "border-error",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"medium": {
+		"checkBackground": "vis-check",
+		"checkBackgroundOver": "vis-check-over",
+		"checkBackgroundDown": "vis-check-down",
+		"tick": "vis-check-tick",
+		"tickDisabled": "vis-check-tick-disabled",
+		"focusBorder": "border",
+		"errorBorder": "border-error",
+		"font": "alagard-medium",
 		"fontColor": "white",
 		"disabledFontColor": "grey"
 	}
@@ -778,6 +903,48 @@
 		"disabled": "button",
 		"disabledFontColor": "grey",
 		"subMenu": "sub-menu"
+	},
+	"default-small": {
+		"subMenu": "sub-menu",
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"toggle-small": {
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"over": "button-over",
+		"disabled": "button",
+		"disabledFontColor": "grey",
+		"subMenu": "sub-menu"
+	},
+	"default-medium": {
+		"subMenu": "sub-menu",
+		"down": "button-down",
+		"up": "button",
+		"over": "button-over",
+		"disabled": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"toggle-medium": {
+		"checked": "button-down",
+		"down": "button-down",
+		"up": "button",
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"over": "button-over",
+		"disabled": "button",
+		"disabledFontColor": "grey",
+		"subMenu": "sub-menu"
 	}
 },
 "com.kotcrab.vis.ui.widget.Tooltip$TooltipStyle": {
@@ -790,6 +957,16 @@
 		"fontColor": "link-label",
 		"underline": "white",
 		"font": "alagard"
+	},
+	"small": {
+		"fontColor": "link-label",
+		"underline": "white",
+		"font": "alagard-small"
+	},
+	"medium": {
+		"fontColor": "link-label",
+		"underline": "white",
+		"font": "alagard-medium"
 	}
 },
 "com.kotcrab.vis.ui.widget.tabbedpane.TabbedPane$TabbedPaneStyle": {
@@ -929,10 +1106,6 @@
 		"up": "button",
 		"down": "button-down"
 	},
-	"blue": {
-		"up": "button-blue",
-		"down": "button-blue-down"
-	},
 	"toggle": {
 		"up": "button",
 		"down": "button-down",
@@ -951,6 +1124,20 @@
 		"checkboxOn": "radio-on",
 		"checkboxOff": "radio-off",
 		"font": "alagard",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"small": {
+		"checkboxOn": "check-on",
+		"checkboxOff": "check-off",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey"
+	},
+	"medium": {
+		"checkboxOn": "check-on",
+		"checkboxOff": "check-off",
+		"font": "alagard-medium",
 		"fontColor": "white",
 		"disabledFontColor": "grey"
 	}
@@ -980,17 +1167,46 @@
 		"over": "button-over",
 		"disabled": "button"
 	},
-	"blue": {
+	"toggle": {
 		"font": "alagard",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
-		"up": "button-blue",
-		"down": "button-blue-down",
-		"over": "button-blue-over",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"checked": "button-down",
 		"disabled": "button"
 	},
-	"toggle": {
-		"font": "alagard",
+	"default-small": {
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"disabled": "button"
+	},
+	"toggle-small": {
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"checked": "button-down",
+		"disabled": "button"
+	},
+	"default-medium": {
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"disabled": "button"
+	},
+	"toggle-medium": {
+		"font": "alagard-medium",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
 		"up": "button",
@@ -1010,7 +1226,7 @@
 		"fontColor": "menuitem"
 	},
 	"small": {
-		"font": "alagard",
+		"font": "alagard-small",
 		"fontColor": "white"
 	},
 	"title": {
@@ -1019,6 +1235,10 @@
 	"link-label": {
 		"font": "alagard",
 		"fontColor": "link-label"
+	},
+	"medium": {
+		"font": "alagard-medium",
+		"fontColor": "white"
 	}
 },
 "ListStyle": {
@@ -1105,17 +1325,46 @@
 		"over": "button-over",
 		"disabled": "button"
 	},
-	"blue": {
+	"toggle": {
 		"font": "alagard",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
-		"up": "button-blue",
-		"down": "button-blue-down",
-		"over": "button-blue-over",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"checked": "button-down",
 		"disabled": "button"
 	},
-	"toggle": {
-		"font": "alagard",
+	"default-small": {
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"disabled": "button"
+	},
+	"toggle-small": {
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"checked": "button-down",
+		"disabled": "button"
+	},
+	"default-medium": {
+		"font": "alagard-medium",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"up": "button",
+		"down": "button-down",
+		"over": "button-over",
+		"disabled": "button"
+	},
+	"toggle-medium": {
+		"font": "alagard-medium",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
 		"up": "button",
@@ -1136,7 +1385,16 @@
 		"messageFontColor": "grey"
 	},
 	"small": {
-		"font": "alagard",
+		"font": "alagard-small",
+		"fontColor": "white",
+		"disabledFontColor": "grey",
+		"background": "textfield",
+		"cursor": "cursor",
+		"selection": "selection",
+		"messageFontColor": "grey"
+	},
+	"medium": {
+		"font": "alagard-medium",
 		"fontColor": "white",
 		"disabledFontColor": "grey",
 		"background": "textfield",

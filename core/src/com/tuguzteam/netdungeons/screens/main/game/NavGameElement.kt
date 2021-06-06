@@ -18,7 +18,7 @@ class NavGameElement(
 ) {
     private val windowPad = heightFraction(.05f)
 
-    private val radioButton = RadioButtonGroup(false, buttonNames).apply {
+    private val radioButton = RadioButtonGroup(false, buttonNames, "-medium").apply {
         groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
                 if (innerLabel.textEquals(buttonNames[index]))
@@ -28,7 +28,8 @@ class NavGameElement(
             })
         }
     }
-    val innerLabel = VisLabel(labelName, Align.center).apply {
+    val innerLabel = VisLabel(labelName, "medium").apply {
+        setAlignment(Align.center)
         addListener(ClickListener {
             scrollPane.scrollPercentY = percentage
         })

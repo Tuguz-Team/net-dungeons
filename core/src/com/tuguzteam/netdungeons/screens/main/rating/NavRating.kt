@@ -17,22 +17,17 @@ class NavRating(contentSplitPane: SplitPane, header: ContentHeader) {
     private val navPad = heightFraction(.1f)
 
     private val tableHeader = TableBlock(
-        "Position", "Adventurer", "Score points",
-    )
-    private val tableFooter = TableBlock(
-        nickname = "фанат секса",
-    )
+        "Position", "Adventurer", "Score")
     private val tableContent = Container<Actor>().fill()
+    private val tableFooter = TableBlock(
+        "inf.", "Very Good Person", "inf.")
 
     private val levelButton = TableDataButton(
-        "Level", tableFooter, tableContent,
-    )
+        "Level", tableFooter, tableContent)
     private val winButton = TableDataButton(
-        "Win count", tableFooter, tableContent,
-    )
+        "Win count", tableFooter, tableContent)
     private val fragButton = TableDataButton(
-        "Frag count", tableFooter, tableContent,
-    )
+        "Frag count", tableFooter, tableContent)
 
     private val ratingTable = VisTable(false).apply {
         tableHeader.addTo(this)
@@ -41,18 +36,15 @@ class NavRating(contentSplitPane: SplitPane, header: ContentHeader) {
     }
     private val tableContainer = Container(ratingTable).fill().pad(navPad)
 
-    private val radioButton = RadioButtonGroup(
-        true,
-        arrayListOf(levelButton, winButton, fragButton),
+    private val radioButton = RadioButtonGroup(true,
+        arrayListOf(levelButton, winButton, fragButton)
     )
 
     private val sortButtons = VisTable(false).apply {
         left().padRight(navPad)
 
-        addActor(
-            this,
-            VisLabel("Sort by", Align.center), navPad * 3,
-        )
+        addActor(this,
+            VisLabel("Sort by", Align.center), navPad * 2)
         radioButton.groupButtons.forEach { button ->
             addActor(this, button)
         }

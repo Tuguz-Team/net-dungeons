@@ -21,14 +21,14 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
     private val navPad = heightFraction(.1f)
 
     private val playerInfo = VisTable(false).apply {
-        addActor(this, VisLabel("Level", Align.center), navPad * 2)
+        addActor(this, VisLabel("13", Align.center), navPad * 1.25f)
 
         add(
             Container(VisImageButton(null, null, null))
                 .fill().size(heightFraction(.12f))
         ).grow()
 
-        addActor(this, VisLabel("Name", Align.left), navPad * 9)
+        addActor(this, VisLabel("Name", Align.left))
     }
 
     private val skillWindow = SkillWindow(
@@ -45,18 +45,16 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
 
     private val statsTable = ScrollPane(VisTable(false).apply {
         repeat(5) {
-            add(
-                Container(
-                    VisImageButton(null, null, null)
-                )
-                    .fill().pad(heightFraction(.02f))
+            add(Container(
+                VisImageButton(null, null, null))
+                .fill().pad(heightFraction(.02f))
             ).size(heightFraction(.1f))
 
             add(VisLabel("100", Align.center)).size(0f, heightFraction(.05f))
                 .pad(0f, heightFraction(.05f), 0f, heightFraction(.05f))
 
-            add(VisLabel("+0", Align.center)).size(0f, heightFraction(.05f))
-                .padRight(heightFraction(.05f)).row()
+            add(VisLabel("+0", "medium")).size(0f, heightFraction(.05f))
+                .padRight(heightFraction(.0625f)).row()
         }
     }).apply {
         setOverscroll(false, false)
@@ -80,8 +78,9 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
         }).pad(heightFraction(.025f))
             .size(widthFraction(.2f), heightFraction(.075f))
 
-        add(VisLabel("Progress points: 0", Align.center)).growX()
-            .pad(heightFraction(.025f)).size(0f, heightFraction(.075f)).row()
+        add(VisLabel("New points: 0", "medium")
+            .apply { setAlignment(Align.center) }).growX().pad(heightFraction(.025f))
+            .size(0f, heightFraction(.075f)).row()
 
         add(skillTreeScroll).colspan(2).expand()
     }

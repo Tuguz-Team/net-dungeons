@@ -50,13 +50,11 @@ class NavGame(loader: Loader, contentSplitPane: SplitPane, header: ContentHeader
     }
 
     private val headerContent = VisTable(false).apply {
-        left().padRight(navPad)
+        left().padRight(navPad / 2)
 
         addActor(this, gameMode.innerLabel)
-        addActor(
-            this,
-            VisLabel("in", Align.center), navPad,
-        )
+        addActor(this, VisLabel("in", "medium")
+            .apply { setAlignment(Align.center) }, navPad)
         addActor(this, gameSize.innerLabel)
         addActor(this, gameType.innerLabel)
     }

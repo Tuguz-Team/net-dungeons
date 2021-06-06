@@ -17,7 +17,8 @@ class ExtValidTextField(
 ) : VisValidatableTextField() {
 
     private var infoLabel = VisLabel(infoText, align)
-    private var errorLabel = VisLabel(null, align).apply {
+    private var errorLabel = VisLabel(null, "medium").apply {
+        setAlignment(align)
         color = Color.RED
     }
 
