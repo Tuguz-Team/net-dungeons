@@ -100,7 +100,8 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
 
     private val signInContent = AuthContent(
         this, "Continue playing",
-        "Login", ClickListener {
+        "Login",
+        ClickListener {
             KtxAsync.launch {
                 signInWaitDialog.show(this@AuthScreen)
                 val email = emailTextField.text
@@ -128,7 +129,8 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
                 }
                 signInWaitDialog.hide()
             }
-        }, optionContent, optionFooter, passwordTextField, listOf(emailTextField),
+        },
+        optionContent, optionFooter, passwordTextField, listOf(emailTextField),
     )
 
     private val radioButton = RadioButtonGroup(

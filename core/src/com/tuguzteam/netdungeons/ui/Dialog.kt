@@ -41,12 +41,14 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
     }
 
     fun size(): Dialog {
-        val width = buttonsTable.cells.maxByOrNull{ it.actor.width }
+        val width = buttonsTable.cells.maxByOrNull { it.actor.width }
             ?.actor?.width ?: 0f
 
         buttonsTable.cells.forEach {
-            it.size(width + heightFraction(.075f),
-                heightFraction(.075f))
+            it.size(
+                width + heightFraction(.075f),
+                heightFraction(.075f),
+            )
         }
         return this
     }
