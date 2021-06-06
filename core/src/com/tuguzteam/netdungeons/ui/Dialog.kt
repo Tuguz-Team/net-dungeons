@@ -25,22 +25,28 @@ open class Dialog(title: String) : VisDialog(title, "noborder") {
     }
 
     init {
-        titleLabel.setAlignment(Align.top)
+        titleLabel.setAlignment(Align.center)
+        titleTable.getCell(titleLabel)
+            .pad(heightFraction(.1f))
+        titleTable.padTop(heightFraction(.05f))
+        contentTable.padTop(heightFraction(.025f))
+
         isResizable = false
         isMovable = false
     }
 
     fun pad(): Dialog {
         buttonsTable.cells.forEach { it.pad(heightFraction(.02f)) }
-        contentTable.cells.forEach { it.pad(heightFraction(.02f)) }
         return this
     }
 
     fun size(): Dialog {
+        val width = buttonsTable.cells.maxByOrNull{ it.actor.width }
+            ?.actor?.width ?: 0f
+
         buttonsTable.cells.forEach {
-            it.width(0f).size(
-                heightFraction(.15f), heightFraction(.075f)
-            )
+            it.size(width + heightFraction(.075f),
+                heightFraction(.075f))
         }
         return this
     }
