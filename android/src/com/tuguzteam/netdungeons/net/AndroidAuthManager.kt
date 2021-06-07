@@ -76,7 +76,7 @@ object AndroidAuthManager : AuthManager() {
             is Result.Failure -> Result.Failure(cause = result.cause)
             is Result.Success -> {
                 val user = result.data
-                check(user != null) { "WTF user is null?" }
+                check(user != null) { "Why user is null?" }
                 Result.Success(data = user)
             }
         }
@@ -106,7 +106,7 @@ object AndroidAuthManager : AuthManager() {
         }
 
         val firebaseUser: FirebaseUser? = authResult.user
-        check(firebaseUser != null) { "WTF user is null?" }
+        check(firebaseUser != null) { "Why user is null?" }
         firebaseUser.updateProfile(userProfileChangeRequest {
             displayName = name
         }).await()
