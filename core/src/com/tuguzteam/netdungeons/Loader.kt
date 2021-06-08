@@ -34,7 +34,7 @@ class Loader(val authManager: AuthManager, val gameManager: GameManager) : KtxGa
 
     override fun create() {
         KtxAsync.initiate()
-        Gdx.app.logLevel = Application.LOG_DEBUG
+        Gdx.app.logLevel = Application.LOG_ERROR
         Gdx.input.setCatchKey(Input.Keys.BACK, true)
 
         logger.debug { "Loader is creating now..." }
