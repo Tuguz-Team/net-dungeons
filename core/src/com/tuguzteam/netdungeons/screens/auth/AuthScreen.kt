@@ -22,10 +22,10 @@ import ktx.log.info
 class AuthScreen(loader: Loader) : StageScreen(loader) {
     private val authPad = heightFraction(.125f)
 
-    private val cancelDialog = YesNoDialog(
-        "Cancel registration?",
-        onYesOption = { loader.setScreen<MainScreen>() },
-    )
+//    private val cancelDialog = YesNoDialog(
+//        "Cancel registration?",
+//        onYesOption = { loader.setScreen<MainScreen>() },
+//    )
     private val registerErrorDialog = OkDialog("Registration error!").apply {
         text("")
         pad()
@@ -160,7 +160,7 @@ class AuthScreen(loader: Loader) : StageScreen(loader) {
         }
     }
 
-    override fun onBackPressed() {
-        if (cancelDialog.isHidden) cancelDialog.show(this)
-    }
+//    override fun onBackPressed() {
+//        if (cancelDialog.isHidden) cancelDialog.show(this)
+//    }
 }

@@ -13,6 +13,7 @@ import com.tuguzteam.netdungeons.ui.ClickListener
 class NavButton(
     text: String, checkParent: WidgetGroup, checkChild: Actor, body: () -> Unit
 ) : Container<Actor>() {
+
     private val imageButton =
         VisImageButton(null, null, null)
 

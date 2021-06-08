@@ -26,7 +26,7 @@ class NavProfile(contentSplitPane: SplitPane, header: ContentHeader) {
         add(
             Container(VisImageButton(null, null, null))
                 .fill().size(heightFraction(.12f))
-        ).grow()
+        ).padLeft(navPad / 2)
 
         addActor(this, VisLabel("Name", Align.left))
     }

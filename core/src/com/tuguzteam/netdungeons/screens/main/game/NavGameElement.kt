@@ -18,7 +18,9 @@ class NavGameElement(
 ) {
     private val windowPad = heightFraction(.05f)
 
-    private val radioButton = RadioButtonGroup(false, buttonNames, "-medium").apply {
+    private val radioButton = RadioButtonGroup(
+        false, buttonNames, "-medium"
+    ).apply {
         groupButtons.forEachIndexed { index, button ->
             button.addListener(ClickListener {
                 if (innerLabel.textEquals(buttonNames[index]))
@@ -34,6 +36,15 @@ class NavGameElement(
             scrollPane.scrollPercentY = percentage
         })
     }
+    val window = VisTable(false).apply {
+        add(VisLabel(windowTitle, Align.center))
+            .colspan(buttons.size).padTop(windowPad)
+            .width(widthFraction(.625f)).row()
+
+        buttons.forEach { button ->
+            add(button).grow().pad(windowPad)
+        }
+    }
 
     private val buttons = mutableListOf<VisTable>().apply {
         radioButton.groupButtons.forEach { radioButton ->
@@ -47,16 +58,6 @@ class NavGameElement(
                     addListener(listener)
                 }
             })
-        }
-    }
-
-    val window = VisTable(false).apply {
-        add(VisLabel(windowTitle, Align.center))
-            .colspan(buttons.size).padTop(windowPad)
-            .width(widthFraction(.625f)).row()
-
-        buttons.forEach { button ->
-            add(button).grow().pad(windowPad)
         }
     }
 
