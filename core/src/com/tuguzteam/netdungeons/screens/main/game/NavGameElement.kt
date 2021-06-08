@@ -36,15 +36,6 @@ class NavGameElement(
             scrollPane.scrollPercentY = percentage
         })
     }
-    val window = VisTable(false).apply {
-        add(VisLabel(windowTitle, Align.center))
-            .colspan(buttons.size).padTop(windowPad)
-            .width(widthFraction(.625f)).row()
-
-        buttons.forEach { button ->
-            add(button).grow().pad(windowPad)
-        }
-    }
 
     private val buttons = mutableListOf<VisTable>().apply {
         radioButton.groupButtons.forEach { radioButton ->
@@ -58,6 +49,16 @@ class NavGameElement(
                     addListener(listener)
                 }
             })
+        }
+    }
+
+    val window = VisTable(false).apply {
+        add(VisLabel(windowTitle, Align.center))
+            .colspan(buttons.size).padTop(windowPad)
+            .width(widthFraction(.625f)).row()
+
+        buttons.forEach { button ->
+            add(button).grow().pad(windowPad)
         }
     }
 
