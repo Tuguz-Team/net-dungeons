@@ -58,10 +58,10 @@ object AndroidGameManager : GameManager() {
                             val gameAdminReference = gameAdminReference(snapshot.reference)
                             KtxAsync.launch {
                                 // Get data from the server about game seed
-                                val seed = gameAdminReference.get().await().getLong(Game.SEED)
+                                val seed = gameAdminReference.get().await().getLong(Game::seed.name)
 
                                 @Suppress("UNCHECKED_CAST")
-                                val userIDs = snapshot[Game.USER_IDS] as? MutableList<String>?
+                                val userIDs = snapshot[Game::userIDs.name] as? MutableList<String>?
                                 checkNotNull(userIDs) { "No user IDs in game data" }
                                 val serverGame = Game(userIDs, seed)
                                 // Start game if needed
@@ -152,9 +152,9 @@ object AndroidGameManager : GameManager() {
         val game = Game(mutableListOf(userID), null)
         val reference = gamesRef.document(userID)
 
-        val userIDsMap = mapOf(Game.USER_IDS to game.userIDs)
+        val userIDsMap = mapOf(Game::userIDs.name to game.userIDs)
         reference.set(userIDsMap).await()
-        val seedMap = mapOf(Game.SEED to null)
+        val seedMap = mapOf(Game::seed.name to null)
         gameAdminReference(reference).set(seedMap).await()
 
         currentGameRef = gamesRef.document(userID)
@@ -173,7 +173,7 @@ object AndroidGameManager : GameManager() {
         val allGamesIsSuitable = allGames.map { game ->
             scope.async {
                 val gameAdminReference = gameAdminReference(gamesRef.document(game.id))
-                val seed = gameAdminReference.get().await().getLong(Game.SEED)
+                val seed = gameAdminReference.get().await().getLong(Game::seed.name)
                 seed?.let { return@async false }
                 val document = usersRef.document(game.id).get().await()
                 val user = document.toObject(User::class.java)
@@ -188,11 +188,11 @@ object AndroidGameManager : GameManager() {
         val suitableGame = allGames[index]
         val userID = firebaseUser.uid
         val currentGameRef = suitableGame.reference
-        val updates = mapOf(Game.USER_IDS to FieldValue.arrayUnion(userID))
+        val updates = mapOf(Game::userIDs.name to FieldValue.arrayUnion(userID))
         currentGameRef.update(updates).await()
 
         @Suppress("UNCHECKED_CAST")
-        val userIDs = suitableGame[Game.USER_IDS] as? MutableList<String>?
+        val userIDs = suitableGame[Game::userIDs.name] as? MutableList<String>?
         checkNotNull(userIDs) { "No user IDs in game data" }
         val game = Game(userIDs)
         this.game = game
@@ -213,7 +213,7 @@ object AndroidGameManager : GameManager() {
             val game = currentGameRef.delete().asDeferred()
             awaitAll(adminReference, game)
         } else {
-            val updates = mapOf(Game.USER_IDS to FieldValue.arrayRemove(userID))
+            val updates = mapOf(Game::userIDs.name to FieldValue.arrayRemove(userID))
             currentGameRef.update(updates).await()
         }
 
@@ -230,7 +230,7 @@ object AndroidGameManager : GameManager() {
         check(currentGameRef != null && game != null) { "Game was not created" }
 
         val adminReference = gameAdminReference(currentGameRef)
-        val seedMap = mapOf(Game.SEED to seed)
+        val seedMap = mapOf(Game::seed.name to seed)
         adminReference.set(seedMap).await()
 
         game = Game(game.userIDs, seed)
