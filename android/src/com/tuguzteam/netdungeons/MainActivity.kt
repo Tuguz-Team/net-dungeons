@@ -20,6 +20,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity(R.layout.activity_main),
     AndroidFragmentApplication.Callbacks {
+
     companion object {
         lateinit var auth: FirebaseAuth
             private set

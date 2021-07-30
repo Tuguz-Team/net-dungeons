@@ -3,7 +3,9 @@ package com.tuguzteam.netdungeons.net
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.userProfileChangeRequest
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.tuguzteam.netdungeons.*
 import com.tuguzteam.netdungeons.MainActivity.Companion.auth
 import com.tuguzteam.netdungeons.MainActivity.Companion.database
