@@ -4,7 +4,7 @@ buildscript {
         kotlinxCoroutineVersion = '1.5.1'
         appName = 'Net Dungeons'
         gdxVersion = '1.10.0'
-        ktxVersion = '1.10.0-b1'
+        ktxVersion = '1.10.0-b2'
         visuiVersion = '1.5.0'
     }
 
@@ -17,8 +17,8 @@ buildscript {
         maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0'
-        classpath 'com.google.gms:google-services:4.3.8'
+        classpath 'com.android.tools.build:gradle:7.0.1'
+        classpath 'com.google.gms:google-services:4.3.10'
         classpath "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
